@@ -7,7 +7,7 @@ This project aims to create filtered endpoint without writing any of query with 
 - Install `AutoFilterer` NuGet package.
 
 *That's it. You don't need any initialization*
-
+***
 # Usage
 
 
@@ -18,8 +18,7 @@ This project aims to create filtered endpoint without writing any of query with 
 public class Blog
 {
     public string BlogId { get; set; }
-    //[FromQuery(Name="category")]   // < -- This attribute may be used to customize your querystring
-    public int CategoryId { get; set; } // <--  But property name must be same with entity 
+    public int CategoryId { get; set; }
     public int Priority { get; set; }
     public bool IsPublished { get; set; }
     public DateTime PublishDate { get; set; }
@@ -112,6 +111,8 @@ public class BlogFilterDto : FilterBase<Blog>
   * `/Blogs?Title=Hello%20World`
   * `/Blogs?Title=a`
 
+***
+
 ## Working With Range
 
 You may want to search a range like bwetween two DateTimes or numbers.
@@ -153,3 +154,29 @@ public class BlogFilterDto : FilterBase<Blog>
   * `/Blogs?PublishDate.Max=01.05.2019` 
     _// Depends on CultureInfo. If you're using Request Localization, each client must send by its own datetime format__
   * `/Blogs?Priority.Min=3&Priority.Max=5`
+
+***
+
+# Customizations
+
+## Customizing QueryString
+
+You may want to use shorter parameter names in querystring. AspNetCore provides to define querystring parameter's names with `FromQuery` attribute:
+
+
+```csharp
+
+```csharp
+public class BlogFilterDto : FilterBase<Blog>
+{
+    [FromQuery(Name="category")]   // < -- This attribute may be used to customize your querystring
+    public int CategoryId { get; set; }// <--  But property name must be same with entity
+    public int Priority { get; set; }
+    public bool? IsPublished { get; set; }
+}
+
+This provides to handle `category` parameter as CategoryId:
+
+    * `/Blogs?category=4`
+
+
