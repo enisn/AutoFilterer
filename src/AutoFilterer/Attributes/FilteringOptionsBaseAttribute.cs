@@ -2,14 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoFilterer.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class FilteringOptionsBaseAttribute : Attribute, IFilteringOptions
+    public abstract class FilteringOptionsBaseAttribute : Attribute, IFilterableType
     {
-        Func<object, object, bool> IFilteringOptions<object>.FilterRuleFunc { get; set; }
+        public abstract Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value);
     }
 }

@@ -150,7 +150,7 @@ namespace AutoFilterer.Types
             return (T1)maxValue;
         }
 
-        public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property)
+        public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value)
         {
             var parameter = Expression.Parameter(property.DeclaringType, property.Name);
 

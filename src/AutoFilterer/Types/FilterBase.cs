@@ -2,6 +2,7 @@
 using AutoFilterer.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,47 +11,50 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
-    public class FilterBase<TEntity>
+    public class FilterBase<TEntity> : IFilterableType
     {
         public IQueryable<TEntity> ApplyFilterTo(IQueryable<TEntity> query)
         {
             var _type = this.GetType();
             foreach (var entityProperty in typeof(TEntity).GetProperties())
             {
-                var filterProperty = _type.GetProperty(entityProperty.Name);
-                if (filterProperty == null)
-                    continue;
-
-                var val = filterProperty.GetValue(this);
-                if (val == null)
-                    continue;
-
-                if(val is string str)
+                try
                 {
-                    var attribute = filterProperty.GetCustomAttribute<StringFilterOptionsAttribute>(false);
+                    var filterProperty = _type.GetProperty(entityProperty.Name);
+                    if (filterProperty == null)
+                        continue;
+
+                    var val = filterProperty.GetValue(this);
+                    if (val == null)
+                        continue;
+
+                    var attribute = filterProperty.GetCustomAttribute<FilteringOptionsBaseAttribute>(false);
+
                     if (attribute != null)
                     {
-                        query = query.Where(attribute.BuildExpression<TEntity>(entityProperty, str));
+                        query = query.Where(attribute.BuildExpression<TEntity>(entityProperty, val));
                         continue;
                     }
+
+                    if (val is IFilterableType filterableProperty)
+                    {
+                        var expression = filterableProperty.BuildExpression<TEntity>(entityProperty, val);
+                        query = query.Where(expression);
+                    }
+                    else
+                    {
+                        var expression = BuildExpression<TEntity>(entityProperty, val);
+                    }
                 }
-
-
-                if (val is IFilterableType filterableProperty)
+                catch (Exception ex)
                 {
-                    var expression = filterableProperty.BuildExpression<TEntity>(entityProperty);
-                    query = query.Where(expression);
+                    Debug.WriteLine(ex?.ToString());
                 }
-                else
-                {
-                    var expression = BuildEqualityExpression<TEntity>(entityProperty, val);
-                }
-
             }
             return query;
         }
 
-        public static Expression<Func<TModel, bool>> BuildEqualityExpression<TModel>(PropertyInfo property, object value)
+        public Expression<Func<TModel, bool>> BuildExpression<TModel>(PropertyInfo property, object value)
         {
             var parameter = Expression.Parameter(property.DeclaringType, property.Name);
 
