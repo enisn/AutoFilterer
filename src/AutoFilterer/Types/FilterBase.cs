@@ -44,6 +44,7 @@ namespace AutoFilterer.Types
                     else
                     {
                         var expression = BuildExpression<TEntity>(entityProperty, val);
+                        query = query.Where(expression);
                     }
                 }
                 catch (Exception ex)
