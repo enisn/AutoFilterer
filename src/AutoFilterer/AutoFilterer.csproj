@@ -9,6 +9,12 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
+    <Version>1.0.0.1</Version>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Users\enisn\source\repos\enisn\AutoFilterer\src\AutoFilterer\AutoFilterer.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
