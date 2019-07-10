@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer", "AutoFilterer\AutoFilterer.csproj", "{D6410D6B-340A-401A-BD97-C4C7B3A02527}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD6599CA-1650-46F4-8DDC-04A122412F67}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{CD6599CA-1650-46F4-8DDC-04A122412F67}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{35117D10-C053-4FCE-93AF-689BC94454F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sandbox", "sandbox", "{9D9A2A41-92A6-4E01-91AF-8CFB82498C5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer", "src\AutoFilterer\AutoFilterer.csproj", "{12FBD30C-3442-45AE-87C4-A952AAEA74CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,13 +22,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D6410D6B-340A-401A-BD97-C4C7B3A02527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6410D6B-340A-401A-BD97-C4C7B3A02527}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6410D6B-340A-401A-BD97-C4C7B3A02527}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6410D6B-340A-401A-BD97-C4C7B3A02527}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12FBD30C-3442-45AE-87C4-A952AAEA74CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12FBD30C-3442-45AE-87C4-A952AAEA74CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12FBD30C-3442-45AE-87C4-A952AAEA74CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12FBD30C-3442-45AE-87C4-A952AAEA74CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12FBD30C-3442-45AE-87C4-A952AAEA74CD} = {35117D10-C053-4FCE-93AF-689BC94454F0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7AD042FE-9723-4702-8D75-2733C4AE8E76}
