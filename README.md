@@ -165,8 +165,6 @@ You may want to use shorter parameter names in querystring. AspNetCore provides 
 
 
 ```csharp
-
-```csharp
 public class BlogFilterDto : FilterBase<Blog>
 {
     [FromQuery(Name="category")]   // < -- This attribute may be used to customize your querystring
@@ -174,6 +172,7 @@ public class BlogFilterDto : FilterBase<Blog>
     public int Priority { get; set; }
     public bool? IsPublished { get; set; }
 }
+```
 
 This provides to handle `category` parameter as CategoryId:
 
