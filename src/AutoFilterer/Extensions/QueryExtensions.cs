@@ -8,7 +8,7 @@ namespace AutoFilterer.Extensions
 {
     public static class QueryExtensions
     {
-        public static IQueryable<T> ToPaged<T>(this IQueryable<T> source, int page, int pageSize)
+        public static IQueryable<T> ToPaged<T>(this IOrderedQueryable<T> source, int page, int pageSize)
             => source.Skip((page - 1) * pageSize).Take(pageSize);
     }
 }

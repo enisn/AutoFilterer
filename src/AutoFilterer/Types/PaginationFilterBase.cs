@@ -12,7 +12,7 @@ namespace AutoFilterer.Types
         public virtual int Page { get; set; } = 1;
         public virtual int PerPage { get; set; } = 10;
 
-        public override IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query) 
+        public new IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
             => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
     }
 
@@ -21,10 +21,10 @@ namespace AutoFilterer.Types
         public virtual int Page { get; set; } = 1;
         public virtual int PerPage { get; set; } = 10;
 
-        public override IQueryable<T> ApplyFilterTo(IQueryable<T> query) 
+        public new IQueryable<T> ApplyFilterTo(IOrderedQueryable<T> query) 
             => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
 
-        public override IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query) 
+        public new IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
             => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
     }
 }

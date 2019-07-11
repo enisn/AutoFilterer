@@ -11,7 +11,7 @@ using WebApplication.API.Models;
 
 namespace WebApplication.API.Dtos
 {
-    public class BlogFilterDto : FilterBase<Blog>
+    public class BlogFilterDto : PaginationFilterBase<Blog>
     {
         public int? CategoryId { get; set; }
 

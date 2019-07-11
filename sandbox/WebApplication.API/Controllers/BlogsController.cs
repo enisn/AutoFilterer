@@ -19,7 +19,9 @@ namespace WebApplication.API.Controllers
         {
             var db = new BlogDummyData();
 
-            var list = filter.ApplyFilterTo(db.Blogs).ToList();
+            var query = db.Blogs.OrderByDescending(o => o.PublishDate);
+
+            var list = filter.ApplyFilterTo(query).ToList();
 
             return Ok(list);
         }
