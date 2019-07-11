@@ -13,7 +13,7 @@ namespace AutoFilterer.Types
         public virtual int PerPage { get; set; } = 10;
 
         public new IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
-            => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
+            => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
     }
 
     public class PaginationFilterBase<T> : FilterBase<T>
@@ -22,9 +22,9 @@ namespace AutoFilterer.Types
         public virtual int PerPage { get; set; } = 10;
 
         public new IQueryable<T> ApplyFilterTo(IOrderedQueryable<T> query) 
-            => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
+            => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
 
         public new IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
-            => base.ApplyFilterTo(query.ToPaged(Page, PerPage));
+            => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
     }
 }
