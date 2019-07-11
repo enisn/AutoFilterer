@@ -19,19 +19,20 @@ namespace AutoFilterer.Attributes
         }
 
         public StringFilterOption Option { get; set; }
+        public StringComparison StringComparison { get; set; } = StringComparison.InvariantCultureIgnoreCase;
 
         public Func<string, string, bool> FilterRuleFunc { get; set; }
 
-        public override Expression<Func<T,bool>> BuildExpression<T>(PropertyInfo property, object value)
+        public override Expression<Func<T, bool>> BuildExpression<T>(PropertyInfo property, object value)
         {
             var parameter = Expression.Parameter(property.DeclaringType, "x");
-            var method = typeof(string).GetMethod(Option.ToString(), types: new[] { typeof(string) });
+            var method = typeof(string).GetMethod(Option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
 
             var comparison = Expression.Equal(
                         Expression.Call(
                             method: method,
                             instance: Expression.Property(parameter, property.Name),
-                            arguments: Expression.Constant(value)),
+                            arguments: new[] { Expression.Constant(value), Expression.Constant(StringComparison) }),
                         Expression.Constant(true)
                 );
 
