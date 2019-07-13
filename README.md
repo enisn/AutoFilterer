@@ -4,9 +4,11 @@ This project aims to create filtered endpoint without writing any of query with 
 
 > Basicly provides QueryString To Linq conversion.
 
+You can visit [Wiki](/wiki) for more documents
+
 # Getting Started
 
-- Install `AutoFilterer` NuGet package.
+- Install `AutoFilterer` NuGet package from [here](https://www.nuget.org/packages/AutoFilterer/).
 
 *That's it. You don't need any initialization*
 ***
