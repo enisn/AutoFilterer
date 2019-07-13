@@ -26,13 +26,10 @@ namespace WebApplication.API.Controllers
         {
             var db = new BlogDummyData();
 
-            //if (filter.Title == null)
-            //    return Ok(db.Blogs.OrderByDescending(o => o.PublishDate).Skip((filter.Page - 1) * filter.PerPage).Take(filter.PerPage).ToList());
-            //else
-            //    return Ok(db.Blogs.OrderByDescending(o => o.PublishDate).Where(x => x.Title.Contains(filter.Title)).Skip((filter.Page - 1) * filter.PerPage).Take(filter.PerPage).ToList());
-
             var query = db.Blogs.OrderByDescending(o => o.PublishDate);
+
             var list = filter.ApplyFilterTo(query).ToList();
+
             return Ok(list);
         }
     }
