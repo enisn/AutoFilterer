@@ -4,7 +4,7 @@ This project aims to create filtered endpoint without writing any of query with 
 
 > Basicly provides QueryString To Linq conversion.
 
-You can visit [Wiki](/wiki) for more documents
+You can visit [Wiki](../../wiki) for more documents
 
 # Getting Started
 
