@@ -2,6 +2,8 @@
 
 This project aims to create filtered endpoint without writing any of query with entity framework. Just prepare your filter model and apply it into your Db Entity.
 
+> Basicly provides QueryString To Linq conversion.
+
 # Getting Started
 
 - Install `AutoFilterer` NuGet package.
