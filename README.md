@@ -1,4 +1,4 @@
-# AutoFilterer
+﻿# AutoFilterer
 
 This project aims to create filtered endpoint without writing any of query with entity framework. Just prepare your filter model and apply it into your Db Entity.
 
@@ -157,6 +157,53 @@ public class BlogFilterDto : FilterBase<Blog>
 
 ***
 
+## Working with Pagination
+- Just inherit your Dto from `PaginationFilter` instead of FilterBase:
+
+
+```csharp
+public class BlogFilterDto : PaginationFilterBase<Blog>
+{
+    public int? CategoryId { get; set; }
+    public Range<int> Priority { get; set; }
+    public string Title { get; set; }
+    public bool? IsPublished { get; set; }
+    public Range<DateTime> PublishDate { get; set; }
+
+    [FromQuery(Name = "p")] // <-- you can set querystring name
+    public override int Page { get => base.Page; set => base.Page = value; }
+
+    [FromQuery(Name = "limit")]
+    public override int PerPage { get => base.PerPage; set => base.PerPage = value; }
+}
+```
+
+- And One more thing is required to apply paginations: **Ordering By**
+
+```csharp
+public class BlogsController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get([FromQuery]BlogFilterDto filter)
+    {
+        using(var db = new MyDbContext())
+        {
+            // You just need to apply an ordering before calling ApplyFilterTo() method
+            var query = db.Blogs.OrderByDescending(o => o.PublishDate);
+            var blogList = filter.ApplyFilterTo(query).ToList();
+            return Ok(blogList);
+        }
+    }
+}
+```
+
+- You can use `page` and `perPage` querystring parameters with all other parameters:
+  - `/Blogs?page=2`
+  - `/Blogs?perPage=10`
+  - `/Blogs?perPage=10&page=2`
+  - `/Blogs?perPage=2&page=3&priority.min=3&title=h`
+***
+
 # Customizations
 
 ## Customizing QueryString
@@ -178,4 +225,12 @@ This provides to handle `category` parameter as CategoryId:
 
     * `/Blogs?category=4`
 
+## Customizing Pagination Parameters
+You may want to use different names instead of `page` and `perPage`
 
+- Just go your Filter Dto and override them:
+
+
+
+## Swagger
+Of course swagger will see your parameters and use them. 👍
