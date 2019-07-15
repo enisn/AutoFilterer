@@ -61,9 +61,9 @@ public class BlogsController : ControllerBase
 
   * `/Blogs?IsPublished=False`
   * `/Blogs?CategoryId=4`
-  * `/Blogs?`Priority=4
-  * `/Blogs?IsPublished=True&Priority=1
-  * `/Blogs?IsPublished=True&Priority=5&CategoryId=1
+  * `/Blogs?Priority=4`
+  * `/Blogs?IsPublished=True&Priority=1`
+  * `/Blogs?IsPublished=True&Priority=5&CategoryId=1`
 
 ***
 
@@ -166,19 +166,13 @@ public class BlogFilterDto : FilterBase<Blog>
 
 
 ```csharp
-public class BlogFilterDto : PaginationFilterBase<Blog>
+public class BlogFilterDto : PaginationFilterBase<Blog> // <-- That's all!
 {
     public int? CategoryId { get; set; }
     public Range<int> Priority { get; set; }
     public string Title { get; set; }
     public bool? IsPublished { get; set; }
     public Range<DateTime> PublishDate { get; set; }
-
-    [FromQuery(Name = "p")] // <-- you can set querystring name
-    public override int Page { get => base.Page; set => base.Page = value; }
-
-    [FromQuery(Name = "limit")]
-    public override int PerPage { get => base.PerPage; set => base.PerPage = value; }
 }
 ```
 
@@ -234,6 +228,22 @@ You may want to use different names instead of `page` and `perPage`
 
 - Just go your Filter Dto and override them:
 
+```csharp
+public class BlogFilterDto : PaginationFilterBase<Blog>
+{
+    public int? CategoryId { get; set; }
+    public Range<int> Priority { get; set; }
+    public string Title { get; set; }
+    public bool? IsPublished { get; set; }
+    public Range<DateTime> PublishDate { get; set; }
+
+    [FromQuery(Name = "p")] // <-- you can set querystring name
+    public override int Page { get => base.Page; set => base.Page = value; }
+
+    [FromQuery(Name = "limit")]
+    public override int PerPage { get => base.PerPage; set => base.PerPage = value; }
+}
+```
 
 
 ## Swagger
