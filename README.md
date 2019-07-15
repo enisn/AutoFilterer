@@ -245,6 +245,29 @@ public class BlogFilterDto : PaginationFilterBase<Blog>
 }
 ```
 
+- You can change default values also:
+
+```csharp
+    public class BlogFilterDto : PaginationFilterBase<Blog>
+    {
+        public BlogFilterDto()
+        {
+            base.PerPage = 32; // Sets default value when object is initialized.
+            // Model binder will set property after constructor if request has this parameter.
+        }
+        public int? CategoryId { get; set; }
+
+        public Range<int> Priority { get; set; }
+
+        [StringFilterOptions(StringFilterOption.Contains)]
+        public string Title { get; set; }
+
+        public bool? IsPublished { get; set; }
+
+        public Range<DateTime> PublishDate { get; set; }
+    }
+```
+
 
 ## Swagger
 Of course swagger will see your parameters and use them. 👍
