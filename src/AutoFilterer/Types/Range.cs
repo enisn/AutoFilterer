@@ -9,7 +9,6 @@ namespace AutoFilterer.Types
 {
     public class Range<T> : IRange<T>, IRange where T : struct, IComparable
     {
-
         public Range()
         {
         }
@@ -43,7 +42,7 @@ namespace AutoFilterer.Types
 
         public override string ToString()
         {
-            return $"{this.Min?.ToString() ?? "-"} {this.Max?.ToString() ?? "-"}"; ;
+            return $"{this.Min?.ToString() ?? "-"} {this.Max?.ToString() ?? "-"}";
         }
 
         public static T1 GetMaxValue<T1>()
@@ -143,7 +142,7 @@ namespace AutoFilterer.Types
                     maxValue = ulong.MinValue;
                     break;
                 default:
-                    maxValue = default(T1);//set default value
+                    maxValue = default(T1); // set default value
                     break;
             }
 

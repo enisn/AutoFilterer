@@ -22,7 +22,7 @@ namespace WebApplication.API.Controllers
         // api/Blogs?priority.min=2
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]BlogFilterDto filter)
+        public IActionResult Get([FromQuery]BlogFilterDto filter)
         {
             var db = new BlogDummyData();
 

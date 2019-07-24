@@ -18,6 +18,7 @@ You can search Case-Sensitive or in-sensitive</PackageReleaseNotes>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>C:\Users\enisn\source\repos\enisn\AutoFilterer\src\AutoFilterer\AutoFilterer.xml</DocumentationFile>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
 </Project>
