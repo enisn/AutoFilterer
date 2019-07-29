@@ -16,7 +16,7 @@ This project aims to create filtered endpoint without writing any of query with 
 
 You can visit [Wiki](../../wiki) for more documents
 
-![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)
+[![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)](https://www.nuget.org/packages/AutoFilterer/)
 [![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
 
 </td>
