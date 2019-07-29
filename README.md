@@ -1,10 +1,28 @@
-﻿# AutoFilterer
+﻿
+<table>
+<tr>
+<td>
+
+ ![Logo](https://github.com/enisn/AutoFilterer/blob/master/content/auto_filterer_icon.png?raw=true) 
+
+</td>
+<td>
+
+ # AutoFilterer
 
 This project aims to create filtered endpoint without writing any of query with entity framework. Just prepare your filter model and apply it into your Db Entity.
 
 > Basicly provides QueryString To Linq conversion.
 
 You can visit [Wiki](../../wiki) for more documents
+
+![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)
+![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)
+
+</td>
+</tr>
+</table>
+
 
 # Getting Started
 
