@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
-    public class FilterBase : IFilterableType
+    public class FilterBase : IFilter
     {
         /// <summary>
         /// Automaticly Applies Where() to IQuaryable collection. Please visit project site for more information and customizations.
@@ -77,17 +77,4 @@ namespace AutoFilterer.Types
             return Expression.Lambda<Func<TModel, bool>>(comparison, parameter);
         }
     }
-
-    public class FilterBase<TEntity> : FilterBase
-    {
-        /// <summary>
-        /// Automaticly Applies Where() to IQuaryable collection. Please visit project site for more information and customizations.
-        /// </summary>
-        /// <param name="query"></param>
-        public virtual IQueryable<TEntity> ApplyFilterTo(IQueryable<TEntity> query)
-        {
-            return ApplyFilterTo<TEntity>(query);
-        }
-    }
-
 }

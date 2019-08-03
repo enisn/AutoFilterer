@@ -12,8 +12,8 @@ namespace AutoFilterer.Types
     {
         public Range()
         {
-
         }
+
         public Range(string value)
         {
             var parsed = Parse<T>(value);
@@ -104,7 +104,7 @@ namespace AutoFilterer.Types
                     maxValue = ulong.MaxValue;
                     break;
                 default:
-                    maxValue = default(T1);//set default value
+                    maxValue = default(T1); // Set as default value.
                     break;
             }
             return (T1)maxValue;
