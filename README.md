@@ -63,6 +63,8 @@ public class BlogFilterDto : FilterBase<Blog>
 - Let's create a sample Controller and get the DTO from querystring
 
 ```csharp
+using AutoFilterer.Extensions; // <-- To call extension methods
+//...
 public class BlogsController : ControllerBase
 {
     [HttpGet]
@@ -70,7 +72,7 @@ public class BlogsController : ControllerBase
     {
         using(var db = new MyDbContext())
         {
-            var blogList = filter.ApplyFilterTo(db.Blogs).ToList();
+            var blogList = db.Blogs.ApplyFilter(filter);
             return Ok(blogList);
         }
     }
@@ -206,9 +208,8 @@ public class BlogsController : ControllerBase
     {
         using(var db = new MyDbContext())
         {
-            // You just need to apply an ordering before calling ApplyFilterTo() method
-            var query = db.Blogs.OrderByDescending(o => o.PublishDate);
-            var blogList = filter.ApplyFilterTo(query).ToList();
+            // You just need to apply an ordering before calling ApplyFilter() method
+            var blogList = db.Blogs.OrderBy(o => o.PublishDate).ApplyFilter(filter);
             return Ok(blogList);
         }
     }
