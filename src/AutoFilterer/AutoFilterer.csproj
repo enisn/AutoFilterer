@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>enisn</Authors>
     <Description>This library provides filtering from DTOs to Entities without writing any query. Visit the project site for more information</Description>
     <PackageProjectUrl>https://github.com/enisn/AutoFilterer</PackageProjectUrl>
@@ -21,6 +20,10 @@ You can search Case-Sensitive or in-sensitive</PackageReleaseNotes>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>C:\Users\enisn\source\repos\enisn\AutoFilterer\src\AutoFilterer\AutoFilterer.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>

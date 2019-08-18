@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoFilterer.Abstractions;
+using AutoFilterer.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,5 +29,10 @@ namespace AutoFilterer.Extensions
 
             return (source as IOrderedQueryable<T>).Skip((page - 1) * pageSize).Take(pageSize);
         }
-    }
+
+        public static IQueryable<T> ApplyFilter<T>(this IQueryable<T> source, IFilter filter)
+        {
+            return filter.ApplyFilterTo(source);
+        }
+    } 
 }

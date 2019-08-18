@@ -1,10 +1,30 @@
-﻿# AutoFilterer
+﻿
+<table>
+<tr>
+<td>
+
+ ![Logo](https://github.com/enisn/AutoFilterer/blob/master/content/auto_filterer_icon.png?raw=true) 
+
+</td>
+<td>
+
+ # AutoFilterer
 
 This project aims to create filtered endpoint without writing any of query with entity framework. Just prepare your filter model and apply it into your Db Entity.
 
 > Basicly provides QueryString To Linq conversion.
 
 You can visit [Wiki](../../wiki) for more documents
+
+[![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)](https://www.nuget.org/packages/AutoFilterer/)
+[![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
+[![CodeFactor](https://www.codefactor.io/repository/github/enisn/autofilterer/badge)](https://www.codefactor.io/repository/github/enisn/autofilterer)
+[![Build status](https://ci.appveyor.com/api/projects/status/fhsry13a6k6j712w?svg=true)](https://ci.appveyor.com/project/enisn/autofilterer)
+
+</td>
+</tr>
+</table>
+
 
 # Getting Started
 
@@ -43,6 +63,8 @@ public class BlogFilterDto : FilterBase<Blog>
 - Let's create a sample Controller and get the DTO from querystring
 
 ```csharp
+using AutoFilterer.Extensions; // <-- To call extension methods
+//...
 public class BlogsController : ControllerBase
 {
     [HttpGet]
@@ -50,7 +72,7 @@ public class BlogsController : ControllerBase
     {
         using(var db = new MyDbContext())
         {
-            var blogList = filter.ApplyFilterTo(db.Blogs).ToList();
+            var blogList = db.Blogs.ApplyFilter(filter);
             return Ok(blogList);
         }
     }
@@ -186,9 +208,8 @@ public class BlogsController : ControllerBase
     {
         using(var db = new MyDbContext())
         {
-            // You just need to apply an ordering before calling ApplyFilterTo() method
-            var query = db.Blogs.OrderByDescending(o => o.PublishDate);
-            var blogList = filter.ApplyFilterTo(query).ToList();
+            // You just need to apply an ordering before calling ApplyFilter() method
+            var blogList = db.Blogs.OrderBy(o => o.PublishDate).ApplyFilter(filter);
             return Ok(blogList);
         }
     }
