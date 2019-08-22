@@ -34,5 +34,10 @@ namespace AutoFilterer.Extensions
         {
             return filter.ApplyFilterTo(source);
         }
+
+        public static IQueryable<T> ApplyFilter<T>(this IOrderedQueryable<T> source, IFilter filter)
+        {
+            return filter.ApplyFilterTo(source);
+        }
     } 
 }
