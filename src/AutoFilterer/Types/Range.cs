@@ -162,13 +162,20 @@ namespace AutoFilterer.Types
             return (T1)maxValue;
         }
 
-        public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value)
+        /// <summary>
+        /// Compares Min and Max length and generates a lambda expression for LINQ.
+        /// </summary>
+        /// <typeparam name="TEntity">Entity Type of database or something else.</typeparam>
+        /// <param name="property">Property info to apply expression.</param>
+        /// <param name="value">Value to compare.</param>
+        /// <returns>Built expression.</returns>
+        public Expression BuildExpression(PropertyInfo property, object value)
         {
             var parameter = Expression.Parameter(property.DeclaringType, property.Name);
 
             var comparison = GetRangeComparison();
 
-            return Expression.Lambda<Func<TEntity, bool>>(comparison, parameter);
+            return Expression.Lambda(comparison, parameter);
 
             BinaryExpression GetRangeComparison()
             {
@@ -194,6 +201,11 @@ namespace AutoFilterer.Types
 
                 return Expression.And(minExp, maxExp);
             }
+        }
+
+        public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value)
+        {
+            return (Expression<Func<TEntity, bool>>)BuildExpression(property, value);
         }
 
         public bool Equals(string other)

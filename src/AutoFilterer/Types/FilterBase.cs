@@ -1,6 +1,7 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,44 +20,7 @@ namespace AutoFilterer.Types
         /// <param name="query"></param>
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
         {
-            var _type = this.GetType();
-            foreach (var entityProperty in typeof(TEntity).GetProperties())
-            {
-                try
-                {
-                    var filterProperty = _type.GetProperty(entityProperty.Name);
-                    if (filterProperty == null)
-                        continue;
-
-                    var val = filterProperty.GetValue(this);
-                    if (val == null)
-                        continue;
-
-                    var attribute = filterProperty.GetCustomAttribute<FilteringOptionsBaseAttribute>(false);
-
-                    if (attribute != null)
-                    {
-                        query = query.Where(attribute.BuildExpression<TEntity>(entityProperty, val));
-                        continue;
-                    }
-
-                    if (val is IFilterableType filterableProperty)
-                    {
-                        var expression = filterableProperty.BuildExpression<TEntity>(entityProperty, val);
-                        query = query.Where(expression);
-                    }
-                    else
-                    {
-                        var expression = BuildExpression<TEntity>(entityProperty, val);
-                        query = query.Where(expression);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex?.ToString());
-                }
-            }
-            return query;
+            return query.Where(this.BuildExpression<TEntity>());
         }
 
         /// <summary>
@@ -65,16 +29,88 @@ namespace AutoFilterer.Types
         /// <typeparam name="TModel">Expression to apply model</typeparam>
         /// <param name="property">Reflection <see cref="PropertyInfo"/> to filter</param>
         /// <param name="value">value to filter</param>
-        public virtual Expression<Func<TModel, bool>> BuildExpression<TModel>(PropertyInfo property, object value)
+        public virtual Expression BuildExpression(Type entityType, object filter = null)
         {
-            var parameter = Expression.Parameter(property.DeclaringType, property.Name);
+            if (filter == null)
+                filter = this;
 
-            var comparison = Expression.Equal(
-                                Expression.Property(parameter, property.Name),
-                                Expression.Constant(value)
-                                );
+            Expression lastExpression = null;
+            var parameters = new List<ParameterExpression>();
+            foreach (var filterProperty in filter.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                var val = filterProperty.GetValue(filter);
+                if (val == null)
+                    continue;
 
-            return Expression.Lambda<Func<TModel, bool>>(comparison, parameter);
+                var entityProperty = entityType.GetProperty(filterProperty.Name, BindingFlags.Instance | BindingFlags.Public);
+                if (entityProperty == null)
+                    continue;
+
+
+                Expression currentExpression = null;
+                var parameter = Expression.Parameter(entityProperty.DeclaringType, entityProperty.Name);
+                parameters.Add(parameter);
+
+                if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType) || typeof(IQueryable).IsAssignableFrom(entityProperty.PropertyType))
+                {
+                    var method =
+                        typeof(Queryable).IsAssignableFrom(entityProperty.PropertyType) ?
+                        typeof(Queryable).GetMethods().FirstOrDefault(x => x.Name == nameof(Queryable.Any) && x.GetParameters().Length == 2) :
+                        typeof(Enumerable).GetMethods().FirstOrDefault(x => x.Name == nameof(Queryable.Any) && x.GetParameters().Length == 2)
+                        ;
+
+                    method = method.MakeGenericMethod(entityProperty.PropertyType.GenericTypeArguments[0]);
+
+                    currentExpression = Expression.Equal(
+                            Expression.Call(
+                                method: method,
+                                instance: null,
+                                arguments: new[] { Expression.Property(parameter, entityProperty.Name), BuildExpression(entityProperty.PropertyType.GenericTypeArguments[0], val) }
+                                ),
+                            Expression.Constant(true)
+                        );
+
+                }
+
+                if (val is IFilter)
+                {
+                    currentExpression = BuildExpression(entityProperty, val);
+                }
+                else if (val is IFilterableType filterable)
+                {
+                    currentExpression = typeof(IFilterableType).GetMethod(nameof(IFilterableType.BuildExpression)).MakeGenericMethod(entityProperty.DeclaringType).Invoke(filterable, parameters: new[] { entityProperty, val }) as Expression;
+                }
+                else
+                {
+                    currentExpression = Expression.Equal(
+                                        Expression.Property(parameter, entityProperty.Name),
+                                        Expression.Constant(val)
+                                        );
+                }
+
+                if (lastExpression == null)
+                    lastExpression = currentExpression;
+                else
+                    lastExpression = Expression.And(lastExpression, currentExpression);
+            }
+
+            return LambdaExpression.Lambda(lastExpression, parameters);
+        }
+
+        public Expression<Func<TEntity, bool>> BildExpression<TEntity>(object filter = null)
+        {
+            var lastQuery = BuildExpression(typeof(TEntity), filter);
+            return (Expression<Func<TEntity, bool>>) lastQuery;
+        }
+
+        public Expression BuildExpression(PropertyInfo property, object value)
+        {
+            return BuildExpression(property.PropertyType, value);
+        }
+
+        public Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value)
+        {
+            return (Expression<Func<TEntity, bool>>)BuildExpression(property, value);
         }
     }
 }

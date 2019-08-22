@@ -13,5 +13,7 @@ namespace WebApplication.API.Models
         public int Priority { get; set; }
         public bool IsPublished { get; set; }
         public DateTime PublishDate { get; set; }
+
+        public virtual Author Author { get; set; }
     }
 }

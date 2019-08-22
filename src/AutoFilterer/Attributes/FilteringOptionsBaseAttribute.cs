@@ -13,5 +13,7 @@ namespace AutoFilterer.Attributes
     public abstract class FilteringOptionsBaseAttribute : Attribute, IFilterableType
     {
         public abstract Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value);
+
+        public abstract Expression BuildExpression(PropertyInfo property, object value);
     }
 }

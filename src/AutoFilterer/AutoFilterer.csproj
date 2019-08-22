@@ -8,11 +8,13 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.1.2</AssemblyVersion>
+    <Version>1.0.4</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <PackageReleaseNotes>Added StringComparison to StringFilterOptionsAttribute. 
 You can search Case-Sensitive or in-sensitive</PackageReleaseNotes>
-    <FileVersion>1.0.1.2</FileVersion>
+    <FileVersion>1.0.4.0</FileVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://github.com/enisn/AutoFilterer/raw/master/content/auto_filterer_icon.png?raw=true</PackageIconUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
