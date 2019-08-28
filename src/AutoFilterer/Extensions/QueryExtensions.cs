@@ -1,10 +1,6 @@
 ﻿using AutoFilterer.Abstractions;
-using AutoFilterer.Types;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Extensions
 {
@@ -14,7 +10,8 @@ namespace AutoFilterer.Extensions
         {
             if (page <= 0)
                 throw new ArgumentOutOfRangeException(nameof(page), "The given parameter can not be zero or negative.");
-            if (page <= 0)
+
+            if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageSize), "The given parameter can not be zero or negative.");
 
             return source.Skip((page - 1) * pageSize).Take(pageSize);
@@ -24,7 +21,8 @@ namespace AutoFilterer.Extensions
         {
             if (page <= 0)
                 throw new ArgumentOutOfRangeException(nameof(page), "The given parameter can not be zero or negative.");
-            if (page <= 0)
+
+            if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageSize), "The given parameter can not be zero or negative.");
 
             return (source as IOrderedQueryable<T>).Skip((page - 1) * pageSize).Take(pageSize);
