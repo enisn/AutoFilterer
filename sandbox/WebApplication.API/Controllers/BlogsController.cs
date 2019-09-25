@@ -34,7 +34,7 @@ namespace WebApplication.API.Controllers
         // api/Blogs?title=hello
         // api/Blogs?priority.min=5
         [HttpGet("paged")]
-        public IActionResult GetWithPages(BlogPaginationFilterDto filter)
+        public IActionResult GetWithPages([FromQuery]BlogPaginationFilterDto filter)
         {
             var db = new BlogDummyData();
 
