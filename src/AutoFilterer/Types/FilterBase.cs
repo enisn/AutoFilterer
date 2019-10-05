@@ -1,6 +1,8 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
+using AutoFilterer.Enums;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,14 +15,26 @@ namespace AutoFilterer.Types
 {
     public class FilterBase : IFilter
     {
-        /// <summary>
-        /// Automaticly Applies Where() to IQuaryable collection. Please visit project site for more information and customizations.
-        /// </summary>
-        /// <param name="query"></param>
+        public CombineType CombineWith { get; set; }
+
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
         {
+            var parameter = Expression.Parameter(typeof(TEntity), "x");
+
+            var exp = BuildExpression(typeof(TEntity), parameter);
+            if (exp == null)
+                return query;
+
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
+            //var lambda = exp as Expression<Func<TEntity, bool>>;
+            return query.Where(lambda);
+        }
+
+        public Expression BuildExpression(Type entityType, Expression body)
+        {
+            Expression finalExpression = null;
             var _type = this.GetType();
-            foreach (var entityProperty in typeof(TEntity).GetProperties())
+            foreach (var entityProperty in entityType.GetProperties())
             {
                 try
                 {
@@ -36,19 +50,55 @@ namespace AutoFilterer.Types
 
                     if (attribute != null)
                     {
-                        query = query.Where(attribute.BuildExpression<TEntity>(entityProperty, val));
+                        var expression = attribute.BuildExpression(body, entityProperty, val);
+                        finalExpression = Combine(finalExpression, expression);
                         continue;
+                    }
+
+                    if (val is IFilter filter)
+                    {
+                        if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType))
+                        {
+                            var type = entityProperty.PropertyType.GetGenericArguments().FirstOrDefault();
+                            
+                            var prop = Expression.Property(body, entityProperty.Name);
+                            var parameter = Expression.Parameter(type, "a");
+
+                            var methodInfo = typeof(Enumerable).GetMethods().LastOrDefault(x => x.Name == "Any");
+                            var method = methodInfo.MakeGenericMethod(type);
+                            var query = filter.BuildExpression(type, body: parameter);
+                            var lambda = Expression.Lambda(query, parameter);
+                            var expression = Expression.Call(
+                                                        method: method,
+                                                        instance: null,
+                                                        arguments: new Expression[] { prop, lambda }
+                                );
+                                //prop, methodInfo, lambda);
+                            finalExpression = Combine(finalExpression, expression);
+                            continue;
+                        }
+                        else
+                        {
+                            var parameter = Expression.Property(body, entityProperty.Name);
+                            var expression = filter.BuildExpression(entityProperty.PropertyType, parameter);
+                            finalExpression = Combine(finalExpression, expression);
+                            continue;
+                        }
                     }
 
                     if (val is IFilterableType filterableProperty)
                     {
-                        var expression = filterableProperty.BuildExpression<TEntity>(entityProperty, val);
-                        query = query.Where(expression);
+                        var expression = filterableProperty.BuildExpression(body, entityProperty, val);
+                        finalExpression = Combine(finalExpression, expression);
                     }
                     else
                     {
-                        var expression = BuildExpression<TEntity>(entityProperty, val);
-                        query = query.Where(expression);
+                        var comparison = Expression.Equal(
+                                            Expression.Property(body, entityProperty.Name),
+                                            Expression.Constant(val)
+                                            );
+
+                        finalExpression = Combine(finalExpression, comparison);
                     }
                 }
                 catch (Exception ex)
@@ -56,25 +106,37 @@ namespace AutoFilterer.Types
                     Debug.WriteLine(ex?.ToString());
                 }
             }
-            return query;
+
+            return finalExpression;
         }
 
-        /// <summary>
-        /// Generates a LINQ Expression with properties
-        /// </summary>
-        /// <typeparam name="TModel">Expression to apply model</typeparam>
-        /// <param name="property">Reflection <see cref="PropertyInfo"/> to filter</param>
-        /// <param name="value">value to filter</param>
-        public virtual Expression<Func<TModel, bool>> BuildExpression<TModel>(PropertyInfo property, object value)
+        private Expression Combine(Expression body, Expression extend)
         {
-            var parameter = Expression.Parameter(property.DeclaringType, property.Name);
+            if (body == null)
+                return extend;
+            if (extend == null)
+                return body;
 
-            var comparison = Expression.Equal(
-                                Expression.Property(parameter, property.Name),
-                                Expression.Constant(value)
-                                );
+            if (body is BinaryExpression && extend is BinaryExpression)
+                switch (CombineWith)
+                {
+                    case CombineType.And:
+                        return Expression.And(body, extend);
+                    case CombineType.Or:
+                        return Expression.Or(body, extend);
+                    default:
+                        return Expression.And(body, extend);
+                }
 
-            return Expression.Lambda<Func<TModel, bool>>(comparison, parameter);
+            return extend;
+        }
+
+        private Expression<Func<T, bool>> AndOrSelf<T>(Expression baseExp, Expression<Func<T, bool>> newExpression)
+        {
+            if (baseExp == null)
+                return newExpression;
+            else
+                return Expression.Lambda<Func<T, bool>>(Expression.And(baseExp, newExpression));
         }
     }
 }
