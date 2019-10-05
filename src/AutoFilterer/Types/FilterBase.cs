@@ -73,7 +73,6 @@ namespace AutoFilterer.Types
                                                         instance: null,
                                                         arguments: new Expression[] { prop, lambda }
                                 );
-                                //prop, methodInfo, lambda);
                             finalExpression = Combine(finalExpression, expression);
                             continue;
                         }
