@@ -23,20 +23,19 @@ namespace AutoFilterer.Attributes
 
         public Func<string, string, bool> FilterRuleFunc { get; set; }
 
-        public override Expression<Func<T, bool>> BuildExpression<T>(PropertyInfo property, object value)
+        public override Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value)
         {
-            var parameter = Expression.Parameter(property.DeclaringType, "x");
             var method = typeof(string).GetMethod(Option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
 
             var comparison = Expression.Equal(
                         Expression.Call(
                             method: method,
-                            instance: Expression.Property(parameter, property.Name),
+                            instance: Expression.Property(expressionBody, property.Name),
                             arguments: new[] { Expression.Constant(value), Expression.Constant(StringComparison) }),
                         Expression.Constant(true)
                 );
 
-            return Expression.Lambda<Func<T, bool>>(comparison, parameter);
+            return comparison;
         }
     }
 }
