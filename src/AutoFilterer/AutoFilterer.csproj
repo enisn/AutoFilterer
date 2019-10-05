@@ -8,10 +8,10 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>1.0.5.1</Version>
-    <AssemblyVersion>1.0.5.1</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <FileVersion>1.0.5.1</FileVersion>
+    <FileVersion>1.1.0.0</FileVersion>
     <PackageIconUrl>https://raw.githubusercontent.com/enisn/AutoFilterer/master/content/auto_filterer_icon.png</PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
