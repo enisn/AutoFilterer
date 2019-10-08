@@ -60,7 +60,7 @@ namespace AutoFilterer.Types
                         if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType) || (entityProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(entityProperty.PropertyType)))
                         {
                             var type = entityProperty.PropertyType.GetGenericArguments().FirstOrDefault();
-                            
+
                             var prop = Expression.Property(body, entityProperty.Name);
                             var parameter = Expression.Parameter(type, "a");
 
@@ -116,16 +116,15 @@ namespace AutoFilterer.Types
             if (extend == null)
                 return body;
 
-            if (body is BinaryExpression && extend is BinaryExpression)
-                switch (CombineWith)
-                {
-                    case CombineType.And:
-                        return Expression.And(body, extend);
-                    case CombineType.Or:
-                        return Expression.Or(body, extend);
-                    default:
-                        return Expression.And(body, extend);
-                }
+            switch (CombineWith)
+            {
+                case CombineType.And:
+                    return Expression.And(body, extend);
+                case CombineType.Or:
+                    return Expression.Or(body, extend);
+                default:
+                    return Expression.And(body, extend);
+            }
 
             return extend;
         }
