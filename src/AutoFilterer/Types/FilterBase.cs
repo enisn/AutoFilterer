@@ -57,7 +57,7 @@ namespace AutoFilterer.Types
 
                     if (val is IFilter filter)
                     {
-                        if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType))
+                        if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType) || (entityProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(entityProperty.PropertyType)))
                         {
                             var type = entityProperty.PropertyType.GetGenericArguments().FirstOrDefault();
                             
