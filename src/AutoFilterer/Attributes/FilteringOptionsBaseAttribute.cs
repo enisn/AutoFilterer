@@ -12,6 +12,6 @@ namespace AutoFilterer.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public abstract class FilteringOptionsBaseAttribute : Attribute, IFilterableType
     {
-        public abstract Expression<Func<TEntity, bool>> BuildExpression<TEntity>(PropertyInfo property, object value);
+        public abstract Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value);
     }
 }

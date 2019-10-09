@@ -9,6 +9,7 @@ using AutoFilterer.Extensions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using System.Linq.Expressions;
 
 namespace AutoFilterer.Tests.Types
 {
@@ -112,6 +113,29 @@ namespace AutoFilterer.Tests.Types
         }
 
         [Fact]
+        public void ApplyFilterTo_WithTwoField_ShouldMatchCount()
+        {
+            // Arrange
+            var filterBase = new UserFilterBase
+            {
+                Email = dummyData.FirstOrDefault().Email,
+                IsActive = dummyData.FirstOrDefault().IsActive,
+            };
+
+            IQueryable<User> query = dummyData.AsQueryable();
+
+            // Act
+            var result = query.ApplyFilter(filterBase).ToList();
+            filterBase.CombineWith = Enums.CombineType.Or;
+            var orResult = query.ApplyFilter(filterBase).ToList();
+
+
+            // Assert
+            Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email && x.IsActive == filterBase.IsActive));
+            Assert.True(orResult.Count == dummyData.Count(x => x.Email == filterBase.Email || x.IsActive == filterBase.IsActive));
+        }
+
+        [Fact]
         public void BuildExpression_WithContainsString_ShouldMatchCount()
         {
             // Arrange
@@ -176,7 +200,8 @@ namespace AutoFilterer.Tests.Types
             var result = query.ApplyFilter(filterBase).ToList();
 
             // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
+            var actualResult = dummyData.Where(x => x.Preferences.GivenName == filterBase.Preferences.GivenName).ToList();
+
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
                 Assert.Contains(item, actualResult);
@@ -200,14 +225,47 @@ namespace AutoFilterer.Tests.Types
 
             // Assert
             var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
+
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
                 Assert.Contains(item, actualResult);
         }
-
-        [Fact]
+        
+        //[Fact]
         public void MethodGet()
         {
+            // Arrange
+            var partOfName = dummyData.FirstOrDefault()?.FullName?.Substring(0, 4);
+            var filterBase = new UserFilterBase
+            {
+                FullName = partOfName,
+            };
+
+            var query = dummyData.AsQueryable();
+
+            // Act
+            //var result = query.ApplyFilter(filterBase).ToList();
+
+            //dummyData.Where(x => x.Preferences.IsTwoFactorEnabled == true));
+
+            var parameter = Expression.Parameter(typeof(User), "x");
+
+            Expression body = parameter;
+
+            body = Expression.Property(body, "Preferences");
+
+            body = Expression.Property(body, "IsTwoFactorEnabled");
+
+            var comparison = Expression.Equal(
+                body,
+                Expression.Constant(true)
+                );
+
+            var lambda = Expression.Lambda(body, parameter);
+
+
+            // Assert
+            //Assert.True(result.Count == );
             Assert.True(true);
         }
     }
