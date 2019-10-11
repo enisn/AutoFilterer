@@ -33,7 +33,7 @@ You can visit [Wiki](../../wiki) for more documents
 *That's it. You don't need any initialization*
 ***
 # Usage
-
+Just [visit WiKi](../../wiki) for better understanding of usage.
 
 ## Basics
 - Let say you have a Model like that:
