@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AutoFilterer\AutoFilterer.csproj" />
+    <ProjectReference Include="..\..\src\AutoFilterer\AutoFilterer.csproj" />
   </ItemGroup>
 
 </Project>
