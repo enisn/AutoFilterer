@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using AutoFilterer.Enums;
 using AutoFilterer.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
