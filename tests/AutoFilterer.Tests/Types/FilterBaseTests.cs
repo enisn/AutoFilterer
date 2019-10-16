@@ -200,7 +200,7 @@ namespace AutoFilterer.Tests.Types
             var result = query.ApplyFilter(filterBase).ToList();
 
             // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName == filterBase.Preferences.GivenName).ToList();
+            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
 
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
@@ -224,7 +224,7 @@ namespace AutoFilterer.Tests.Types
             var result = query.ApplyFilter(filterBase).ToList();
 
             // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
+            var actualResult = dummyData.Where(x => x.Books.Any(a => a.Title.Contains(filterBase.Books.Title))).ToList();
 
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
