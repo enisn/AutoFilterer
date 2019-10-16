@@ -123,10 +123,8 @@ namespace AutoFilterer.Types
                 case CombineType.Or:
                     return Expression.Or(body, extend);
                 default:
-                    return Expression.And(body, extend);
+                    return extend;
             }
-
-            return extend;
         }
 
         private Expression<Func<T, bool>> AndOrSelf<T>(Expression baseExp, Expression<Func<T, bool>> newExpression)
