@@ -38,13 +38,13 @@ namespace AutoFilterer.Types
             return Parse<T>(val);
         }
 
-        public static Range<T> Parse<T>(string value) where T : struct, IComparable
+        public static Range<TParam> Parse<TParam>(string value) where TParam : struct, IComparable
         {
             var splitted = value.Split(' ');
 
-            return new Range<T>(
-                        splitted[0] == null || splitted[0] == "-" ? default(T) : (T)Convert.ChangeType(splitted[0], typeof(T)),
-                        splitted[1] == null || splitted[1] == "-" ? default(T) : (T)Convert.ChangeType(splitted[1], typeof(T))
+            return new Range<TParam>(
+                        splitted[0] == null || splitted[0] == "-" ? default(TParam) : (TParam)Convert.ChangeType(splitted[0], typeof(TParam)),
+                        splitted[1] == null || splitted[1] == "-" ? default(TParam) : (TParam)Convert.ChangeType(splitted[1], typeof(TParam))
                         );
         }
 

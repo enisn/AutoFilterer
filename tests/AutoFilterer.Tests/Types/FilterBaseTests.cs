@@ -230,43 +230,5 @@ namespace AutoFilterer.Tests.Types
             foreach (var item in actualResult)
                 Assert.Contains(item, actualResult);
         }
-        
-        //[Fact]
-        public void MethodGet()
-        {
-            // Arrange
-            var partOfName = dummyData.FirstOrDefault()?.FullName?.Substring(0, 4);
-            var filterBase = new UserFilterBase
-            {
-                FullName = partOfName,
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            //var result = query.ApplyFilter(filterBase).ToList();
-
-            //dummyData.Where(x => x.Preferences.IsTwoFactorEnabled == true));
-
-            var parameter = Expression.Parameter(typeof(User), "x");
-
-            Expression body = parameter;
-
-            body = Expression.Property(body, "Preferences");
-
-            body = Expression.Property(body, "IsTwoFactorEnabled");
-
-            var comparison = Expression.Equal(
-                body,
-                Expression.Constant(true)
-                );
-
-            var lambda = Expression.Lambda(body, parameter);
-
-
-            // Assert
-            //Assert.True(result.Count == );
-            Assert.True(true);
-        }
     }
 }
