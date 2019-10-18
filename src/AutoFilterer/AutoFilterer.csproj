@@ -9,9 +9,9 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>1.1.2</Version>
-    <AssemblyVersion>1.1.2.0</AssemblyVersion>
-    <PackageReleaseNotes>Added support for nested queries. That means you can place nested filter dtos for relational queries</PackageReleaseNotes>
+    <Version>1.1.3</Version>
+    <AssemblyVersion>1.1.3.0</AssemblyVersion>
+    <PackageReleaseNotes>Added missing virtual keyword, Now it can be more overridable!</PackageReleaseNotes>
     <FileVersion>1.1.2.0</FileVersion>
     <PackageIconUrl>https://raw.githubusercontent.com/enisn/AutoFilterer/master/content/auto_filterer_icon.png</PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
