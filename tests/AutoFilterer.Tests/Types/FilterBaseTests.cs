@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using System.Linq.Expressions;
+using AutoFilterer.Tests.Statics;
 
 namespace AutoFilterer.Tests.Types
 {
@@ -94,8 +95,8 @@ namespace AutoFilterer.Tests.Types
             return new FilterBase();
         }
 
-        [Fact]
-        public void ApplyFilterTo_WithSingleField_ShouldMatchCount()
+        [Theory, AutoMoqData]
+        public void ApplyFilterTo_WithSingleField_ShouldMatchCount(List<User> dummyData)
         {
             // Arrange
             var filterBase = new UserFilterBase
@@ -112,8 +113,8 @@ namespace AutoFilterer.Tests.Types
             Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email));
         }
 
-        [Fact]
-        public void ApplyFilterTo_WithTwoField_ShouldMatchCount()
+        [Theory, AutoMoqData]
+        public void ApplyFilterTo_WithTwoField_ShouldMatchCount(List<User> dummyData)
         {
             // Arrange
             var filterBase = new UserFilterBase
@@ -135,8 +136,8 @@ namespace AutoFilterer.Tests.Types
             Assert.True(orResult.Count == dummyData.Count(x => x.Email == filterBase.Email || x.IsActive == filterBase.IsActive));
         }
 
-        [Fact]
-        public void BuildExpression_WithContainsString_ShouldMatchCount()
+        [Theory, AutoMoqData]
+        public void BuildExpression_WithContainsString_ShouldMatchCount(List<User> dummyData)
         {
             // Arrange
             var partOfName = dummyData.FirstOrDefault()?.FullName?.Substring(0, 4);
@@ -154,11 +155,8 @@ namespace AutoFilterer.Tests.Types
             Assert.True(result.Count == dummyData.Count(x => x.FullName.Contains(filterBase.FullName)));
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        [InlineData(null)]
-        public void BuildExpression_WithSingleBooleanParameter_ShouldMatchCount(bool? isActive)
+        [Theory, AutoMoqData(15)]
+        public void BuildExpression_WithSingleBooleanParameter_ShouldMatchCount(bool? isActive, List<User> dummyData)
         {
             // Arrange
             var filterBase = new UserFilterBase
@@ -206,7 +204,6 @@ namespace AutoFilterer.Tests.Types
             foreach (var item in actualResult)
                 Assert.Contains(item, actualResult);
         }
-
 
         [Fact]
         public void BuildExpression_InnerSingleObjectWithCollectionFilter_ShouldMatchCount()
