@@ -10,7 +10,7 @@ namespace AutoFilterer.Tests.Dtos
 {
     public class BookFilterBase : FilterBase
     {
-        [StringFilterOptions(Enums.StringFilterOption.Contains)]
+        [StringFilterOptions(Enums.StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
         public string Title { get; set; }
         [StringFilterOptions(Enums.StringFilterOption.StartsWith)]
         public string Author { get; set; }

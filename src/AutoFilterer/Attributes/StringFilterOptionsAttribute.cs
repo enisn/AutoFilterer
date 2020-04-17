@@ -18,22 +18,44 @@ namespace AutoFilterer.Attributes
             this.Option = option;
         }
 
-        public StringFilterOption Option { get; set; }
-        public StringComparison StringComparison { get; set; } = StringComparison.InvariantCultureIgnoreCase;
+        public StringFilterOptionsAttribute(StringFilterOption option, StringComparison comparison) : this(option)
+        {
+            this.Comparison = comparison;
+        }
 
-        public Func<string, string, bool> FilterRuleFunc { get; set; }
+        public StringFilterOption Option { get; set; }
+
+        public StringComparison? Comparison { get; set; }
 
         public override Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value)
         {
-            var method = typeof(string).GetMethod(Option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
+            if (Comparison == null)
+                return BuildExpressionWithoutComparison(this.Option, expressionBody, property, value);
+            else
+                return BuildExpressionWithComparison(this.Option, expressionBody, property, value);
+        }
 
-            var comparison = Expression.Equal(
-                        Expression.Call(
-                            method: method,
-                            instance: Expression.Property(expressionBody, property.Name),
-                            arguments: new[] { Expression.Constant(value), Expression.Constant(StringComparison) }),
-                        Expression.Constant(true)
-                );
+        private Expression BuildExpressionWithComparison(StringFilterOption option, Expression expressionBody, PropertyInfo property, object value)
+        {
+            var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
+
+            var comparison = Expression.Call(
+                                  method: method,
+                                  instance: Expression.Property(expressionBody, property.Name),
+                                  arguments: new[] { Expression.Constant(value), Expression.Constant(Comparison) });                 
+              
+
+            return comparison;
+        }
+
+        private Expression BuildExpressionWithoutComparison(StringFilterOption option, Expression expressionBody, PropertyInfo property, object value)
+        {
+            var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string) });
+
+            var comparison = Expression.Call(
+                                method: method,
+                                instance: Expression.Property(expressionBody, property.Name),
+                                arguments: new[] { Expression.Constant(value) });
 
             return comparison;
         }
