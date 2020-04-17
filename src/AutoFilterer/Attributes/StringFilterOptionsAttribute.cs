@@ -39,13 +39,11 @@ namespace AutoFilterer.Attributes
         {
             var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
 
-            var comparison = Expression.Equal(
-                      Expression.Call(
-                          method: method,
-                          instance: Expression.Property(expressionBody, property.Name),
-                          arguments: new[] { Expression.Constant(value), Expression.Constant(Comparison) }),
-                      Expression.Constant(true)
-              );
+            var comparison = Expression.Call(
+                                  method: method,
+                                  instance: Expression.Property(expressionBody, property.Name),
+                                  arguments: new[] { Expression.Constant(value), Expression.Constant(Comparison) });                 
+              
 
             return comparison;
         }
@@ -54,13 +52,10 @@ namespace AutoFilterer.Attributes
         {
             var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string) });
 
-            var comparison = Expression.Equal(
-                      Expression.Call(
-                          method: method,
-                          instance: Expression.Property(expressionBody, property.Name),
-                          arguments: new[] { Expression.Constant(value) }),
-                      Expression.Constant(true)
-              );
+            var comparison = Expression.Call(
+                                method: method,
+                                instance: Expression.Property(expressionBody, property.Name),
+                                arguments: new[] { Expression.Constant(value) });
 
             return comparison;
         }
