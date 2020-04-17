@@ -151,7 +151,7 @@ namespace AutoFilterer.Tests.Types
             var result = query.ApplyFilter(filterBase).ToList();
 
             // Assert
-            Assert.True(result.Count == dummyData.Count(x => x.FullName.Contains(filterBase.FullName)));
+            Assert.True(result.Count == dummyData.Count(x => x.FullName.Contains(filterBase.FullName, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         [Theory]
@@ -200,7 +200,7 @@ namespace AutoFilterer.Tests.Types
             var result = query.ApplyFilter(filterBase).ToList();
 
             // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName == filterBase.Preferences.GivenName).ToList();
+            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
 
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
@@ -213,7 +213,7 @@ namespace AutoFilterer.Tests.Types
         {
             // Arrange
 
-            var filterBase = new UserFilterBase
+            var filter = new UserFilterBase
             {
                 Books = new BookFilterBase { Title = "Normal" }
             };
@@ -221,10 +221,10 @@ namespace AutoFilterer.Tests.Types
             var query = dummyData.AsQueryable();
 
             // Act
-            var result = query.ApplyFilter(filterBase).ToList();
+            var result = query.ApplyFilter(filter).ToList();
 
             // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
+            var actualResult = dummyData.Where(x => x.Books.Any(a => a.Title.Contains(filter.Books.Title, StringComparison.InvariantCultureIgnoreCase))).ToList();
 
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)

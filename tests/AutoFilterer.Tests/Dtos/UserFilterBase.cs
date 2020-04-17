@@ -11,7 +11,7 @@ namespace AutoFilterer.Tests.Dtos
 {
     public class UserFilterBase : FilterBase
     {
-        [StringFilterOptions(StringFilterOption.Contains)]
+        [StringFilterOptions(StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
         public string FullName { get; set; }
         public string Email { get; set; }
         public bool? IsActive { get; set; }

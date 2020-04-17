@@ -11,7 +11,6 @@ namespace AutoFilterer.Tests.Models
     {
         public Guid Id { get; set; }
 
-        [StringFilterOptions(Enums.StringFilterOption.Contains)]
         public string FullName { get; set; }
 
         public string Email { get; set; }
