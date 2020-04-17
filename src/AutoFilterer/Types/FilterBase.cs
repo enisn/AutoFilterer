@@ -15,7 +15,7 @@ namespace AutoFilterer.Types
 {
     public class FilterBase : IFilter
     {
-        public CombineType CombineWith { get; set; }
+        public virtual CombineType CombineWith { get; set; }
 
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
         {
@@ -30,7 +30,7 @@ namespace AutoFilterer.Types
             return query.Where(lambda);
         }
 
-        public Expression BuildExpression(Type entityType, Expression body)
+        public virtual Expression BuildExpression(Type entityType, Expression body)
         {
             Expression finalExpression = null;
             var _type = this.GetType();
@@ -109,7 +109,7 @@ namespace AutoFilterer.Types
             return finalExpression;
         }
 
-        private Expression Combine(Expression body, Expression extend)
+        private protected virtual Expression Combine(Expression body, Expression extend)
         {
             if (body == null)
                 return extend;
@@ -123,18 +123,8 @@ namespace AutoFilterer.Types
                 case CombineType.Or:
                     return Expression.Or(body, extend);
                 default:
-                    return Expression.And(body, extend);
+                    return extend;
             }
-
-            return extend;
-        }
-
-        private Expression<Func<T, bool>> AndOrSelf<T>(Expression baseExp, Expression<Func<T, bool>> newExpression)
-        {
-            if (baseExp == null)
-                return newExpression;
-            else
-                return Expression.Lambda<Func<T, bool>>(Expression.And(baseExp, newExpression));
         }
     }
 }
