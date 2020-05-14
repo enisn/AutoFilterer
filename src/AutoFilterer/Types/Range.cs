@@ -56,7 +56,7 @@ namespace AutoFilterer.Types
             return $"{this.Min?.ToString() ?? "-"} {this.Max?.ToString() ?? "-"}";
         }
 
-        public Expression BuildExpression(Expression body, PropertyInfo property, object value)
+        public Expression BuildExpression(Expression body, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             return GetRangeComparison();
 
@@ -67,7 +67,7 @@ namespace AutoFilterer.Types
                 if (Min != null)
                 {
                     minExp = Expression.GreaterThanOrEqual(
-                               Expression.Property(body, property.Name),
+                               Expression.Property(body, targetProperty.Name),
                                Expression.Constant(Min));
                     if (Max == null)
                         return minExp;
@@ -76,7 +76,7 @@ namespace AutoFilterer.Types
                 if (Max != null)
                 {
                     maxExp = Expression.LessThanOrEqual(
-                                Expression.Property(body, property.Name),
+                                Expression.Property(body, targetProperty.Name),
                                 Expression.Constant(Max));
                     if (Min == null)
                         return maxExp;

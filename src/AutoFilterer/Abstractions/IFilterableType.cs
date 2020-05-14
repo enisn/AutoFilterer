@@ -6,6 +6,6 @@ namespace AutoFilterer.Abstractions
 {
     public interface IFilterableType
     {
-        Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value);
+        Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value);
     }
 }
