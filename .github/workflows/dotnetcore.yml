@@ -1,4 +1,4 @@
-name: .NET Core
+name: .NET Pipeline
 
 on:
   push:
@@ -25,5 +25,7 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Pack
       run: dotnet pack -o packages --configuration Release
-    - name: Push
+    - name: ShowNugetSource
+        run: echo 
+    - name: Push "$NUGET_SOURCE"
       run: dotnet nuget push packages/*.nupkg -k "$NUGET_KEY" -s "$NUGET_SOURCE" --skip-duplicate
