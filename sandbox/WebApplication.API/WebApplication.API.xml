@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApplication.API</name>
+    </assembly>
+    <members>
+        <member name="P:WebApplication.API.Dtos.BookFilter.Search">
+            <summary>
+            Search in **Title**, **Author** and **Country**.
+            </summary>
+        </member>
+    </members>
+</doc>

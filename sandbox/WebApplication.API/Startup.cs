@@ -32,7 +32,8 @@ namespace WebApplication.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddSingleton<BooksRepository>();
 

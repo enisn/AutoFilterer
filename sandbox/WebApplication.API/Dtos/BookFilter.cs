@@ -12,8 +12,11 @@ namespace WebApplication.API.Dtos
 {
     public class BookFilter : PaginationFilterBase
     {
+        /// <summary>
+        /// Search in **Title**, **Author** and **Country**.
+        /// </summary>
         [CompareTo(nameof(Book.Title), nameof(Book.Author), nameof(Book.Country))]
-        [StringFilterOptions(StringFilterOption.Contains)]
+        [StringFilterOptions(StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
         public string Search { get; set; }
 
         [StringFilterOptions(StringFilterOption.Contains)]
