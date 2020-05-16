@@ -1,4 +1,3 @@
-﻿
 <table>
 <tr>
 <td>
@@ -37,10 +36,12 @@ You can visit [Wiki](../../wiki) for more documents
 
 # Showcase
 - All querying supports Open API 3.0 Specifications:
+
 ![image](https://user-images.githubusercontent.com/23705418/82128447-f9961180-97c3-11ea-87b3-452c38d9f676.png)
 
 - And Result:
-![image](https://user-images.githubusercontent.com/23705418/82128466-3bbf5300-97c4-11ea-8794-921c8e11ac3f.png)
+
+![image](https://user-images.githubusercontent.com/23705418/82128521-6ad5c480-97c4-11ea-9f78-575733c101dd.png)
 
 ***
 
