@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace AutoFilterer.Types
 {
+    [Obsolete("This type is obsolete. Use OperatorFilter<T> instead of this. Because this Range type is too heavy and performanceless. OperatorFilter has more dynamic options.")]
     public partial class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
         where T : struct, IComparable
     {
