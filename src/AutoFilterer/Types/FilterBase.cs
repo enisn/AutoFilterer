@@ -15,6 +15,7 @@ namespace AutoFilterer.Types
 {
     public class FilterBase : IFilter
     {
+        [IgnoreFilter]
         public virtual CombineType CombineWith { get; set; }
 
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
@@ -32,73 +33,37 @@ namespace AutoFilterer.Types
 
         public virtual Expression BuildExpression(Type entityType, Expression body)
         {
-            Expression finalExpression = null;
+            Expression finalExpression = body;
             var _type = this.GetType();
-            foreach (var entityProperty in entityType.GetProperties())
+            foreach (var filterProperty in _type.GetProperties())
             {
                 try
                 {
-                    var filterProperty = _type.GetProperty(entityProperty.Name);
-                    if (filterProperty == null)
-                        continue;
+                    var entityProperty = entityType.GetProperty(filterProperty.Name);
 
                     var val = filterProperty.GetValue(this);
-                    if (val == null)
+                    if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
                         continue;
 
-                    var attribute = filterProperty.GetCustomAttribute<FilteringOptionsBaseAttribute>(false);
+                    var attribute = filterProperty.GetCustomAttribute<CompareToAttribute>(inherit: true) ?? new CompareToAttribute(filterProperty.Name);
 
-                    if (attribute != null)
+                    Expression innerExpression = null;
+
+                    foreach (var targetPropertyName in attribute.PropertyNames)
                     {
-                        var expression = attribute.BuildExpression(body, entityProperty, val);
-                        finalExpression = Combine(finalExpression, expression);
-                        continue;
-                    }
-
-                    if (val is IFilter filter)
-                    {
-                        if (typeof(ICollection).IsAssignableFrom(entityProperty.PropertyType) || (entityProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(entityProperty.PropertyType)))
-                        {
-                            var type = entityProperty.PropertyType.GetGenericArguments().FirstOrDefault();
-
-                            var prop = Expression.Property(body, entityProperty.Name);
-                            var parameter = Expression.Parameter(type, "a");
-
-                            var methodInfo = typeof(Enumerable).GetMethods().LastOrDefault(x => x.Name == "Any");
-                            var method = methodInfo.MakeGenericMethod(type);
-                            var query = filter.BuildExpression(type, body: parameter);
-                            var lambda = Expression.Lambda(query, parameter);
-                            var expression = Expression.Call(
-                                                        method: method,
-                                                        instance: null,
-                                                        arguments: new Expression[] { prop, lambda }
-                                );
-                            finalExpression = Combine(finalExpression, expression);
+                        var targetProperty = entityType.GetProperty(targetPropertyName);
+                        if (targetProperty == null)
                             continue;
-                        }
-                        else
-                        {
-                            var parameter = Expression.Property(body, entityProperty.Name);
-                            var expression = filter.BuildExpression(entityProperty.PropertyType, parameter);
-                            finalExpression = Combine(finalExpression, expression);
-                            continue;
-                        }
+
+                        var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
+
+                        var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
+                        innerExpression = Combine(innerExpression, expression, attribute.CombineWith);
                     }
 
-                    if (val is IFilterableType filterableProperty)
-                    {
-                        var expression = filterableProperty.BuildExpression(body, entityProperty, val);
-                        finalExpression = Combine(finalExpression, expression);
-                    }
-                    else
-                    {
-                        var comparison = Expression.Equal(
-                                            Expression.Property(body, entityProperty.Name),
-                                            Expression.Constant(val)
-                                            );
-
-                        finalExpression = Combine(finalExpression, comparison);
-                    }
+                    //var expression = attribute.BuildExpression(body, entityProperty, filterProperty, val);
+                    var combined = Combine(finalExpression, innerExpression);
+                    finalExpression = Combine(combined, body);
                 }
                 catch (Exception ex)
                 {
@@ -111,19 +76,29 @@ namespace AutoFilterer.Types
 
         private protected virtual Expression Combine(Expression body, Expression extend)
         {
-            if (body == null)
-                return extend;
-            if (extend == null)
-                return body;
+            return Combine(body, extend, this.CombineWith);
+        }
 
-            switch (CombineWith)
+        private protected virtual Expression Combine(Expression left, Expression right, CombineType combineType)
+        {
+            if (left == null)
+                return right;
+            if (right == null)
+                return left;
+
+            if (left is ParameterExpression || left is MemberExpression)
+                return right;
+            if (right is ParameterExpression || right is MemberExpression)
+                return left;
+
+            switch (combineType)
             {
                 case CombineType.And:
-                    return Expression.And(body, extend);
+                    return Expression.And(left, right);
                 case CombineType.Or:
-                    return Expression.Or(body, extend);
+                    return Expression.Or(left, right);
                 default:
-                    return extend;
+                    return right;
             }
         }
     }

@@ -27,12 +27,12 @@ namespace AutoFilterer.Attributes
 
         public StringComparison? Comparison { get; set; }
 
-        public override Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value)
+        public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             if (Comparison == null)
-                return BuildExpressionWithoutComparison(this.Option, expressionBody, property, value);
+                return BuildExpressionWithoutComparison(this.Option, expressionBody, targetProperty, value);
             else
-                return BuildExpressionWithComparison(this.Option, expressionBody, property, value);
+                return BuildExpressionWithComparison(this.Option, expressionBody, targetProperty, value);
         }
 
         private Expression BuildExpressionWithComparison(StringFilterOption option, Expression expressionBody, PropertyInfo property, object value)

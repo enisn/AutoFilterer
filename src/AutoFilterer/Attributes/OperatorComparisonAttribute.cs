@@ -1,9 +1,11 @@
 ﻿using AutoFilterer.Enums;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AutoFilterer.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
     {
         public OperatorComparisonAttribute(OperatorType operatorType)
@@ -13,9 +15,9 @@ namespace AutoFilterer.Attributes
 
         public OperatorType OperatorType { get; }
 
-        public override Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value)
+        public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
-            var prop = Expression.Property(expressionBody, property.Name);
+            var prop = Expression.Property(expressionBody, targetProperty.Name);
             var param = Expression.Constant(value);
 
             switch (OperatorType)

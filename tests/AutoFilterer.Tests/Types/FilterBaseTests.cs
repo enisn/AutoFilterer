@@ -1,16 +1,13 @@
-﻿using AutoFilterer.Tests.Dtos;
-using AutoFilterer.Tests.Models;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Envirorment.Dtos;
+using AutoFilterer.Tests.Envirorment.Models;
+using AutoFilterer.Tests.Envirorment.Statics;
 using AutoFilterer.Types;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoFilterer.Extensions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using System.Linq.Expressions;
-using AutoFilterer.Tests.Statics;
 
 namespace AutoFilterer.Tests.Types
 {
@@ -126,6 +123,7 @@ namespace AutoFilterer.Tests.Types
             IQueryable<User> query = dummyData.AsQueryable();
 
             // Act
+            filterBase.CombineWith = Enums.CombineType.And;
             var result = query.ApplyFilter(filterBase).ToList();
             filterBase.CombineWith = Enums.CombineType.Or;
             var orResult = query.ApplyFilter(filterBase).ToList();
@@ -195,7 +193,8 @@ namespace AutoFilterer.Tests.Types
             var query = dummyData.AsQueryable();
 
             // Act
-            var result = query.ApplyFilter(filterBase).ToList();
+            var filteredQuery = query.ApplyFilter(filterBase);
+            var result = filteredQuery.ToList();
 
             // Assert
             var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
@@ -218,7 +217,9 @@ namespace AutoFilterer.Tests.Types
             var query = dummyData.AsQueryable();
 
             // Act
-            var result = query.ApplyFilter(filter).ToList();
+            var filteredQuery = query.ApplyFilter(filter);
+            Console.WriteLine(filteredQuery);
+            var result = filteredQuery.ToList();
 
             // Assert
             var actualResult = dummyData.Where(x => x.Books.Any(a => a.Title.Contains(filter.Books.Title, StringComparison.InvariantCultureIgnoreCase))).ToList();
