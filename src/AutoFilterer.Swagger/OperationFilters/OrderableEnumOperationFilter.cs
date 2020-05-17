@@ -18,20 +18,27 @@ namespace AutoFilterer.Swagger.OperationFilters
 
                 if (typeof(IOrderable).IsAssignableFrom(param.ModelMetadata.ContainerType) && param.Name == nameof(IOrderable.Sort))
                 {
-                    foreach (var prop in param.ModelMetadata.ContainerType.GetProperties())
-                        if (!prop.HasAttribute<IgnoreFilterAttribute>())
+                    var possibleSortings = param.ModelMetadata.ContainerType.GetCustomAttribute<PossibleSortingsAttribute>();
+                    if (possibleSortings != null)
+                    {
+                        foreach (var propertyName in possibleSortings.PropertyNames)
+                            item.Schema.Enum.Add(new OpenApiString(propertyName));
+                        break;
+                    }
+
+                    foreach (var prop in param.ModelMetadata.ContainerType.GetProperties().Where(x => !x.HasAttribute<IgnoreFilterAttribute>()))
+                    {
+                        var compareTo = prop.GetCustomAttribute<CompareToAttribute>();
+                        if (compareTo != null)
                         {
-                            var compareTo = prop.GetCustomAttribute<CompareToAttribute>();
-                            if (compareTo != null)
-                            {
-                                foreach (var propertyName in compareTo.PropertyNames)                                
-                                    item.Schema.Enum.Add(new OpenApiString(propertyName));                                
-                            }
-                            else
-                            {
-                                item.Schema.Enum.Add(new OpenApiString(prop.Name));
-                            }
+                            foreach (var propertyName in compareTo.PropertyNames)
+                                item.Schema.Enum.Add(new OpenApiString(propertyName));
                         }
+                        else
+                        {
+                            item.Schema.Enum.Add(new OpenApiString(prop.Name));
+                        }
+                    }
                 }
             }
         }

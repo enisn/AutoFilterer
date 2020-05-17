@@ -6,6 +6,7 @@ using WebApplication.API.Models;
 
 namespace WebApplication.API.Dtos
 {
+    //[PossibleSortings(nameof(Title), nameof(TotalPage), nameof(Year))]
     public class BookFilter : PaginationFilterBase
     {
         /// <summary>
