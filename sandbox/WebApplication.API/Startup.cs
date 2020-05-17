@@ -65,7 +65,11 @@ namespace WebApplication.API
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseDocumentation(cfg => cfg.RootPathHandling = HandlingType.Redirect);
+            app.UseDocumentation(cfg =>
+            {
+                cfg.RootPathHandling = HandlingType.Redirect;
+                cfg.GetMdlStyle = "https://code.getmdl.io/1.3.0/material.deep_purple-light_blue.min.css";
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -74,7 +78,7 @@ namespace WebApplication.API
                 options.EnableDeepLinking();
                 options.DisplayRequestDuration();
                 options.ShowExtensions();
-                
+
                 options.RoutePrefix = "swagger";
 
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
