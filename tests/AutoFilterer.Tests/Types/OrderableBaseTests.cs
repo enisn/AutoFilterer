@@ -34,6 +34,7 @@ namespace AutoFilterer.Tests.Types
             for (int i = 0; i < expected.Count; i++)
                 Assert.Equal(expected[i], result[i]);
         }
+
         [Theory, AutoMoqData(count: 16)]
         public void ApplyOrder_WithEmptyParameter_ShouldThrowArgumentNullException(List<Book> data)
         {
@@ -137,6 +138,5 @@ namespace AutoFilterer.Tests.Types
             for (int i = 0; i < expected.Count; i++)
                 Assert.Equal(expected[i], result[i]);
         }
-
     }
 }
