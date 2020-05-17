@@ -7,14 +7,15 @@
     <Description>This library provides filtering from DTOs to Entities without writing any query. Visit the project site for more information</Description>
     <PackageProjectUrl>https://github.com/enisn/AutoFilterer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
-    <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
+    <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.0.1</Version>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
+    <Version>2.1.0-pre.1</Version>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <PackageReleaseNotes>Added missing virtual keyword, Now it can be more overridable!</PackageReleaseNotes>
-    <FileVersion>2.0.1.0</FileVersion>
-    <PackageIconUrl>https://raw.githubusercontent.com/enisn/AutoFilterer/master/content/auto_filterer_icon.png</PackageIconUrl>
+    <FileVersion>2.1.0.0</FileVersion>
+    <PackageIconUrl></PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -28,6 +29,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
