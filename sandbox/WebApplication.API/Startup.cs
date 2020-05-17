@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoFilterer.Swagger;
+using MarkdownDocumenting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,6 +39,8 @@ namespace WebApplication.API
 
             services.AddSingleton<BooksRepository>();
 
+            services.AddDocumentation();
+
             services.AddSwaggerGen(c =>
             {
                 c.UseAutoFiltererParameters();
@@ -61,6 +64,8 @@ namespace WebApplication.API
         {
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseDocumentation(cfg => cfg.RootPathHandling = HandlingType.Redirect);
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>

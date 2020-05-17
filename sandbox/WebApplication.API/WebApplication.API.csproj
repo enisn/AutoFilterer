@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.MarkdownDocumenting" Version="2.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
   </ItemGroup>
@@ -20,6 +21,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AutoFilterer.Swagger\AutoFilterer.Swagger.csproj" />
     <ProjectReference Include="..\..\src\AutoFilterer\AutoFilterer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Docs\**\*.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
