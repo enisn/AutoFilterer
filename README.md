@@ -1,4 +1,3 @@
-﻿
 <table>
 <tr>
 <td>
@@ -10,9 +9,12 @@
 
  # AutoFilterer
 
-This project aims to create filtered endpoint without writing any of query with entity framework. Just prepare your filter model and apply it into your Db Entity.
+AutoFilterer is a mini filtering & querying framework for .NET Standard. The project aims applying automatic filters in Open API 3.0 specifications unlike oData or graphql. All parameters are supported Open API 3.0 specifications and REST.
+As sumamry, this project aims to create queries without writing any of query with **IQueryable**. Just prepare your filter model and apply it into your Db Entity.
 
-> Basicly provides QueryString To Linq conversion.
+Generated queries supports Entity Framework and MongoDB. 
+
+> This library **does not** generate directly database queries. It generates LINQ Expressions.
 
 You can visit [Wiki](../../wiki) for more documents
 
@@ -20,8 +22,6 @@ You can visit [Wiki](../../wiki) for more documents
 [![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
 [![CodeFactor](https://www.codefactor.io/repository/github/enisn/autofilterer/badge)](https://www.codefactor.io/repository/github/enisn/autofilterer)
 [![Build status](https://ci.appveyor.com/api/projects/status/fhsry13a6k6j712w?svg=true)](https://ci.appveyor.com/project/enisn/autofilterer)
-![.NET Core](https://github.com/enisn/AutoFilterer/workflows/.NET%20Core/badge.svg)
-
 </td>
 </tr>
 </table>
@@ -33,6 +33,18 @@ You can visit [Wiki](../../wiki) for more documents
 
 *That's it. You don't need any initialization*
 ***
+
+# Showcase
+- All querying supports Open API 3.0 Specifications:
+
+![image](https://user-images.githubusercontent.com/23705418/82128447-f9961180-97c3-11ea-87b3-452c38d9f676.png)
+
+- And Result:
+
+![image](https://user-images.githubusercontent.com/23705418/82128521-6ad5c480-97c4-11ea-9f78-575733c101dd.png)
+
+***
+
 # Usage
 Just [visit WiKi](../../wiki) for better understanding of usage.
 

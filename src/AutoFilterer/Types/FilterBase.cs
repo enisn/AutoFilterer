@@ -26,6 +26,9 @@ namespace AutoFilterer.Types
             if (exp == null)
                 return query;
 
+            if (exp is MemberExpression || exp is ParameterExpression)
+                return query;
+
             var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
             //var lambda = exp as Expression<Func<TEntity, bool>>;
             return query.Where(lambda);
