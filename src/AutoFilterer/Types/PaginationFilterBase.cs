@@ -1,10 +1,11 @@
 ﻿using AutoFilterer.Attributes;
 using AutoFilterer.Extensions;
+using System;
 using System.Linq;
 
 namespace AutoFilterer.Types
 {
-    public class PaginationFilterBase : FilterBase
+    public class PaginationFilterBase : OrderableFilterBase
     {
         [IgnoreFilter]
         public virtual int Page { get; set; } = 1;
@@ -24,9 +25,10 @@ namespace AutoFilterer.Types
             => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
 
         public IQueryable<T> ApplyFilterWithoutPagination<T>(IQueryable<T> query)
-            => base.ApplyFilterTo(query);
+            => base.ApplyFilterWithoutOrdering(query);
     }
 
+    [Obsolete("This is deprecated. Use PaginationFilterBase instead of PaginationFilterBase<T>. Just remove Type parameter from this.")]
     public class PaginationFilterBase<T> : FilterBase<T>
     {
         [IgnoreFilter]
