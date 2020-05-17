@@ -16,7 +16,7 @@ namespace AutoFilterer.Swagger.OperationFilters
             {
                 var param = context.ApiDescription.ParameterDescriptions.FirstOrDefault(x => x.Name == item.Name);
 
-                if (typeof(IOrderable).IsAssignableFrom(param.ModelMetadata.ContainerType) && param.Name == nameof(IOrderable.Sort))
+                if (param?.ModelMetadata?.ContainerType != null && typeof(IOrderable).IsAssignableFrom(param.ModelMetadata.ContainerType) && param.Name == nameof(IOrderable.Sort))
                 {
                     var possibleSortings = param.ModelMetadata.ContainerType.GetCustomAttribute<PossibleSortingsAttribute>();
                     if (possibleSortings != null)
