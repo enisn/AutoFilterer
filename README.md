@@ -37,6 +37,9 @@ You may visit [visit documentation](../../wiki) for better understanding of impl
 ***
 
 # Showcase
+
+You can TRY [LIVE DEMO](BookFilter).
+
 - All querying supports Open API 3.0 Specifications:
 
 ![image](https://user-images.githubusercontent.com/23705418/82128447-f9961180-97c3-11ea-87b3-452c38d9f676.png)
