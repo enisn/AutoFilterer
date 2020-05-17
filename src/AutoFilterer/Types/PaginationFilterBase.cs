@@ -1,15 +1,15 @@
-﻿using AutoFilterer.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using AutoFilterer.Attributes;
+using AutoFilterer.Extensions;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
     public class PaginationFilterBase : FilterBase
     {
+        [IgnoreFilter]
         public virtual int Page { get; set; } = 1;
+
+        [IgnoreFilter]
         public virtual int PerPage { get; set; } = 10;
 
         public override IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
@@ -29,7 +29,10 @@ namespace AutoFilterer.Types
 
     public class PaginationFilterBase<T> : FilterBase<T>
     {
+        [IgnoreFilter]
         public virtual int Page { get; set; } = 1;
+
+        [IgnoreFilter]
         public virtual int PerPage { get; set; } = 10;
 
         public virtual IQueryable<T> ApplyFilterTo(IOrderedQueryable<T> query) 
