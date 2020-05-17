@@ -4,6 +4,19 @@
         <name>WebApplication.API</name>
     </assembly>
     <members>
+        <member name="M:WebApplication.API.Controllers.BooksController.Get(WebApplication.API.Dtos.BookFilter)">
+            <summary>
+            Fitler books.
+            </summary>
+            <remarks>
+            
+            - You can see Controller source-code from [here](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Controllers/BooksController.cs#L29)
+            
+            - You can see FilterBase source-code from [here](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Dtos/BookFilter.cs)
+            </remarks>
+            <param name="filter"></param>
+            <returns></returns>
+        </member>
         <member name="P:WebApplication.API.Dtos.BookFilter.Search">
             <summary>
             Search in **Title**, **Author** and **Country**.
