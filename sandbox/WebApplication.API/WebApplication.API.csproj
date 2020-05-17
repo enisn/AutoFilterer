@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AutoFilterer.Swagger\AutoFilterer.Swagger.csproj" />
     <ProjectReference Include="..\..\src\AutoFilterer\AutoFilterer.csproj" />
   </ItemGroup>
 
