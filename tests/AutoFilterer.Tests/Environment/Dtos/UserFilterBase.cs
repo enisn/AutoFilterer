@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Envirorment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos
 {
     public class UserFilterBase : FilterBase
     {

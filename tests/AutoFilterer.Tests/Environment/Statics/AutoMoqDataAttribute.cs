@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Envirorment.Statics
+namespace AutoFilterer.Tests.Environment.Statics
 {
     public class AutoMoqDataAttribute : AutoDataAttribute
     {

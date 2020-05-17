@@ -1,4 +1,4 @@
-﻿using AutoFilterer.Tests.Envirorment.Statics;
+﻿using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using AutoFilterer.Tests.Envirorment.Models;
-using AutoFilterer.Tests.Envirorment.Dtos;
+using AutoFilterer.Tests.Environment.Models;
+using AutoFilterer.Tests.Environment.Dtos;
 using System.Diagnostics;
 using System.Linq.Expressions;
 

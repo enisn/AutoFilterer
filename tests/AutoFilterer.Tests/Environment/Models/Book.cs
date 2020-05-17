@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Envirorment.Models
+namespace AutoFilterer.Tests.Environment.Models
 {
     public class Book
     {

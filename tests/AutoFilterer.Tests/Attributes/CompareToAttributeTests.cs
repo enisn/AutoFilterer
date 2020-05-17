@@ -1,6 +1,6 @@
-﻿using AutoFilterer.Tests.Envirorment.Dtos;
-using AutoFilterer.Tests.Envirorment.Models;
-using AutoFilterer.Tests.Envirorment.Statics;
+﻿using AutoFilterer.Tests.Environment.Dtos;
+using AutoFilterer.Tests.Environment.Models;
+using AutoFilterer.Tests.Environment.Statics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

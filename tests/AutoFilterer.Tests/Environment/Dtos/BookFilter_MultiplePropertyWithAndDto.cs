@@ -1,8 +1,8 @@
 ﻿using AutoFilterer.Attributes;
-using AutoFilterer.Tests.Envirorment.Models;
+using AutoFilterer.Tests.Environment.Models;
 using AutoFilterer.Types;
 
-namespace AutoFilterer.Tests.Envirorment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos
 {
     public class BookFilter_MultiplePropertyWithAndDto : FilterBase
     {
