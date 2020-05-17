@@ -7,9 +7,9 @@ namespace AutoFilterer.Types
 {
     public class OrderableFilterBase : FilterBase, IOrderable
     {
-        [IgnoreFilter] public Sorting SortBy { get; set; }
+        [IgnoreFilter] public virtual Sorting SortBy { get; set; }
 
-        [IgnoreFilter] public string Sort { get; set; }
+        [IgnoreFilter] public virtual string Sort { get; set; }
 
         public override IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
         {

@@ -16,8 +16,8 @@ namespace AutoFilterer.Types
         private static readonly MethodInfo orderBy = typeof(Queryable).GetMethods().First(x => x.Name == nameof(Queryable.OrderBy));
         private static readonly MethodInfo orderByDescending = typeof(Queryable).GetMethods().First(x => x.Name == nameof(Queryable.OrderByDescending));
 
-        public Sorting SortBy { get; set; }
-        public string Sort { get; }
+        [IgnoreFilter] public virtual Sorting SortBy { get; set; }
+        [IgnoreFilter] public virtual string Sort { get; }
 
         public IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> queryable)
         {
