@@ -1,6 +1,6 @@
 <table>
 <tr>
-<td>
+<td width="15%">
 
  ![Logo](https://github.com/enisn/AutoFilterer/blob/master/content/auto_filterer_icon.png?raw=true) 
 
