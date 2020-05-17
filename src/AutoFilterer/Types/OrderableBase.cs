@@ -26,6 +26,9 @@ namespace AutoFilterer.Types
 
         public static IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source, IOrderable orderable)
         {
+            if (string.IsNullOrEmpty(orderable.Sort))
+                throw new ArgumentNullException(nameof(orderable.Sort));
+
             var parameter = Expression.Parameter(typeof(TSource), "o");
             var property = Expression.Property(parameter, orderable.Sort);
             var lambda = Expression.Lambda(property, parameter);
