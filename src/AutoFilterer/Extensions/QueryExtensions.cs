@@ -37,5 +37,10 @@ namespace AutoFilterer.Extensions
         {
             return filter.ApplyFilterTo(source);
         }
-    } 
+
+        public static IOrderedQueryable<T> ApplyOrder<T>(this IQueryable<T> source, IOrderable filter)
+        {
+            return filter.ApplyOrder(source);
+        }
+    }
 }
