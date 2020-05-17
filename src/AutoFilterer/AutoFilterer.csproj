@@ -9,11 +9,10 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.1.0</Version>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <PackageReleaseNotes>Added missing virtual keyword, Now it can be more overridable!</PackageReleaseNotes>
-    <FileVersion>2.1.0.0</FileVersion>
-    <PackageIconUrl></PackageIconUrl>
+    <Version>2.1.1</Version>
+    <AssemblyVersion>2.1.1.0</AssemblyVersion>
+    <PackageReleaseNotes>Added TypeMetaData constructor to PossibleSortings.</PackageReleaseNotes>
+    <FileVersion>2.1.1.0</FileVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
