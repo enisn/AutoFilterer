@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.0.0-pre.2</Version>
+    <Version>2.0.0</Version>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <PackageReleaseNotes>Added missing virtual keyword, Now it can be more overridable!</PackageReleaseNotes>
     <FileVersion>2.0.0.0</FileVersion>
