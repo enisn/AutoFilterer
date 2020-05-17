@@ -40,7 +40,8 @@ namespace WebApplication.API
 
             services.AddSwaggerGen(c =>
             {
-                c.AddAutoFilterer();
+                c.UseAutoFiltererParameters();
+
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Sample book",
