@@ -26,7 +26,7 @@ namespace WebApplication.API.Controllers
         [ProducesResponseType(typeof(Book[]), 200)]
         public IActionResult Get([FromQuery]BookFilter filter)
         {
-            var result = repository.Books.ApplyOrder(filter).ApplyFilter(filter).ToList();
+            var result = repository.Books.ApplyFilter(filter).ToList();
 
             return Ok(result);
         }
