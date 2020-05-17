@@ -71,7 +71,6 @@ namespace AutoFilterer.Tests
             // Arrange
             Stopwatch sw = new Stopwatch();
 
-
             // AutoFilterer Way
             sw.Restart();
             var aQuery = data.AsQueryable().ApplyFilter(filter);
@@ -96,7 +95,6 @@ namespace AutoFilterer.Tests
             var cElapsed = sw.ElapsedTicks;
             Console.WriteLine("Classical Elapsed: " + cElapsed);
 
-
             var ratio = cElapsed / (float)aElapsed;
             Console.WriteLine("Classical / AutoFilterer : " + ratio);
 
@@ -111,11 +109,9 @@ namespace AutoFilterer.Tests
             var filter = new BookFilterBase { Title = "a" };
             Stopwatch sw = new Stopwatch();
 
-
             List<long> bResults = new List<long>();
             for (int i = 0; i < 1000; i++)
             {
-
                 sw.Restart();
                 var parameter = Expression.Parameter(typeof(Book), "x");
                 var property = Expression.Property(parameter, "Title");
