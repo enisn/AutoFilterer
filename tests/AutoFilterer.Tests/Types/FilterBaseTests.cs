@@ -93,6 +93,42 @@ namespace AutoFilterer.Tests.Types
         }
 
         [Theory, AutoMoqData]
+        public void ApplyFilterTo_WithEmptyFilterBase_ShouldMatchExpected(List<Book> data)
+        {
+            // Arrange
+            var filter = new BookFilterBase();
+
+            // Act
+            var query = data.AsQueryable().ApplyFilter(filter);
+            var result = query.ToList();
+
+            // Assert
+            var expected = data.AsQueryable().ToList();
+
+            Assert.Equal(expected.Count, result.Count);
+            foreach (var item in expected)
+                Assert.Contains(item, result);
+        }
+
+        [Theory, AutoMoqData]
+        public void ApplyFilterTo_WithEmptyPaginationFilterBase_ShouldMatchExpected(List<Book> data)
+        {
+            // Arrange
+            var filter = new BookFilter_Orderable();
+
+            // Act
+            var query = data.AsQueryable().ApplyFilter(filter);
+            var result = query.ToList();
+
+            // Assert
+            var expected = data.AsQueryable().ToList();
+
+            Assert.Equal(expected.Count, result.Count);
+            foreach (var item in expected)
+                Assert.Contains(item, result);
+        }
+
+        [Theory, AutoMoqData]
         public void ApplyFilterTo_WithSingleField_ShouldMatchCount(List<User> dummyData)
         {
             // Arrange

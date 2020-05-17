@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using AutoFilterer.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +40,8 @@ namespace WebApplication.API
 
             services.AddSwaggerGen(c =>
             {
+                c.UseAutoFiltererParameters();
+
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Sample book",
@@ -66,7 +69,7 @@ namespace WebApplication.API
                 options.EnableDeepLinking();
                 options.DisplayRequestDuration();
                 options.ShowExtensions();
-
+                
                 options.RoutePrefix = "swagger";
 
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");

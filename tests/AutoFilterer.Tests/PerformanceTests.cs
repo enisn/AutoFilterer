@@ -101,49 +101,5 @@ namespace AutoFilterer.Tests
             // Assert
             Assert.True(ratio > 1.2f);
         }
-
-        [Theory, AutoMoqData(count: 64)]
-        public void Test(List<Book> data)
-        {
-            var books = data.AsQueryable();
-            var filter = new BookFilterBase { Title = "a" };
-            Stopwatch sw = new Stopwatch();
-
-            List<long> bResults = new List<long>();
-            for (int i = 0; i < 1000; i++)
-            {
-                sw.Restart();
-                var parameter = Expression.Parameter(typeof(Book), "x");
-                var property = Expression.Property(parameter, "Title");
-
-                var comparison = Expression.Or(
-                        Expression.Equal(property, Expression.Constant(null)),
-                        Expression.Equal(property, Expression.Constant(filter.Title))
-                    );
-
-                var queryB = books.Where(Expression.Lambda<Func<Book, bool>>(comparison, parameter));
-                sw.Stop();
-                bResults.Add(sw.ElapsedTicks);
-            }
-            var b = bResults.Sum() / (float)1000;
-
-            List<long> aResults = new List<long>();
-            for (int i = 0; i < 1000; i++)
-            {
-                sw.Restart();
-                var queryA = books.Where(x => filter.Title == null || x.Title == filter.Title);
-                sw.Stop();
-                aResults.Add(sw.ElapsedTicks);
-            }
-            var a = aResults.Sum() / (float)1000;
-
-            var ratio = a / b;
-
-            Console.WriteLine("a: " + a);
-            Console.WriteLine("b: " + b);
-
-            // Assert
-            Assert.True(ratio > 1.2f);
-        }
     }
 }

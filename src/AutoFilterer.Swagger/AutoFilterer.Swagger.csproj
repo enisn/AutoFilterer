@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
     <Authors>enisn</Authors>
     <Description>This library provides filtering from DTOs to Entities without writing any query. Visit the project site for more information</Description>
     <PackageProjectUrl>https://github.com/enisn/AutoFilterer</PackageProjectUrl>
@@ -11,24 +10,18 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Version>2.1.0-pre.1</Version>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <PackageReleaseNotes>Added missing virtual keyword, Now it can be more overridable!</PackageReleaseNotes>
+    <PackageReleaseNotes>First Release</PackageReleaseNotes>
     <FileVersion>2.1.0.0</FileVersion>
-    <PackageIconUrl></PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\enisn\source\repos\enisn\AutoFilterer\src\AutoFilterer\AutoFilterer.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.4.1" />
+  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <ProjectReference Include="..\AutoFilterer\AutoFilterer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,10 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
+
+    /// <summary>
+    /// Base class of filter Data Transfer Objects.
+    /// </summary>
     public class FilterBase : IFilter
     {
         [IgnoreFilter]
@@ -30,7 +34,6 @@ namespace AutoFilterer.Types
                 return query;
 
             var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
-            //var lambda = exp as Expression<Func<TEntity, bool>>;
             return query.Where(lambda);
         }
 
