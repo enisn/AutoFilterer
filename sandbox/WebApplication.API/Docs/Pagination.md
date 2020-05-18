@@ -1,4 +1,4 @@
-# Pasination
+# Pagination
 Sorting is easy to implement. You filter object just should inherit from **PaginationFilterBase**.
 After you inherit, PaginationFilterBase applies `query`, `sorting` and `pagination` when you call **ApplyFilter** method.
 
