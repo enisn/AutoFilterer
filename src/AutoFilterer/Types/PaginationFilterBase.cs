@@ -18,7 +18,7 @@ namespace AutoFilterer.Types
             if (query is IOrderedQueryable<TEntity> ordered)
                 return this.ApplyFilterTo(ordered);
 
-            return base.ApplyFilterTo(query);
+            return base.ApplyFilterTo(query).ToPaged(Page, PerPage);
         }
 
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 

@@ -1,3 +1,4 @@
+# AutoFilterer
 Welcome to the AutoFilterer wiki!
 
 Topics:

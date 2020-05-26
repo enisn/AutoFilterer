@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoFilterer.Swagger;
+using MarkdownDocumenting.Elements;
 using MarkdownDocumenting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -69,6 +70,12 @@ namespace WebApplication.API
             {
                 cfg.RootPathHandling = HandlingType.Redirect;
                 cfg.GetMdlStyle = "https://code.getmdl.io/1.3.0/material.deep_purple-light_blue.min.css";
+                var swashbuckleLink = new CustomLink("Swagger UI", "/swagger", false);
+                cfg
+                    .AddCustomLink(swashbuckleLink)
+                    .AddFooterLink(swashbuckleLink)
+                    .AddFooterLink(new CustomLink("Swagger.json", "/swagger/v1/swagger.json", true))
+                    .AddFooterLink(new CustomLink("See on Gitub", "https://github.com/enisn/AutoFilterer", true));
             });
 
             app.UseSwagger();
