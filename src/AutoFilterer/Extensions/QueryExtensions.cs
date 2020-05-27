@@ -25,7 +25,7 @@ namespace AutoFilterer.Extensions
             if (pageSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageSize), "The given parameter can not be zero or negative.");
 
-            return (source as IOrderedQueryable<T>).Skip((page - 1) * pageSize).Take(pageSize);
+            return source.Skip((page - 1) * pageSize).Take(pageSize);
         }
 
         public static IQueryable<T> ApplyFilter<T>(this IQueryable<T> source, IFilter filter)
