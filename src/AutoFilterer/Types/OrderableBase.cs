@@ -30,12 +30,13 @@ namespace AutoFilterer.Types
                 throw new ArgumentNullException(nameof(orderable.Sort));
 
             var parameter = Expression.Parameter(typeof(TSource), "o");
-            var property = Expression.Property(parameter, orderable.Sort);
+
+            var property = GetMemberExpression(parameter, orderable.Sort);
             var lambda = Expression.Lambda(property, parameter);
 
             var attribute = orderable.GetType().GetCustomAttribute<PossibleSortingsAttribute>();
             if (attribute != null && !attribute.PropertyNames.Contains(orderable.Sort))
-                throw new ArgumentException($"{orderable.Sort} field is not allowed to sort! Check PossibleSortings Attribute at top of filter object.", paramName: "Sort: "+orderable.Sort);
+                throw new ArgumentException($"{orderable.Sort} field is not allowed to sort! Check PossibleSortings Attribute at top of filter object.", paramName: "Sort: " + orderable.Sort);
 
             switch (orderable.SortBy)
             {
@@ -47,6 +48,20 @@ namespace AutoFilterer.Types
             }
 
             throw new InvalidOperationException("Invalid Sorting type in ApplyOrder method");
+        }
+
+        private static MemberExpression GetMemberExpression(Expression parameter, string name)
+        {
+            if (!name.Contains("."))
+                return Expression.Property(parameter, name);
+
+            var expression = parameter;
+            foreach (var item in name.Split('.'))
+            {
+                expression = GetMemberExpression(expression, item);
+            }
+
+            return expression as MemberExpression;
         }
     }
 }

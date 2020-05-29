@@ -138,5 +138,27 @@ namespace AutoFilterer.Tests.Types
             for (int i = 0; i < expected.Count; i++)
                 Assert.Equal(expected[i], result[i]);
         }
+
+        [Theory, AutoMoqData(count: 16)]
+        public void ApplyOrder_WithInnerObject_ShouldMatchExpected(List<User> data)
+        {
+            // Arrange
+            var filter = new BookFilter_Orderable
+            {
+                Sort = "Preferences.SecurityLevel",
+                SortBy = Enums.Sorting.Ascending
+            };
+
+            // Act
+            var query = filter.ApplyOrder(data.AsQueryable());
+            var result = query.ToList();
+
+            // Assert
+            var expected = data.AsQueryable().OrderBy(o => o.Preferences.SecurityLevel).ToList();
+            Assert.Equal(expected.Count, result.Count);
+
+            for (int i = 0; i < expected.Count; i++)
+                Assert.Equal(expected[i], result[i]);
+        }
     }
 }
