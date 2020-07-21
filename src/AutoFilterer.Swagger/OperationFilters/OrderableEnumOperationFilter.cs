@@ -34,6 +34,13 @@ namespace AutoFilterer.Swagger.OperationFilters
                             foreach (var propertyName in compareTo.PropertyNames)
                                 item.Schema.Enum.Add(new OpenApiString(propertyName));
                         }
+                        else if (typeof(IFilter).IsAssignableFrom(prop.PropertyType))
+                        {
+                            foreach (var innerProp in prop.PropertyType.GetProperties())
+                            {
+                                item.Schema.Enum.Add(new OpenApiString(prop.Name + "." + innerProp.Name));
+                            }
+                        }
                         else
                         {
                             item.Schema.Enum.Add(new OpenApiString(prop.Name));
