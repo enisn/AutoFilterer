@@ -3,6 +3,7 @@ using AutoFilterer.Attributes;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -14,7 +15,7 @@ namespace AutoFilterer.Swagger.OperationFilters
         {
             foreach (var item in operation.Parameters)
             {
-                var param = context.ApiDescription.ParameterDescriptions.FirstOrDefault(x => x.Name == item.Name);
+                var param = context.ApiDescription.ParameterDescriptions.FirstOrDefault(x => x.Name.Equals(item.Name, StringComparison.InvariantCultureIgnoreCase));
 
                 if (param?.ModelMetadata?.ContainerType != null && typeof(IOrderable).IsAssignableFrom(param.ModelMetadata.ContainerType) && param.Name == nameof(IOrderable.Sort))
                 {
