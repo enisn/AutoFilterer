@@ -8,7 +8,7 @@ namespace AutoFilterer.Types
     /// If you don't have access to your Entity models from dto (if they're in seperated libraries), just inherit non-generic type of FilterBase which is <see cref="FilterBase"/>.
     /// </summary>
     /// <typeparam name="TEntity">Entity Type.</typeparam>
-    [Obsolete("This si deprecated. Use without FilterBase instead of FilterBase<TEntity>. Just remove Entity type parameter from FilterBase.")]
+    [Obsolete("This is deprecated. Use without FilterBase instead of FilterBase<TEntity>. Just remove Entity type parameter from FilterBase.")]
     public class FilterBase<TEntity> : FilterBase
     {
         /// <summary>
