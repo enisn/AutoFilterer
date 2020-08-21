@@ -58,6 +58,7 @@ namespace AutoFilterer.Types
             }
             return (T1)maxValue;
         }
+
         public static T1 GetMinValue<T1>()
         {
             object maxValue = default(T1);

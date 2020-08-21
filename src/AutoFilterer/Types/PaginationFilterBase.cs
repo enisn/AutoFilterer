@@ -42,5 +42,8 @@ namespace AutoFilterer.Types
 
         public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
             => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
+
+        public IQueryable<T> ApplyFilterWithoutPagination<T>(IQueryable<T> query)
+            => base.ApplyFilterTo(query);
     }
 }
