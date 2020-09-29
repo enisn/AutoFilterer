@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{CD6599CA-1650-46F4-8DDC-04A122412F67}"
 	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -20,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication.API", "sandb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Tests", "tests\AutoFilterer.Tests\AutoFilterer.Tests.csproj", "{92FE764D-0E34-415A-A392-D42636DB5C99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFilterer.Swagger", "src\AutoFilterer.Swagger\AutoFilterer.Swagger.csproj", "{D1DCF695-233C-4087-9427-A65C4647D770}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Swagger", "src\AutoFilterer.Swagger\AutoFilterer.Swagger.csproj", "{D1DCF695-233C-4087-9427-A65C4647D770}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

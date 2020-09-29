@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
-
     /// <summary>
     /// Base class of filter Data Transfer Objects.
     /// </summary>
@@ -35,6 +34,15 @@ namespace AutoFilterer.Types
 
             var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
             return query.Where(lambda);
+        }
+
+        public virtual Expression<Func<TEntity,bool>> BuildLambda<TEntity>()
+        {
+            var parameter = Expression.Parameter(typeof(TEntity), "x");
+
+            var exp = BuildExpression(typeof(TEntity), parameter);
+
+            return Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
         }
 
         public virtual Expression BuildExpression(Type entityType, Expression body)

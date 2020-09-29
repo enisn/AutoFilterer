@@ -38,7 +38,7 @@ You may visit [visit documentation](../../wiki) for better understanding of impl
 
 # Showcase
 
-You can TRY [LIVE DEMO](https://autofilterer-showcase.azurewebsites.net/swagger/index.html#/Books/get_api_Books).
+You can TRY [LIVE DEMO](https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books).
 
 - All querying supports Open API 3.0 Specifications:
 
