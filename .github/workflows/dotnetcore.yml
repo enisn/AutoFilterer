@@ -26,5 +26,5 @@ jobs:
     - name: Pack
       run: dotnet pack -o packages --configuration Release
     - name: Push
-      run: dotnet nuget push packages/*.nupkg --source ${{secret.NUGET_SOURCE}} --api-key ${{secret.NUGET_KEY}}  --skip-duplicate
+      run: dotnet nuget push packages/*.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate
       #continue-on-error: true
