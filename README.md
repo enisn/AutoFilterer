@@ -22,6 +22,9 @@ You can visit [Wiki](../../wiki) for more documents
 [![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
 [![CodeFactor](https://www.codefactor.io/repository/github/enisn/autofilterer/badge)](https://www.codefactor.io/repository/github/enisn/autofilterer)
 [![Build status](https://ci.appveyor.com/api/projects/status/fhsry13a6k6j712w?svg=true)](https://ci.appveyor.com/project/enisn/autofilterer)
+<a href="https://gitmoji.carloscuesta.me">
+  <img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji">
+</a>
 </td>
 </tr>
 </table>
