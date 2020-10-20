@@ -96,7 +96,7 @@ namespace AutoFilterer.Dynamics
                 case CombineType.And:
                     return Expression.AndAlso(left, right);
                 case CombineType.Or:
-                    return Expression.Or(left, right);
+                    return Expression.OrElse(left, right);
                 default:
                     return right;
             }
