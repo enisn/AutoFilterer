@@ -25,7 +25,7 @@ namespace AutoFilterer.Dynamics
             using (var client = _factory.CreateClient())
             {
                 var query = new DynamicFilter { { "Page", "1" } };
-                var expectedJson = "{ \"Page\": \"1\" }";
+                var expectedJson = "{\"Page\":\"1\"}";
 
                 var responseJson = await client.GetStringAsync("/_api/Tests/query-string-as-object?" + string.Join('&', query.Select(s => $"{s.Key}={s.Value}")));
 

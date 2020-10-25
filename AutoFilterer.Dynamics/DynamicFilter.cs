@@ -29,6 +29,14 @@ namespace AutoFilterer.Dynamics
             this.Value = value;
         }
 
+        public DynamicFilter(IDictionary<string, string> dict)
+        {
+            foreach (var item in dict)
+            {
+                this.Add(item.Key, item.Value);
+            }
+        }
+
         public override string ToString() => this.Value;
 
         public IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
