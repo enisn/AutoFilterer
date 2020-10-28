@@ -15,9 +15,8 @@ namespace WebApplication.API.Controllers
     public class TestsController : ControllerBase
     {
         [HttpGet("query-string-as-object")]
-        public IActionResult GetQueryStringAsObject([FromQuery]Dictionary<string,string> query) 
+        public IActionResult GetQueryStringAsObject([FromQuery] DynamicFilter filter) 
         {
-            var filter = new DynamicFilter(query);
             return Ok(filter.ToDictionary(k => k.Key, v => v.Value.ToString()));
         }
     }
