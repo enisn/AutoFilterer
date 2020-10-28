@@ -1,5 +1,7 @@
 ﻿using AutoFilterer.Abstractions;
+using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
+using AutoFilterer.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +18,20 @@ namespace AutoFilterer.Dynamics
         public static implicit operator DynamicFilter(string value) => new DynamicFilter(value);
         public static explicit operator string(DynamicFilter value) => value.Value;
 
-        public CombineType CombineWith { get; set; }
+        private static readonly Dictionary<string, IFilterableType> specialKeywords = new Dictionary<string, IFilterableType>
+        {
+            { "eq", new OperatorComparisonAttribute(OperatorType.Equal) },
+            { "not", new OperatorComparisonAttribute(OperatorType.NotEqual) },
+            { "gt", new OperatorComparisonAttribute(OperatorType.GreaterThan) },
+            { "gte", new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual) },
+            { "lt", new OperatorComparisonAttribute(OperatorType.LessThan) },
+            { "lte", new OperatorComparisonAttribute(OperatorType.LessThanOrEqual) },
+            { "contains", new StringFilterOptionsAttribute(StringFilterOption.Contains) },
+            { "endswith", new StringFilterOptionsAttribute(StringFilterOption.EndsWith) },
+            { "startswith", new StringFilterOptionsAttribute(StringFilterOption.StartsWith) },
+        };
 
-        public bool IsPrimitive => !string.IsNullOrEmpty(Value);
+        public CombineType CombineWith { get; set; }
 
         public DynamicFilter()
         {
@@ -52,28 +65,46 @@ namespace AutoFilterer.Dynamics
 
             foreach (var key in this.Keys)
             {
-                var filter = new DynamicFilter(this[key]);
-
-                if (filter.IsPrimitive)
+                var filterValue = new DynamicFilter(this[key]);
+                if (IsPrimitive(key))
                 {
-                    var targetProperty = entityType.GetProperty(filter.Value);
-
-                    var prop = Expression.Property(body, targetProperty.Name);
-                    var param = Expression.Constant(Convert.ChangeType((string)filter, targetProperty.PropertyType));
-
-                    var exp = Expression.Equal(prop, param);
+                    var targetProperty = entityType.GetProperty(key);
+                    var value = Convert.ChangeType((string)filterValue, targetProperty.PropertyType);
+                    var exp = new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(body, targetProperty, filterProperty: null, value);
 
                     var combined = Combine(finalExpression, exp);
                     finalExpression = Combine(body, combined);
                 }
                 else
                 {
-                    throw new NotImplementedException("Inner objects are not supported yet!");
+                    var splitted = key.Split('.');
+                    if (splitted.Length == 2)
+                    {
+                        var propName = splitted[0];
+                        var targetProperty = entityType.GetProperty(propName);
+                        var value = Convert.ChangeType((string)filterValue, targetProperty.PropertyType);
+                        var comparisonKeyword = splitted[1];
+                        if (specialKeywords.TryGetValue(comparisonKeyword, out IFilterableType filterable))
+                        {
+                            var exp = filterable.BuildExpression(body, targetProperty, filterProperty: null, value);
+
+                            var combined = Combine(finalExpression, exp);
+                            finalExpression = Combine(body, combined);
+                        }
+                    }
+                    else
+                    {
+
+                        throw new NotImplementedException("Inner objects are not supported yet!");
+                    }
+
                 }
             }
 
             return finalExpression;
         }
+
+        private bool IsPrimitive(string key) => !key.Contains('.');
 
         private protected virtual Expression Combine(Expression body, Expression extend)
         {
