@@ -78,7 +78,7 @@ namespace AutoFilterer.Dynamics
                 else
                 {
                     var splitted = key.Split('.');
-                    if (splitted.Length == 2)
+                    if (IsNotInnerObject(splitted))
                     {
                         var propName = splitted[0];
                         var targetProperty = entityType.GetProperty(propName);
@@ -102,6 +102,8 @@ namespace AutoFilterer.Dynamics
             }
 
             return finalExpression;
+
+            bool IsNotInnerObject(string[] splitted) => splitted.Length == 2;
         }
 
         private bool IsPrimitive(string key) => !key.Contains('.');
