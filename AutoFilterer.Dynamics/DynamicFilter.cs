@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Dynamics
 {
-    public class DynamicFilter : Dictionary<string, DynamicFilter>, IFilter
+    public class DynamicFilter : Dictionary<string, string>, IFilter
     {
         public string Value { get; set; }
         public static implicit operator DynamicFilter(string value) => new DynamicFilter(value);
@@ -27,14 +27,6 @@ namespace AutoFilterer.Dynamics
         public DynamicFilter(string value)
         {
             this.Value = value;
-        }
-
-        public DynamicFilter(IDictionary<string, string> dict)
-        {
-            foreach (var item in dict)
-            {
-                this.Add(item.Key, item.Value);
-            }
         }
 
         public override string ToString() => this.Value;
@@ -60,13 +52,14 @@ namespace AutoFilterer.Dynamics
 
             foreach (var key in this.Keys)
             {
-                var value = this[key];
-                if (value.IsPrimitive)
+                var filter = new DynamicFilter(this[key]);
+
+                if (filter.IsPrimitive)
                 {
-                    var targetProperty = entityType.GetProperty(key);
+                    var targetProperty = entityType.GetProperty(filter.Value);
 
                     var prop = Expression.Property(body, targetProperty.Name);
-                    var param = Expression.Constant(Convert.ChangeType((string)value, targetProperty.PropertyType));
+                    var param = Expression.Constant(Convert.ChangeType((string)filter, targetProperty.PropertyType));
 
                     var exp = Expression.Equal(prop, param);
 
