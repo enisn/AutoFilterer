@@ -78,5 +78,194 @@ namespace AutoFilterer.Dynamics.Tests
             foreach (var item in expectedResult)
                 Assert.Contains(item, actualResult);
         }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordEq(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.eq", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage == 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordGte(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.gte", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage >= 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordGt(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.gt", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage > 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordLt(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.lt", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage < 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordLte(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.lte", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage <= 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordNot(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "TotalPage.not", "5" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.TotalPage != 5);
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordContains(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "Title.contains", "a" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.Title.Contains("a"));
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordStartsWith(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "Title.startswith", "a" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.Title.StartsWith("a"));
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count: 32)]
+        public void ApplyFilterTo_ShouldFilterCorrect_WithCustomComparisonKeywordEndsWith(List<Book> list)
+        {
+            // Arrange
+            DynamicFilter filter = new DynamicFilter { { "Title.endswith", "a" } };
+
+            // Act
+            var actualQuery = list.AsQueryable().ApplyFilter(filter);
+            var exprectedQuery = list.AsQueryable().Where(x => x.Title.EndsWith("a"));
+
+            var actualResult = actualQuery.ToList();
+            var expectedResult = exprectedQuery.ToList();
+
+            // Assert
+            Assert.Equal(exprectedQuery.Expression.ToString(), actualQuery.Expression.ToString());
+            Assert.Equal(expectedResult.Count, actualResult.Count);
+
+            foreach (var item in expectedResult)
+                Assert.Contains(item, actualResult);
+        }
     }
 }
