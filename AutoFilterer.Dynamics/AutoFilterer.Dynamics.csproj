@@ -2,10 +2,29 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <Authors>enisn</Authors>
+    <Description>This library provides filtering from QueryString (Dictionary) to Entities without writing any LINQ. Visit the project site for more information.</Description>
+    <PackageProjectUrl>https://github.com/enisn/AutoFilterer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
+    <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Version>2.1.0</Version>
+    <AssemblyVersion>2.1.0</AssemblyVersion>
+    <PackageReleaseNotes>First Release.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\AutoFilterer\AutoFilterer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
