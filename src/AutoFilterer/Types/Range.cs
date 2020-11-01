@@ -6,7 +6,7 @@ using System.Reflection;
 namespace AutoFilterer.Types
 {
     [Obsolete("This type is obsolete. Use OperatorFilter<T> instead of this. Because this Range type is too heavy and performanceless. OperatorFilter has more dynamic options.")]
-    public partial class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
+    public class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
         where T : struct, IComparable
     {
         public Range()
@@ -39,7 +39,7 @@ namespace AutoFilterer.Types
 
         public static Range<TParam> Parse<TParam>(string value) where TParam : struct, IComparable
         {
-            var splitted = value.Split(' ');
+            var splitted = value.Split('|');
 
             return new Range<TParam>(
                         splitted[0] == null || splitted[0] == "-" ? default(TParam) : (TParam)Convert.ChangeType(splitted[0], typeof(TParam)),
@@ -54,7 +54,7 @@ namespace AutoFilterer.Types
 
         public override string ToString()
         {
-            return $"{this.Min?.ToString() ?? "-"} {this.Max?.ToString() ?? "-"}";
+            return $"{this.Min?.ToString() ?? "-"}|{this.Max?.ToString() ?? "-"}";
         }
 
         public Expression BuildExpression(Expression body, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
