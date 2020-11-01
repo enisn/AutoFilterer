@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\sandbox\WebApplication.API\WebApplication.API.csproj" />
-    <ProjectReference Include="..\..\src\AutoFilterer\AutoFilterer.csproj" />
   </ItemGroup>
 
 </Project>
