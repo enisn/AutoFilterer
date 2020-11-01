@@ -8,10 +8,9 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.1.6-pre.2</Version>
-    <AssemblyVersion>2.1.6.0</AssemblyVersion>
-    <PackageReleaseNotes>First Release</PackageReleaseNotes>
-    <FileVersion>2.1.6.0</FileVersion>
+    <Version>2.2.0</Version>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <PackageReleaseNotes>Fix inner objects documenting at Swagger UI</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
