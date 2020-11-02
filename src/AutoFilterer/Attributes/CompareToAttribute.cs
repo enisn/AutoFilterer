@@ -66,6 +66,10 @@ namespace AutoFilterer.Attributes
             {
                 return filterableProperty.BuildExpression(expressionBody, targetProperty, filterProperty, value);
             }
+            else if (filterProperty.PropertyType.IsArray && !typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType))
+            {
+                return new ArraySearchFilterAttribute().BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            }
             else
             {
                 return new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, value);
