@@ -1,0 +1,16 @@
+﻿using AutoFilterer.Attributes;
+using AutoFilterer.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AutoFilterer.Tests.Environment.Dtos
+{
+    public class PreferencesFilter_ArraySearchWithAttribute : FilterBase
+    {
+        [ArraySearchFilter]
+        public int[] SecurityLevel { get; set; }
+    }
+}
