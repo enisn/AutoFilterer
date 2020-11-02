@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Restore
-      run: dotnet restore      
+      run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Pack
