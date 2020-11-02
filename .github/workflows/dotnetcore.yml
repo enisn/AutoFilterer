@@ -23,8 +23,4 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Pack
-      run: dotnet pack -o packages --configuration Release
-    - name: Push
-      run: dotnet nuget push packages/*.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate
       #continue-on-error: true
