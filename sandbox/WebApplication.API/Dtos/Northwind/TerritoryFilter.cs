@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace WebApplication.API.Dtos.Northwind
 {
-    public class TerritoryFilter : FilterBase
+    public class TerritoryFilter : PaginationFilterBase
     {
-        public string TerritoryId { get; set; }
+        public string[] TerritoryId { get; set; }
         [StringFilterOptions(StringFilterOption.Contains)]
         public string TerritoryDescription { get; set; }
     }

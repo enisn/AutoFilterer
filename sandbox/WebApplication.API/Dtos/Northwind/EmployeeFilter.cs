@@ -38,5 +38,7 @@ namespace WebApplication.API.Dtos.Northwind
         public string Extension { get; set; }
         [StringFilterOptions(StringFilterOption.Contains)]
         public string Notes { get; set; }
+
+        public EmployeeTerritoryFilter EmployeeTerritories { get; set; }
     }
 }

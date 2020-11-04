@@ -13,7 +13,7 @@ namespace WebApplication.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BooksController : ControllerBase
+    public class BooksController : BaseController
     {
         private readonly BooksRepository repository;
 
@@ -37,7 +37,7 @@ namespace WebApplication.API.Controllers
         [ProducesResponseType(typeof(Book[]), 200)]
         public IActionResult Get([FromQuery]BookFilter filter)
         {
-            var result = repository.Books.ApplyFilter(filter).ToList();
+            var result = repository.Books.ApplyFilter(filter);
 
             return Ok(result);
         }

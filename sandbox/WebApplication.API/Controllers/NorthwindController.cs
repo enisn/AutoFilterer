@@ -11,8 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication.API.Controllers
 {
+    /// <summary>
+    /// This is sample comment line.
+    /// </summary>
     [Route("api/[controller]/[action]")]
-    public class NorthwindController : ControllerBase
+    public class NorthwindController : BaseController
     {
         private readonly NorthwindDbContext dbContext;
 
@@ -22,54 +25,60 @@ namespace WebApplication.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Categories([FromQuery] CategoryFilter filter) 
-            => Ok(await dbContext.Categories.ApplyFilter(filter).ToListAsync());
+        public IActionResult Categories([FromQuery] CategoryFilter filter)
+            => Ok(dbContext.Categories.ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Customers([FromQuery] CustomerFilter filter) 
-            => Ok(await dbContext.Customers.ApplyFilter(filter).ToListAsync());
+        public IActionResult Customers([FromQuery] CustomerFilter filter)
+            => Ok(dbContext.Customers.ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> CustomerCustomerDemos([FromQuery] CustomerCustomerDemoFilter filter) 
-            => Ok(await dbContext.CustomerCustomerDemos.Include(i=> i.Customer).Include(i=> i.CustomerType).ApplyFilter(filter).ToListAsync());
+        public IActionResult CustomerCustomerDemos([FromQuery] CustomerCustomerDemoFilter filter)
+            => Ok(dbContext.CustomerCustomerDemos
+                                .Include(i => i.Customer)
+                                .Include(i => i.CustomerType)
+                                .ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> CustomerDemographics([FromQuery] CustomerDemographicFilter filter)
-            => Ok(await dbContext.CustomerDemographics.ApplyFilter(filter).ToListAsync());
+        public IActionResult CustomerDemographics([FromQuery] CustomerDemographicFilter filter)
+            => Ok(dbContext.CustomerDemographics.ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Employees([FromQuery] EmployeeFilter filter)
-            => Ok(await dbContext.Employees
+        public IActionResult Employees([FromQuery] EmployeeFilter filter)
+            => Ok(dbContext.Employees
                                 .Include(i => i.EmployeeTerritories)
-                                .ThenInclude(ti => ti.Employee)
-                                .ApplyFilter(filter).ToListAsync());
+                                .ThenInclude(ti => ti.Territory)
+                                .ApplyFilter(filter));
         [HttpGet]
-        public async Task<IActionResult> Orders([FromQuery] OrderFilter filter)
-            => Ok(await dbContext.Orders
+        public IActionResult Orders([FromQuery] OrderFilter filter)
+            => Ok(dbContext.Orders
                                 .Include(i => i.OrderDetails)
                                 .ThenInclude(ti => ti.Product)
-                                .ApplyFilter(filter).ToListAsync());
+                                .ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Products([FromQuery] ProductFilter filter)
-            => Ok(await dbContext.Products
+        public IActionResult Products([FromQuery] ProductFilter filter)
+            => Ok(dbContext.Products
                                 .Include(i => i.Supplier)
                                 .Include(i => i.Category)
-                                .ApplyFilter(filter)
-                                .ToListAsync());
+                                .ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Regions([FromQuery] RegionFilter filter)
-            => Ok(await dbContext.Regions
+        public IActionResult Regions([FromQuery] RegionFilter filter)
+            => Ok(dbContext.Regions
                                 .Include(i => i.Territories)
-                                .ApplyFilter(filter).ToListAsync());
+                                .ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Shippers([FromQuery] ShipperFilter filter)
-            => Ok(await dbContext.Shippers.ApplyFilter(filter).ToListAsync());
+        public IActionResult Shippers([FromQuery] ShipperFilter filter)
+            => Ok(dbContext.Shippers.ApplyFilter(filter));
 
         [HttpGet]
-        public async Task<IActionResult> Suppliers([FromQuery] SupplierFilter filter)
-            => Ok(await dbContext.Suppliers.ApplyFilter(filter).ToListAsync());
+        public IActionResult Suppliers([FromQuery] SupplierFilter filter)
+            => Ok(dbContext.Suppliers.ApplyFilter(filter));
+
+        [HttpGet]
+        public IActionResult Territories([FromQuery] TerritoryFilter filter)
+            => Ok(dbContext.Territories.ApplyFilter(filter));
     }
 }

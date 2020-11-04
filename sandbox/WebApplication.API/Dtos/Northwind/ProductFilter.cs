@@ -13,7 +13,7 @@ namespace WebApplication.API.Dtos.Northwind
 {
     public class ProductFilter : PaginationFilterBase
     {
-        public int?[] ProductId { get; set; }
+        public int[] ProductId { get; set; }
 
         [StringFilterOptions(StringFilterOption.Contains)]
         public string ProductName { get; set; }
