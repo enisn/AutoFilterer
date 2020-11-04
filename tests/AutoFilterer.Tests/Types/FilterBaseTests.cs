@@ -14,6 +14,7 @@ namespace AutoFilterer.Tests.Types
     public class FilterBaseTests : IDisposable
     {
         private MockRepository mockRepository;
+        private static readonly Random random = new Random();
 
         private readonly List<User> dummyData = new List<User>
         {
@@ -263,6 +264,25 @@ namespace AutoFilterer.Tests.Types
             Assert.True(result.Count == actualResult.Count);
             foreach (var item in actualResult)
                 Assert.Contains(item, actualResult);
+        }
+
+        [Theory, AutoMoqData(count:64)]
+        public void BuildExpression_IntoNullableProperty_ShouldMatchCount(List<Preferences> dummyData)
+        {
+            // Arrange
+            var filter = new PreferencesFilter_NullableProperty
+            {
+                ReadLimit = dummyData.FirstOrDefault(x => random.Next(0, 100) < 50)?.ReadLimit
+            };
+
+            var query = dummyData.AsQueryable();
+
+            // Act
+            var actualQuery = query.ApplyFilter(filter);
+            var expectedQuery = query.Where(x => x.ReadLimit.Value == filter.ReadLimit);
+
+            // Assert
+            Assert.Equal(expectedQuery.Count(), actualQuery.Count());
         }
     }
 }

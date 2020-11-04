@@ -12,5 +12,6 @@ namespace AutoFilterer.Tests.Environment.Models
         public bool IsTwoFactorEnabled { get; set; }
         public string GivenName { get; set; }
         public int SecurityLevel { get; set; }
+        public int? ReadLimit { get; set; }
     }
 }

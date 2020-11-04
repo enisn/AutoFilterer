@@ -9,6 +9,7 @@ namespace AutoFilterer.Swagger
         public static SwaggerGenOptions UseAutoFiltererParameters(this SwaggerGenOptions options)
         {
             options.OperationFilter<OrderableEnumOperationFilter>();
+            options.OperationFilter<InnerFilterPropertiesOperationFilter>();
             return options;
         }
     }

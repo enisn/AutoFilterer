@@ -1,4 +1,5 @@
 ﻿using AutoFilterer.Enums;
+using AutoFilterer.Extensions;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -19,6 +20,9 @@ namespace AutoFilterer.Attributes
         {
             var prop = Expression.Property(expressionBody, targetProperty.Name);
             var param = Expression.Constant(value);
+
+            if (targetProperty.PropertyType.IsNullable())
+                prop = Expression.Property(prop, nameof(Nullable<bool>.Value));
 
             switch (OperatorType)
             {
