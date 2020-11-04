@@ -8,8 +8,10 @@
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\enisn\source\repos\enisn\AutoFilterer\sandbox\WebApplication.API\WebApplication.API.xml</DocumentationFile>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <WarningsAsErrors>NU1605</WarningsAsErrors>
+    <NoWarn>1701;1702;1591;SA1503</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

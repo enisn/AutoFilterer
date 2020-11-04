@@ -23,5 +23,10 @@
             Search in **Title**, **Author** and **Country**.
             </summary>
         </member>
+        <member name="P:WebApplication.API.Dtos.Northwind.SupplierFilter.Search">
+            <summary>
+            Searches in **CompanyName**, **ContactName** and **ContactTitle**.
+            </summary>
+        </member>
     </members>
 </doc>
