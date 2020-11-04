@@ -1,4 +1,5 @@
 ﻿using AutoFilterer.Abstractions;
+using AutoFilterer.Extensions;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -64,10 +65,14 @@ namespace AutoFilterer.Types
             {
                 BinaryExpression minExp = default, maxExp = default;
 
+                var propertyExpression = Expression.Property(body, targetProperty.Name);
+                if (targetProperty.PropertyType.IsNullable())
+                    propertyExpression = Expression.Property(propertyExpression, nameof(Nullable<bool>.Value));
+
                 if (Min != null)
                 {
                     minExp = Expression.GreaterThanOrEqual(
-                               Expression.Property(body, targetProperty.Name),
+                               propertyExpression,
                                Expression.Constant(Min));
                     if (Max == null)
                         return minExp;
@@ -76,7 +81,7 @@ namespace AutoFilterer.Types
                 if (Max != null)
                 {
                     maxExp = Expression.LessThanOrEqual(
-                                Expression.Property(body, targetProperty.Name),
+                                propertyExpression,
                                 Expression.Constant(Max));
                     if (Min == null)
                         return maxExp;

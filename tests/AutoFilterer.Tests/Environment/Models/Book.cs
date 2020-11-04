@@ -14,5 +14,6 @@ namespace AutoFilterer.Tests.Environment.Models
         public int TotalPage { get; set; }
         public int ReadCount { get; set; }
         public bool IsPublished { get; set; }
+        public int? Views { get; set; }
     }
 }
