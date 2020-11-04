@@ -18,6 +18,5 @@ namespace WebApplication.API.Dtos.Northwind
         [CompareTo(nameof(Category.CategoryName), nameof(Category.Description))]
         [StringFilterOptions(StringFilterOption.Contains)]
         public string Search { get; set; }
-
     }
 }

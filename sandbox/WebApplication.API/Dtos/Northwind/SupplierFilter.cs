@@ -37,6 +37,5 @@ namespace WebApplication.API.Dtos.Northwind
         public string Fax { get; set; }
         [StringFilterOptions(StringFilterOption.Contains)]
         public string HomePage { get; set; }
-
     }
 }

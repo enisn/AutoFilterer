@@ -15,6 +15,5 @@ namespace WebApplication.API.Dtos.Northwind
 
         [StringFilterOptions(StringFilterOption.Contains)]
         public string RegionDescription { get; set; }
-
     }
 }
