@@ -64,8 +64,7 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<CustomerCustomerDemo>(entity =>
             {
-                entity.HasKey(e => new { e.CustomerId, e.CustomerTypeId })
-                    .IsClustered(false);
+                entity.HasKey(e => new { e.CustomerId, e.CustomerTypeId });
 
                 entity.Property(e => e.CustomerId).IsFixedLength();
 
@@ -86,8 +85,7 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<CustomerDemographic>(entity =>
             {
-                entity.HasKey(e => e.CustomerTypeId)
-                    .IsClustered(false);
+                entity.HasKey(e => e.CustomerTypeId);
 
                 entity.Property(e => e.CustomerTypeId).IsFixedLength();
             });
@@ -108,8 +106,7 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<EmployeeTerritory>(entity =>
             {
-                entity.HasKey(e => new { e.EmployeeId, e.TerritoryId })
-                    .IsClustered(false);
+                entity.HasKey(e => new { e.EmployeeId, e.TerritoryId });
 
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.EmployeeTerritories)
@@ -235,8 +232,7 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Region>(entity =>
             {
-                entity.HasKey(e => e.RegionId)
-                    .IsClustered(false);
+                entity.HasKey(e => e.RegionId);
 
                 entity.Property(e => e.RegionId).ValueGeneratedNever();
 
@@ -254,8 +250,7 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Territory>(entity =>
             {
-                entity.HasKey(e => e.TerritoryId)
-                    .IsClustered(false);
+                entity.HasKey(e => e.TerritoryId);
 
                 entity.Property(e => e.TerritoryDescription).IsFixedLength();
 
