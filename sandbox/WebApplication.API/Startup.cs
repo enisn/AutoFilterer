@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using AutoFilterer.Swagger;
+﻿using AutoFilterer.Swagger;
 using MarkdownDocumenting.Elements;
 using MarkdownDocumenting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using WebApplication.API.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.IO;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using WebApplication.API.Contexts.Contexts;
 using WebApplication.API.Repository;
 
 namespace WebApplication.API
@@ -36,7 +32,19 @@ namespace WebApplication.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews()
+                .AddNewtonsoftJson(opts =>
+                {
+                    opts.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    opts.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    opts.SerializerSettings.MaxDepth = 3;
+                })
                 .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+            services.AddDbContext<NorthwindDbContext>(opts
+                //=> opts.UseSqlServer(Configuration.GetConnectionString("Northwind"))
+                => opts.UseNpgsql(Configuration.GetConnectionString("Northwind"))
+                );
 
             services.AddSingleton<BooksRepository>();
 
