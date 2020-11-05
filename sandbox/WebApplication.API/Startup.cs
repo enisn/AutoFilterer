@@ -100,7 +100,6 @@ namespace WebApplication.API
 
             });
 
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

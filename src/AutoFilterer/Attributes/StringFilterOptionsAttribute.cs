@@ -44,7 +44,6 @@ namespace AutoFilterer.Attributes
                                   instance: Expression.Property(expressionBody, property.Name),
                                   arguments: new[] { Expression.Constant(value), Expression.Constant(Comparison) });                 
               
-
             return comparison;
         }
 
