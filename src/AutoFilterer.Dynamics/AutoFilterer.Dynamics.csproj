@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.4.3</Version>
+    <Version>2.4.0</Version>
     <AssemblyVersion>2.4.0</AssemblyVersion>
     <PackageReleaseNotes>First Release.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
