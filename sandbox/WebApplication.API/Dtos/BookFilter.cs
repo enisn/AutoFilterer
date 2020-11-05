@@ -21,7 +21,8 @@ namespace WebApplication.API.Dtos
         [StringFilterOptions(StringFilterOption.Contains)]
         public string Language { get; set; }
 
-        public StringFilter Author { get; set; }
+        [ToLowerContainsComparison]
+        public string Author { get; set; }
 
         public OperatorFilter<int> TotalPage { get; set; }
 
