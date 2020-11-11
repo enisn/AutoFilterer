@@ -58,6 +58,6 @@ You can TRY [LIVE DEMO](https://autofilterer-showcase.herokuapp.com/swagger/inde
 Just [visit Wiki](../../wiki) for better understanding of usage.
 
 ## Swagger
-All parameters supports OpenAPI 3.0 Specifications 👍
+All parameters support OpenAPI 3.0 Specifications 👍
 
 Improve your swagger documentation via using [AutoFilterer.Swagger](https://www.nuget.org/packages/AutoFilterer.Swagger)
