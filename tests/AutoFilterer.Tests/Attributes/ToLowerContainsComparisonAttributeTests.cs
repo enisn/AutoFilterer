@@ -26,7 +26,7 @@ namespace AutoFilterer.Tests.Attributes
             var filteredQuery = query.ApplyFilter(filter);
             var result = filteredQuery.ToList();
             // Assert
-            var actualResult = query.Where(x => x.Title.Contains(filter.Query.ToLower())).ToList();
+            var actualResult = query.Where(x => x.Title.ToLower().Contains(filter.Query.ToLower())).ToList();
 
             Assert.Equal(result.Count, actualResult.Count);
         }
