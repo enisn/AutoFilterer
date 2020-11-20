@@ -60,4 +60,4 @@ Just [visit Wiki](../../wiki) for better understanding of usage.
 ## Swagger
 All parameters support OpenAPI 3.0 Specifications 👍
 
-Improve your swagger documentation via using [AutoFilterer.Swagger](https://www.nuget.org/packages/AutoFilterer.Swagger)
+Improve your swagger documentation via using [AutoFilterer.Swagger](/enisn/AutoFilterer/tree/master/src/AutoFilterer.Swagger)
