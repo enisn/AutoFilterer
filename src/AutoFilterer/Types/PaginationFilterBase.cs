@@ -1,11 +1,12 @@
-﻿using AutoFilterer.Attributes;
+﻿using AutoFilterer.Abstractions;
+using AutoFilterer.Attributes;
 using AutoFilterer.Extensions;
 using System;
 using System.Linq;
 
 namespace AutoFilterer.Types
 {
-    public class PaginationFilterBase : OrderableFilterBase
+    public class PaginationFilterBase : OrderableFilterBase, IOrderablePaginationFilter
     {
         [IgnoreFilter]
         public virtual int Page { get; set; } = 1;
@@ -21,14 +22,18 @@ namespace AutoFilterer.Types
             return base.ApplyFilterTo(query).ToPaged(Page, PerPage);
         }
 
-        public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
+        public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query)
             => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
 
         public IQueryable<T> ApplyFilterWithoutPagination<T>(IQueryable<T> query)
+            => base.ApplyFilterTo(query);
+
+        public IQueryable<T> ApplyFilterWithoutPaginationAndOrdering<T>(IQueryable<T> query)
             => base.ApplyFilterWithoutOrdering(query);
+
     }
 
-    [Obsolete("This is deprecated. Use PaginationFilterBase instead of PaginationFilterBase<T>. Just remove Type parameter from this.")]
+    [Obsolete("This is deprecated. Use PaginationFilterBase instead of PaginationFilterBase<T>. Just remove Type parameter from this.", true)]
     public class PaginationFilterBase<T> : FilterBase<T>
     {
         [IgnoreFilter]
@@ -37,10 +42,10 @@ namespace AutoFilterer.Types
         [IgnoreFilter]
         public virtual int PerPage { get; set; } = 10;
 
-        public virtual IQueryable<T> ApplyFilterTo(IOrderedQueryable<T> query) 
+        public virtual IQueryable<T> ApplyFilterTo(IOrderedQueryable<T> query)
             => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
 
-        public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query) 
+        public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IOrderedQueryable<TEntity> query)
             => base.ApplyFilterTo(query).ToPaged(Page, PerPage);
 
         public IQueryable<T> ApplyFilterWithoutPagination<T>(IQueryable<T> query)
