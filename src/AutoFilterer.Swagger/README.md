@@ -3,7 +3,7 @@ This library describes all AutoFilterer parameter into swagger.json and makes vi
 
 # Set-up
 
-- Install `AutoFilterer.Swagger` package from NuGet
+- Install `AutoFilterer.Swagger` package from [NuGet](https://www.nuget.org/packages/AutoFilterer.Swagger)
 - Go your **Startup** and add following namespace using:
 ```csharp
 using AutoFilterer.Swagger;
