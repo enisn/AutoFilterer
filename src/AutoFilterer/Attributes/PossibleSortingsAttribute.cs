@@ -15,7 +15,7 @@ namespace AutoFilterer.Attributes
         /// <summary>
         /// Generates an attribute from type and finds PropertyNames from Enum values or properties of class.
         /// </summary>
-        /// <param name="typeMetaData">Enum or Model.</param>
+        /// <param name="typeMetaData">Enum or Class.</param>
         public PossibleSortingsAttribute(Type typeMetaData)
         {
             if (typeMetaData.IsEnum)

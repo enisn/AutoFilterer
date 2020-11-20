@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Abstractions
 {
@@ -12,7 +8,8 @@ namespace AutoFilterer.Abstractions
         IComparable Max { get; }
     }
 
-    public interface IRange<T> : IFilterableType where T :struct, IComparable
+    public interface IRange<T> : IFilterableType 
+        where T :struct, IComparable
     {
         T? Min { get; set; }
         T? Max { get; set; }
