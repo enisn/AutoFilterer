@@ -3,7 +3,7 @@
 namespace AutoFilterer.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-    public class OrderingOptionsBaseAttribute : Attribute
+    public abstract class OrderingOptionsBaseAttribute : Attribute
     {
     }
 }
