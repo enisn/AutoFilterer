@@ -1,5 +1,5 @@
 ﻿using AutoFilterer.Attributes;
-using AutoFilterer.Enums;
+
 using AutoFilterer.Types;
 using System;
 using System.Collections.Generic;

@@ -1,13 +1,8 @@
-﻿using AutoFilterer.Tests.Environment.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Environment.Dtos;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
-using AutoFilterer.Extensions;
-using AutoFilterer.Enums;
+
 
 namespace AutoFilterer.Tests.Extensions
 {

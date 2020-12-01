@@ -1,5 +1,5 @@
 ﻿using AutoFilterer.Attributes;
-using AutoFilterer.Enums;
+
 using System.Linq;
 
 namespace AutoFilterer.Abstractions

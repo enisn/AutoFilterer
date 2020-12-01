@@ -1,16 +1,11 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
-using AutoFilterer.Enums;
 using AutoFilterer.Extensions;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {

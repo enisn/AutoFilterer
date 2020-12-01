@@ -160,9 +160,9 @@ namespace AutoFilterer.Tests.Types
             IQueryable<User> query = dummyData.AsQueryable();
 
             // Act
-            filterBase.CombineWith = Enums.CombineType.And;
+            filterBase.CombineWith = CombineType.And;
             var result = query.ApplyFilter(filterBase).ToList();
-            filterBase.CombineWith = Enums.CombineType.Or;
+            filterBase.CombineWith = CombineType.Or;
             var orResult = query.ApplyFilter(filterBase).ToList();
 
 

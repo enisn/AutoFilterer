@@ -1,4 +1,4 @@
-﻿using AutoFilterer.Enums;
+﻿
 using System.Linq.Expressions;
 
 namespace AutoFilterer.Extensions

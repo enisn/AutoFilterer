@@ -1,5 +1,5 @@
 ﻿using AutoFilterer.Attributes;
-using AutoFilterer.Enums;
+
 using AutoFilterer.Types;
 
 namespace WebApplication.API.Dtos.Northwind

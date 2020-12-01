@@ -1,6 +1,6 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
-using AutoFilterer.Enums;
+
 using System.Linq;
 
 namespace AutoFilterer.Types
