@@ -15,6 +15,12 @@ namespace AutoFilterer.Attributes
             PropertyNames = propertyNames;
         }
 
+        public CompareToAttribute(CombineType combineWith, params string[] propertyNames)
+        {
+            CombineWith = combineWith;
+            PropertyNames = propertyNames;
+        }
+
         public string[] PropertyNames { get; set; }
 
         /// <summary>
