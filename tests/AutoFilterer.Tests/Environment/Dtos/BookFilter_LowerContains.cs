@@ -9,6 +9,6 @@ namespace AutoFilterer.Tests.Environment.Dtos
     public class BookFilter_LowerContains : FilterBase
     {
         [ToLowerContainsComparison]
-        public string Query { get; set; }
+        public string Title { get; set; }
     }
 }
