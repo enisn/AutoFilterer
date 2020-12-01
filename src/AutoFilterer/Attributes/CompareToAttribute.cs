@@ -1,5 +1,5 @@
 ﻿using AutoFilterer.Abstractions;
-
+using AutoFilterer.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,15 +28,20 @@ namespace AutoFilterer.Attributes
 
         public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
-            for (int i = 0; i < PropertyNames.Length; i++)
+            Expression innerExpression = null;
+            foreach (var targetPropertyName in PropertyNames)
             {
-                var targetPropertyName = PropertyNames[i];
                 var _targetProperty = targetProperty.DeclaringType.GetProperty(targetPropertyName);
+                if (_targetProperty == null)
+                    continue;
 
-                expressionBody = BuildExpressionForProperty(expressionBody, _targetProperty, filterProperty, value);
+                var bodyParameter = expressionBody;
+
+                var expression = BuildExpressionForProperty(bodyParameter, _targetProperty, filterProperty, value);
+                innerExpression = innerExpression.Combine(expression, CombineWith);
             }
 
-            return expressionBody;
+            return innerExpression;
         }
 
         public virtual Expression BuildExpressionForProperty(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)

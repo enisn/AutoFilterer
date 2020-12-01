@@ -46,19 +46,9 @@ namespace AutoFilterer.Types
 
                     var attribute = filterProperty.GetCustomAttribute<CompareToAttribute>(inherit: true) ?? new CompareToAttribute(filterProperty.Name);
 
-                    Expression innerExpression = null;
+                    var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
-                    foreach (var targetPropertyName in attribute.PropertyNames)
-                    {
-                        var targetProperty = entityType.GetProperty(targetPropertyName);
-                        if (targetProperty == null)
-                            continue;
-
-                        var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
-
-                        var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
-                        innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
-                    }
+                    Expression innerExpression = attribute.BuildExpression(bodyParameter, entityType.GetProperty(attribute.PropertyNames[0]), filterProperty, val);
 
                     var combined = finalExpression.Combine(innerExpression, CombineWith);
                     finalExpression = combined.Combine(body, CombineWith);
