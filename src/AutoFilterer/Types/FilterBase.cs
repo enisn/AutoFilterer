@@ -36,15 +36,6 @@ namespace AutoFilterer.Types
             return query.Where(lambda);
         }
 
-        public virtual Expression<Func<TEntity,bool>> BuildLambda<TEntity>()
-        {
-            var parameter = Expression.Parameter(typeof(TEntity), "x");
-
-            var exp = BuildExpression(typeof(TEntity), parameter);
-
-            return Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
-        }
-
         public virtual Expression BuildExpression(Type entityType, Expression body)
         {
             Expression finalExpression = body;
@@ -53,8 +44,6 @@ namespace AutoFilterer.Types
             {
                 try
                 {
-                    var entityProperty = entityType.GetProperty(filterProperty.Name);
-
                     var val = filterProperty.GetValue(this);
                     if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
                         continue;
@@ -75,7 +64,6 @@ namespace AutoFilterer.Types
                         innerExpression = Combine(innerExpression, expression, attribute.CombineWith);
                     }
 
-                    //var expression = attribute.BuildExpression(body, entityProperty, filterProperty, val);
                     var combined = Combine(finalExpression, innerExpression);
                     finalExpression = Combine(combined, body);
                 }
