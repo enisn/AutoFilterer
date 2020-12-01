@@ -39,7 +39,7 @@ namespace AutoFilterer.Dynamics.Tests
         {
             // Arrange
             DynamicFilter filter = new DynamicFilter { { "TotalPage", "5" },  { "IsPublished", "True" } };
-            filter.CombineWith = Enums.CombineType.And;
+            filter.CombineWith = CombineType.And;
 
             // Act
             var actualQuery = list.AsQueryable().ApplyFilter(filter);
@@ -62,7 +62,7 @@ namespace AutoFilterer.Dynamics.Tests
         {
             // Arrange
             DynamicFilter filter = new DynamicFilter { { "TotalPage", "5" },  { "IsPublished", "True" } };
-            filter.CombineWith = Enums.CombineType.Or;
+            filter.CombineWith = CombineType.Or;
 
             // Act
             var actualQuery = list.AsQueryable().ApplyFilter(filter);

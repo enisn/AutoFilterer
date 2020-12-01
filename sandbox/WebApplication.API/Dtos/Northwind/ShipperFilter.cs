@@ -1,11 +1,6 @@
-﻿using AutoFilterer.Types;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoFilterer;
 using AutoFilterer.Attributes;
+using AutoFilterer.Types;
 
 namespace WebApplication.API.Dtos.Northwind
 {

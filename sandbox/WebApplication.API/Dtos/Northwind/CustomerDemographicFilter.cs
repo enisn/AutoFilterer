@@ -1,5 +1,5 @@
-﻿using AutoFilterer.Attributes;
-
+﻿using AutoFilterer;
+using AutoFilterer.Attributes;
 using AutoFilterer.Types;
 using System;
 using System.Collections.Generic;
