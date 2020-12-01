@@ -30,6 +30,5 @@ namespace AutoFilterer.Types
 
         public IQueryable<T> ApplyFilterWithoutPaginationAndOrdering<T>(IQueryable<T> query)
             => base.ApplyFilterWithoutOrdering(query);
-
     }
 }
