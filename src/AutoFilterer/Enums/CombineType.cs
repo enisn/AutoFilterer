@@ -1,4 +1,4 @@
-﻿namespace AutoFilterer.Enums
+﻿namespace AutoFilterer
 {
     /// <summary>
     /// Combining logic of queries.

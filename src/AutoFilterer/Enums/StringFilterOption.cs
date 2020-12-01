@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace AutoFilterer.Enums
+namespace AutoFilterer
 {
     [Flags]
     public enum StringFilterOption

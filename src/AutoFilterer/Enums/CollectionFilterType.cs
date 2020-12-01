@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AutoFilterer.Enums
+namespace AutoFilterer
 {
     [Flags]
     public enum CollectionFilterType

@@ -1,4 +1,4 @@
-﻿namespace AutoFilterer.Enums
+﻿namespace AutoFilterer
 {
     public enum OperatorType
     {
