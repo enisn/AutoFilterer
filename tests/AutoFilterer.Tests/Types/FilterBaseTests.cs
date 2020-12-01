@@ -165,7 +165,6 @@ namespace AutoFilterer.Tests.Types
             filterBase.CombineWith = CombineType.Or;
             var orResult = query.ApplyFilter(filterBase).ToList();
 
-
             // Assert
             Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email && x.IsActive == filterBase.IsActive));
             Assert.True(orResult.Count == dummyData.Count(x => x.Email == filterBase.Email || x.IsActive == filterBase.IsActive));

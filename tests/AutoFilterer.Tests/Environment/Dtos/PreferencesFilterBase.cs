@@ -1,10 +1,5 @@
 ﻿using AutoFilterer.Attributes;
 using AutoFilterer.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Tests.Environment.Dtos
 {
@@ -12,7 +7,7 @@ namespace AutoFilterer.Tests.Environment.Dtos
     {
         public bool? IsTwoFactorEnabled { get; set; }
 
-        [StringFilterOptions(Enums.StringFilterOption.EndsWith)]
+        [StringFilterOptions(StringFilterOption.EndsWith)]
         public string GivenName { get; set; }
 
         public Range<int> SecurityLevel { get; set; }

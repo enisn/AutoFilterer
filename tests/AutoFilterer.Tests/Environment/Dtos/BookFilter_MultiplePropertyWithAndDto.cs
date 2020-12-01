@@ -6,8 +6,8 @@ namespace AutoFilterer.Tests.Environment.Dtos
 {
     public class BookFilter_MultiplePropertyWithAndDto : FilterBase
     {
-        [CompareTo(nameof(Book.Title), nameof(Book.Author), CombineWith = Enums.CombineType.And)]
-        [StringFilterOptions(Enums.StringFilterOption.Contains)]
+        [CompareTo(nameof(Book.Title), nameof(Book.Author), CombineWith = CombineType.And)]
+        [StringFilterOptions(StringFilterOption.Contains)]
         public string Query { get; set; }
     }
 }
