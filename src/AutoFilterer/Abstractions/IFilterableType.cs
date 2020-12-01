@@ -12,8 +12,7 @@ namespace AutoFilterer.Abstractions
     /// </item>
     /// </list>
     /// </summary>
-    public interface IFilterableType
+    public interface IFilterableType : IPropertyExpressionable
     {
-        Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value);
     }
 }

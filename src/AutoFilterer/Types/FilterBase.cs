@@ -48,7 +48,7 @@ namespace AutoFilterer.Types
 
                     var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
-                    Expression innerExpression = attribute.BuildExpression(bodyParameter, entityType.GetProperty(attribute.PropertyNames[0]), filterProperty, val);
+                    var innerExpression = attribute.CompareAndBuildExpression(bodyParameter, entityType, filterProperty, val);
 
                     var combined = finalExpression.Combine(innerExpression, CombineWith);
                     finalExpression = combined.Combine(body, CombineWith);

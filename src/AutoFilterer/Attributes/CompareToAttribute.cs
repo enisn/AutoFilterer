@@ -2,17 +2,13 @@
 using AutoFilterer.Extensions;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Attributes
 {
-    public class CompareToAttribute : FilteringOptionsBaseAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class CompareToAttribute : Attribute, IPropertyExpressionable
     {
         public CompareToAttribute(params string[] propertyNames)
         {
@@ -26,27 +22,27 @@ namespace AutoFilterer.Attributes
         /// </summary>
         public CombineType CombineWith { get; set; } = CombineType.Or;
 
-        public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        public virtual Expression CompareAndBuildExpression(Expression expressionBody, Type targetType, PropertyInfo filterProperty, object value)
         {
             Expression innerExpression = null;
             foreach (var targetPropertyName in PropertyNames)
             {
-                var _targetProperty = targetProperty.DeclaringType.GetProperty(targetPropertyName);
-                if (_targetProperty == null)
+                var targetProperty = targetType.GetProperty(targetPropertyName);
+                if (targetProperty == null)
                     continue;
 
                 var bodyParameter = expressionBody;
 
-                var expression = BuildExpressionForProperty(bodyParameter, _targetProperty, filterProperty, value);
+                var expression = BuildExpression(bodyParameter, targetProperty, filterProperty, value);
                 innerExpression = innerExpression.Combine(expression, CombineWith);
             }
 
             return innerExpression;
         }
 
-        public virtual Expression BuildExpressionForProperty(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
-            var attribute = filterProperty.GetCustomAttributes<FilteringOptionsBaseAttribute>().FirstOrDefault(x => !(x is CompareToAttribute));
+            var attribute = filterProperty.GetCustomAttribute<FilteringOptionsBaseAttribute>();
 
             if (attribute != null)
             {
