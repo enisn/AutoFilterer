@@ -1,6 +1,7 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
+using AutoFilterer.Extensions;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -51,47 +52,24 @@ namespace AutoFilterer.Types
             Expression expression = null;
 
             if (Eq != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq));
+                expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
 
             if (Not != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not));
+                expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
 
             if (Equals != null)            
-                expression = Combine(expression, new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, this.Equals));            
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Equals), CombineWith);            
 
             if (Contains != null)
-                expression = Combine(expression, new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Contains));
+                expression = expression.Combine( new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Contains), CombineWith);
 
             if (StartsWith != null)
-                expression = Combine(expression, new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, StartsWith));
+                expression = expression.Combine( new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, StartsWith), CombineWith);
 
             if (EndsWith != null)
-                expression = Combine(expression, new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, EndsWith));
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, EndsWith), CombineWith);
 
             return expression;
-        }
-
-        private protected virtual Expression Combine(Expression left, Expression right)
-        {
-            if (left == null)
-                return right;
-            if (right == null)
-                return left;
-
-            if (left is ParameterExpression || left is MemberExpression)
-                return right;
-            if (right is ParameterExpression || right is MemberExpression)
-                return left;
-
-            switch (this.CombineWith)
-            {
-                case CombineType.And:
-                    return Expression.And(left, right);
-                case CombineType.Or:
-                    return Expression.Or(left, right);
-                default:
-                    return right;
-            }
         }
     }
 }

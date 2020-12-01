@@ -1,7 +1,7 @@
 ﻿namespace AutoFilterer.Enums
 {
     /// <summary>
-    /// Combinign logic of queries.
+    /// Combining logic of queries.
     /// 0 - And
     /// 1 - Or
     /// </summary>

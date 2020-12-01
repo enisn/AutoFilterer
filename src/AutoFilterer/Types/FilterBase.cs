@@ -1,6 +1,7 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
+using AutoFilterer.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,11 +62,11 @@ namespace AutoFilterer.Types
                         var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
                         var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
-                        innerExpression = Combine(innerExpression, expression, attribute.CombineWith);
+                        innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
                     }
 
-                    var combined = Combine(finalExpression, innerExpression);
-                    finalExpression = Combine(combined, body);
+                    var combined = finalExpression.Combine(innerExpression, CombineWith);
+                    finalExpression = combined.Combine(body, CombineWith);
                 }
                 catch (Exception ex)
                 {
@@ -74,34 +75,6 @@ namespace AutoFilterer.Types
             }
 
             return finalExpression;
-        }
-
-        private protected virtual Expression Combine(Expression body, Expression extend)
-        {
-            return Combine(body, extend, this.CombineWith);
-        }
-
-        private protected virtual Expression Combine(Expression left, Expression right, CombineType combineType)
-        {
-            if (left == null)
-                return right;
-            if (right == null)
-                return left;
-
-            if (left is ParameterExpression || left is MemberExpression)
-                return right;
-            if (right is ParameterExpression || right is MemberExpression)
-                return left;
-
-            switch (combineType)
-            {
-                case CombineType.And:
-                    return Expression.And(left, right);
-                case CombineType.Or:
-                    return Expression.Or(left, right);
-                default:
-                    return right;
-            }
         }
     }
 }

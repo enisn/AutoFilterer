@@ -1,6 +1,7 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
+using AutoFilterer.Extensions;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -23,47 +24,24 @@ namespace AutoFilterer.Types
             Expression expression = null;
 
             if (Eq != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
 
             if (Gt != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.GreaterThan).BuildExpression(expressionBody, targetProperty, filterProperty, Gt));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.GreaterThan).BuildExpression(expressionBody, targetProperty, filterProperty, Gt), CombineWith);
 
             if (Lt != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.LessThan).BuildExpression(expressionBody, targetProperty, filterProperty, Lt));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.LessThan).BuildExpression(expressionBody, targetProperty, filterProperty, Lt), CombineWith);
 
             if (Gte != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Gte));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Gte), CombineWith);
 
             if (Lte != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.LessThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Lte));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.LessThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Lte), CombineWith);
 
             if (Not != null)
-                expression = Combine(expression, new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not));
+                expression = expression.Combine( new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
 
             return expression;
-        }
-
-        private protected virtual Expression Combine(Expression left, Expression right)
-        {
-            if (left == null)
-                return right;
-            if (right == null)
-                return left;
-
-            if (left is ParameterExpression || left is MemberExpression)
-                return right;
-            if (right is ParameterExpression || right is MemberExpression)
-                return left;
-
-            switch (this.CombineWith)
-            {
-                case CombineType.And:
-                    return Expression.And(left, right);
-                case CombineType.Or:
-                    return Expression.Or(left, right);
-                default:
-                    return right;
-            }
         }
     }
 }
