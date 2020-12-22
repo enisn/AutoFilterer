@@ -1,4 +1,8 @@
-﻿namespace AutoFilterer
+﻿#if LEGACY_NAMESPACE
+namespace AutoFilterer.Enums
+#else
+namespace AutoFilterer
+#endif
 {
     /// <summary>
     /// Combining logic of queries.

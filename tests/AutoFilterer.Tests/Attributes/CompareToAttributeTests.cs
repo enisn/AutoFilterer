@@ -19,7 +19,7 @@ namespace AutoFilterer.Tests.Attributes
             // Arrange
             var filter = new BookFilter_MultiplePropertyWithOrDto
             {
-                CombineWith = Enums.CombineType.Or,
+                CombineWith = CombineType.Or,
                 Query = "12"
             };
 
@@ -40,7 +40,7 @@ namespace AutoFilterer.Tests.Attributes
             // Arrange
             var filter = new BookFilter_MultiplePropertyWithAndDto
             {
-                CombineWith = Enums.CombineType.Or,
+                CombineWith = CombineType.Or,
                 Query = "a"
             };
 

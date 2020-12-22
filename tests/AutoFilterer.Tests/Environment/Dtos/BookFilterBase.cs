@@ -10,9 +10,9 @@ namespace AutoFilterer.Tests.Environment.Dtos
 {
     public class BookFilterBase : FilterBase
     {
-        [StringFilterOptions(Enums.StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
+        [StringFilterOptions(StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
         public string Title { get; set; }
-        [StringFilterOptions(Enums.StringFilterOption.StartsWith)]
+        [StringFilterOptions(StringFilterOption.StartsWith)]
         public string Author { get; set; }
         public Range<int> TotalPage { get; set; }
         public int? ReadCount { get; set; }
