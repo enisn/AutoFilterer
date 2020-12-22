@@ -12,33 +12,36 @@ namespace AutoFilterer.Types
         /// <summary>
         /// Provides parameter for equal operator '==' in query.
         /// </summary>
-        public string Eq { get; set; }
+        public virtual string Eq { get; set; }
 
         /// <summary>
         /// Provides parameter to not equal operator '!=' in query.
         /// </summary>
-        public string Not { get; set; }
+        public virtual string Not { get; set; }
 
         /// <summary>
         /// Provides parameter to String.Equals method query.
         /// </summary>
-        public new string Equals { get; set; }
+        public virtual new string Equals { get; set; }
 
         /// <summary>
         /// Provides parameter to String.Conains method query.
         /// </summary>
-        public string Contains { get; set; }
+        public virtual string Contains { get; set; }
 
         /// <summary>
         /// Provides parameter to String.StartsWith method query.
         /// </summary>
-        public string StartsWith { get; set; }
+        public virtual string StartsWith { get; set; }
 
         /// <summary>
         /// Provides parameter to String.EndsWith method query.
         /// </summary>
-        public string EndsWith { get; set; }
+        public virtual string EndsWith { get; set; }
 
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         public virtual CombineType CombineWith { get; set; }
 
         /// <summary>
@@ -46,7 +49,7 @@ namespace AutoFilterer.Types
         /// </summary>
         public virtual StringComparison? Compare { get; set; }
 
-        public Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             Expression expression = null;
 

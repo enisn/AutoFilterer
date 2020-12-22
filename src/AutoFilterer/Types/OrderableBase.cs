@@ -16,7 +16,7 @@ namespace AutoFilterer.Types
         [IgnoreFilter] public virtual Sorting SortBy { get; set; }
         [IgnoreFilter] public virtual string Sort { get; }
 
-        public IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> queryable)
+        public virtual IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> queryable)
         {
             return ApplyOrder(queryable, this);
         }
@@ -47,6 +47,7 @@ namespace AutoFilterer.Types
             throw new InvalidOperationException("Invalid Sorting type in ApplyOrder method");
         }
 
+        // TODO: AutoFilterer.Dynamics feature.
         private static MemberExpression GetMemberExpression(Expression parameter, string name)
         {
             if (!name.Contains("."))

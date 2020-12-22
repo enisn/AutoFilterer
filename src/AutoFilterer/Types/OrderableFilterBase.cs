@@ -1,6 +1,6 @@
 ﻿using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
-
+using System.Data;
 using System.Linq;
 
 namespace AutoFilterer.Types
@@ -19,10 +19,10 @@ namespace AutoFilterer.Types
             return this.ApplyOrder(base.ApplyFilterTo(query));
         }
 
-        public IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source) 
+        public virtual IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source) 
             => OrderableBase.ApplyOrder(source, this);
 
-        public IQueryable<TSource> ApplyFilterWithoutOrdering<TSource>(IQueryable<TSource> source)
+        public virtual IQueryable<TSource> ApplyFilterWithoutOrdering<TSource>(IQueryable<TSource> source)
             => base.ApplyFilterTo(source);
     }
 }

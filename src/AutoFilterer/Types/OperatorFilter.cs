@@ -9,15 +9,15 @@ namespace AutoFilterer.Types
     public class OperatorFilter<T> : IFilterableType
         where T : struct
     {
-        public T? Eq { get; set; }
-        public T? Not { get; set; }
-        public T? Gt { get; set; }
-        public T? Lt { get; set; }
-        public T? Gte { get; set; }
-        public T? Lte { get; set; }
+        public virtual T? Eq { get; set; }
+        public virtual T? Not { get; set; }
+        public virtual T? Gt { get; set; }
+        public virtual T? Lt { get; set; }
+        public virtual T? Gte { get; set; }
+        public virtual T? Lte { get; set; }
 
-        public CombineType CombineWith { get; set; }
-        public Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        public virtual CombineType CombineWith { get; set; }
+        public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             Expression expression = null;
 

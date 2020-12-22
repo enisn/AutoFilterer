@@ -26,8 +26,8 @@ namespace AutoFilterer.Types
             Max = max;
         }
 
-        public T? Min { get; set; }
-        public T? Max { get; set; }
+        public virtual T? Min { get; set; }
+        public virtual T? Max { get; set; }
 
         IComparable IRange.Min => Min;
         IComparable IRange.Max => Max;
@@ -57,7 +57,7 @@ namespace AutoFilterer.Types
             return $"{this.Min?.ToString() ?? "-"}|{this.Max?.ToString() ?? "-"}";
         }
 
-        public Expression BuildExpression(Expression body, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        public virtual Expression BuildExpression(Expression body, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             return GetRangeComparison();
 
@@ -91,12 +91,12 @@ namespace AutoFilterer.Types
             }
         }
 
-        public bool Equals(string other)
+        public virtual bool Equals(string other)
         {
             return this.ToString() == other;
         }
 
-        public string ToString(string format, IFormatProvider formatProvider)
+        public virtual string ToString(string format, IFormatProvider formatProvider)
         {
             return this.ToString();
         }
