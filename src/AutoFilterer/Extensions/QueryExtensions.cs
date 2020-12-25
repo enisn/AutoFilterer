@@ -101,5 +101,32 @@ namespace AutoFilterer.Extensions
         {
             return filter.ApplyOrder(source);
         }
+
+        public static IQueryable<TResult> ApplyFilter<T, TResult>(this IQueryable<T> source, ISelectorFilter<TResult> filter)
+            where TResult : class, new()
+        {
+            return filter.ApplySelectTo(filter.ApplyFilterTo(source));
+        }
+
+        /// <summary>
+        /// Applies only Select to your query.
+        /// </summary>
+        /// <remarks>
+        /// In example: 
+        /// <br />
+        /// IQueryable&lt;<typeparamref name="T"/>&gt; query = GetQueryable();
+        /// <br />
+        /// query.Select(new <typeparamref name="TResult"/>{ ... });
+        /// </remarks>
+        /// <typeparam name="T">Type of your source model. Might be your Entity.</typeparam>
+        /// <typeparam name="TResult">Type of to be projected model. Might be your DTO.</typeparam>
+        /// <param name="source">Source to be selected.</param>
+        /// <param name="filter">Filter object to be referenced how to filter.</param>
+        /// <returns>Projected <see cref="IQueryable{T}"/>.</returns>
+        public static IQueryable<TResult> ApplySelect<T, TResult>(this IQueryable<T> source, ISelectorFilter<TResult> filter)
+            where TResult : class, new()
+        {
+            return filter.ApplySelectTo(source);
+        }
     }
 }
