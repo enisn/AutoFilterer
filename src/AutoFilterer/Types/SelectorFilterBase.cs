@@ -8,21 +8,12 @@ using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
-    public class SelectorFilterBase<TResult> : ISelectorFilter<TResult>
+    public class SelectorFilterBase<TResult> : FilterBase, ISelectorFilter<TResult>
         where TResult : class, new()
     {
-        public IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
-        {
-            return query;
-        }
-
         public IQueryable<TResult> ApplySelectTo<TEntity>(IQueryable<TEntity> query)
         {
-            throw new NotImplementedException();
-        }
-
-        public Expression BuildExpression(Type entityType, Expression body)
-        {
+            // TODO: Might be useful: https://github.com/enisn/AutoFilterer/issues/20#issuecomment-751188698
             throw new NotImplementedException();
         }
     }
