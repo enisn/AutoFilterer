@@ -1,4 +1,7 @@
-﻿using AutoFilterer;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer;
 using AutoFilterer.Attributes;
 using AutoFilterer.Types;
 using WebApplication.API.Models.Northwind;
