@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Attributes;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Attributes;
 using AutoFilterer.Tests.Environment.Models;
 using AutoFilterer.Types;
 

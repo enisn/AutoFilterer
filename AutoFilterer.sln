@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 		.dockerignore = .dockerignore
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		common.props = common.props
 		Dockerfile = Dockerfile
 		LICENSE = LICENSE
 		README.md = README.md

@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Dynamics.Tests.Environment.Models;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Dynamics.Tests.Environment.Models;
 using AutoFilterer.Dynamics.Tests.Environment.Statics;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Tests.Environment.Statics;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
