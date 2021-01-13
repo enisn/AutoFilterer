@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Tests.Environment.Statics;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
@@ -19,7 +22,7 @@ namespace AutoFilterer.Tests
         public void BuildExpression_TotalPageWithAnd_SholdMatchCount(List<Book> data, BookFilter_OperatorFilter_TotalPage filter)
         {
             // Arrange
-            filter.CombineWith = Enums.CombineType.And;
+            filter.CombineWith = CombineType.And;
             Stopwatch sw = new Stopwatch();
 
             // Act
@@ -82,7 +85,7 @@ namespace AutoFilterer.Tests
             // Classical Way
             sw.Start();
             var cQuery = data.AsQueryable();
-            if (filter.CombineWith == Enums.CombineType.And)
+            if (filter.CombineWith == CombineType.And)
             {
                 cQuery = cQuery.Where(x => (filter.Query != null && x.Title.Contains(filter.Query)) && (filter.Query != null && x.Author.Contains(filter.Query)));
             }

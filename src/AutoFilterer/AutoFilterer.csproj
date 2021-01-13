@@ -1,18 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\common.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
-    <Authors>enisn</Authors>
-    <Description>This library provides filtering from DTOs to Entities without writing any query. Visit the project site for more information</Description>
-    <PackageProjectUrl>https://github.com/enisn/AutoFilterer</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
-    <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.5.0</Version>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <PackageReleaseNotes>Added TypeMetaData constructor to PossibleSortings.</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 

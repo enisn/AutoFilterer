@@ -12,13 +12,13 @@ namespace AutoFilterer.Tests.Attributes
 {
     public class ToLowerContainsComparisonAttributeTests
     {
-        [Theory, AutoMoqData]
+        [Theory, AutoMoqData(count: 16)]
         public void BuildExpression_ShouldGenerateQueryCorrect_WithoutAttribute(List<Book> dummyData)
         {
             // Arrange
             var filter = new BookFilter_LowerContains
             {
-                Query = "a"
+                Title = "a"
             };
             IQueryable<Book> query = dummyData.AsQueryable();
 
@@ -26,7 +26,7 @@ namespace AutoFilterer.Tests.Attributes
             var filteredQuery = query.ApplyFilter(filter);
             var result = filteredQuery.ToList();
             // Assert
-            var actualResult = query.Where(x => x.Title.ToLower().Contains(filter.Query.ToLower())).ToList();
+            var actualResult = query.Where(x => x.Title.ToLower().Contains(filter.Title.ToLower())).ToList();
 
             Assert.Equal(result.Count, actualResult.Count);
         }

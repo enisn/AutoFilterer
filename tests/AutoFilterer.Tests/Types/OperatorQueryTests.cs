@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Extensions;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Extensions;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
 using AutoFilterer.Tests.Environment.Statics;
@@ -15,7 +18,7 @@ namespace AutoFilterer.Tests.Types
         public void BuildExpression_TotalPageWithAnd_SholdMatchCount(List<Book> data, BookFilter_OperatorFilter_TotalPage filter)
         {
             // Arrange
-            filter.CombineWith = Enums.CombineType.And;
+            filter.CombineWith = CombineType.And;
 
             // Act
             var query = data.AsQueryable().ApplyFilter(filter);
@@ -61,7 +64,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Eq = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -86,7 +89,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Not = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -111,7 +114,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Gt = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -136,7 +139,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Gte = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -161,7 +164,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Lte = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -186,7 +189,7 @@ namespace AutoFilterer.Tests.Types
                 TotalPage = new OperatorFilter<int>
                 {
                     Lt = totalPage, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -213,7 +216,7 @@ namespace AutoFilterer.Tests.Types
                 {
                     Gt = min,
                     Lt = max, 
-                    CombineWith = Enums.CombineType.And
+                    CombineWith = CombineType.And
                 }
             };
 
@@ -240,7 +243,7 @@ namespace AutoFilterer.Tests.Types
                 {
                     Gt = min,
                     Lt = max, 
-                    CombineWith = Enums.CombineType.Or
+                    CombineWith = CombineType.Or
                 }
             };
 
@@ -266,7 +269,7 @@ namespace AutoFilterer.Tests.Types
                 {
                     Eq = exact,
                     Lt = max, 
-                    CombineWith = Enums.CombineType.Or
+                    CombineWith = CombineType.Or
                 }
             };
 

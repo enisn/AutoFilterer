@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Extensions;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Extensions;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
 using AutoFilterer.Tests.Environment.Statics;
@@ -160,9 +163,9 @@ namespace AutoFilterer.Tests.Types
             IQueryable<User> query = dummyData.AsQueryable();
 
             // Act
-            filterBase.CombineWith = Enums.CombineType.And;
+            filterBase.CombineWith = CombineType.And;
             var result = query.ApplyFilter(filterBase).ToList();
-            filterBase.CombineWith = Enums.CombineType.Or;
+            filterBase.CombineWith = CombineType.Or;
             var orResult = query.ApplyFilter(filterBase).ToList();
 
 
