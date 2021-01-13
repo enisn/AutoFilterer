@@ -9,12 +9,12 @@
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Version>2.6.0-pre.1</Version>
+    <Version>2.6.0</Version>
     <AssemblyVersion>2.6.0</AssemblyVersion>
     <PackageReleaseNotes>Core changes.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
-    <!--<DefineConstants>LEGACY_NAMESPACE</DefineConstants>-->
+    <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

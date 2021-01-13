@@ -14,6 +14,7 @@
     <PackageReleaseNotes>First Release.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
+    <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

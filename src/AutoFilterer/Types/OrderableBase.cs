@@ -1,6 +1,8 @@
-﻿using AutoFilterer.Abstractions;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Abstractions;
 using AutoFilterer.Attributes;
-
 using System;
 using System.Linq;
 using System.Linq.Expressions;

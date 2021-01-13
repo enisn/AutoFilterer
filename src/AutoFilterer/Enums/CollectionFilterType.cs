@@ -6,13 +6,10 @@ namespace AutoFilterer.Enums
 namespace AutoFilterer
 #endif
 {
-    namespace AutoFilterer
+    [Flags]
+    public enum CollectionFilterType
     {
-        [Flags]
-        public enum CollectionFilterType
-        {
-            Any,
-            All,
-        }
+        Any,
+        All,
     }
 }
