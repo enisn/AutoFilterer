@@ -9,12 +9,12 @@
 
  # AutoFilterer
 
-AutoFilterer is a mini filtering & querying framework for .NET Standard. The project aims applying automatic filters in Open API 3.0 specifications unlike oData or graphql. All parameters are supported Open API 3.0 specifications and REST.
-As summary, this project aims to create queries without writing any of query with **IQueryable**. Just prepare your filter model and apply it into your Db Entity.
+AutoFilterer is a mini filtering & querying framework for .NET Standard. The project aims applying filters automatically in Open API 3.0 specifications unlike oData or graphql. All parameters are supported Open API 3.0 specifications and RESTful.
+This project aims to create queries without writing any of LINQ Expression with **IQueryable**. Just prepare your filter model and apply it into your DbSet/IQueryable.
 
-Generated queries supports Entity Framework and MongoDB. 
+- ✅ Generated queries are tested on **Entity Framework** and **MongoDB**. 
 
-> This library **does not** generate directly database queries. It generates LINQ Expressions.
+> This library **does not** generate database queries directly. It generates LINQ Expressions.
 
 You can visit [Wiki](../../wiki) for more documents
 
