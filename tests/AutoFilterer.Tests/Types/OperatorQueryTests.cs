@@ -1,7 +1,8 @@
 ﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
+using AutoFilterer.Tests.Core;
 using AutoFilterer.Types;
 using System.Collections.Generic;
 using System.Linq;

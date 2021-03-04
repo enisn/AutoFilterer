@@ -1,7 +1,7 @@
 ﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Types;
 using Moq;
 using System;

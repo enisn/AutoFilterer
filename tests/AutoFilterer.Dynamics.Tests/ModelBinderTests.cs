@@ -1,11 +1,5 @@
-﻿using AutoFilterer.Dynamics.Tests.Environment;
-using AutoFilterer.Dynamics.Tests.Environment.Statics;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 

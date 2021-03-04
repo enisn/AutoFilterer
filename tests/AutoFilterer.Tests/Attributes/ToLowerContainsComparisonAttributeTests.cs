@@ -1,12 +1,10 @@
-﻿using AutoFilterer.Tests.Environment.Dtos;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
+using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
-using AutoFilterer.Extensions;
 
 namespace AutoFilterer.Tests.Attributes
 {

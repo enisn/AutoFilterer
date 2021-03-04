@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.14.0" />
-    <PackageReference Include="AutoFixture.AutoMoq" Version="4.14.0" />
-    <PackageReference Include="AutoFixture.Xunit2" Version="4.14.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201020-06" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.0" />
@@ -26,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\sandbox\WebApplication.API\WebApplication.API.csproj" />
+    <ProjectReference Include="..\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj" />
   </ItemGroup>
 
 </Project>

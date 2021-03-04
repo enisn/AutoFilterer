@@ -1,9 +1,13 @@
-﻿using System;
+﻿using AutoFilterer.Filters;
+using AutoFilterer.Tests.Core;
+using AutoFilterer.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using AutoFilterer.Types;
 
 namespace AutoFilterer.Generators.Tests
 {
@@ -22,7 +26,7 @@ namespace AutoFilterer.Generators.Tests
         public void ShouldBookFilterBeCreated()
         {
             // If there is no compile error. Everything is OK 👍
-            Assert.True(typeof(AutoFilterer.Filters.BookFilter) != null);   
+            Assert.True(typeof(AutoFilterer.Filters.BookFilter) != null);
         }
 
         [Fact]
@@ -31,6 +35,19 @@ namespace AutoFilterer.Generators.Tests
             var type = typeof(AutoFilterer.Filters.BookFilter);
 
             Assert.True(type.GetProperty(nameof(Book.Title)).PropertyType == typeof(string));
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void Test(List<Book> books)
+        {
+            var filter = new BookFilter();
+            filter.Page = 1;
+            filter.PerPage = 2;
+            filter.Year = new Types.Range<int>(min: 1990, max: 2021);
+
+
+            books.AsQueryable().ApplyFilter(filter);
         }
     }
 }

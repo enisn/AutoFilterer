@@ -1,13 +1,11 @@
-﻿using AutoFilterer.Tests.Environment.Dtos;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
+using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Types;
-using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace AutoFilterer.Tests.Types

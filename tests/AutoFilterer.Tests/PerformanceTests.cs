@@ -1,15 +1,12 @@
-﻿using AutoFilterer.Tests.Environment.Statics;
-using AutoFilterer.Extensions;
+﻿using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
+using AutoFilterer.Tests.Environment.Dtos;
+using AutoFilterer.Tests.Environment.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Dtos;
 using System.Diagnostics;
-using System.Linq.Expressions;
+using System.Linq;
+using Xunit;
 
 namespace AutoFilterer.Tests
 {

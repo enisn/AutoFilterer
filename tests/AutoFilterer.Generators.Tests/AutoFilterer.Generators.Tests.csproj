@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer"/>
+    <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj" />
   </ItemGroup>
 
 </Project>
