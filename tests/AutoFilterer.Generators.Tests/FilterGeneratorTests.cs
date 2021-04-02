@@ -1,5 +1,4 @@
-﻿using AutoFilterer.Filters;
-using AutoFilterer.Tests.Core;
+﻿using AutoFilterer.Tests.Core;
 using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
@@ -7,12 +6,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using AutoFilterer.Types;
 
 namespace AutoFilterer.Generators.Tests
 {
     [AutoFilterDto]
+    
     public class Book
+    {
+        public string Title { get; set; }
+        public int? Year { get; set; }
+        public int TotalPage { get; set; }
+        public DateTime PublishTime { get; set; }
+    }
+    
+    [AutoFilterDto("MyCustomNamespace")]
+    public class BookInCustomNamespace
     {
         public string Title { get; set; }
         public int? Year { get; set; }
@@ -26,14 +34,21 @@ namespace AutoFilterer.Generators.Tests
         public void ShouldBookFilterBeCreated()
         {
             // If there is no compile error. Everything is OK 👍
-            Assert.True(typeof(AutoFilterer.Filters.BookFilter) != null);
+            Assert.True(typeof(BookFilter) != null);
+        }
+
+        [Fact]
+        public void ShouldBookFilterInCustomNamespaceBeCreated()
+        {
+            // If there is no compile error. Everything is OK 👍
+            Assert.True(typeof(MyCustomNamespace.BookInCustomNamespaceFilter) != null);
         }
 
         [Fact]
         public void ShouldTitleBeString()
         {
-            var type = typeof(AutoFilterer.Filters.BookFilter);
-
+            var type = typeof(BookFilter);
+            
             Assert.True(type.GetProperty(nameof(Book.Title)).PropertyType == typeof(string));
         }
 

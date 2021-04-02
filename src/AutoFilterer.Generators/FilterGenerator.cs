@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AutoFilterer.Generators
 {
@@ -21,35 +22,46 @@ namespace AutoFilterer.Generators
             if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
                 return;
 
-            var classSymbols = GetClassSymbols(context, receiver);
-            foreach (var classSymbol in classSymbols)
+            var classAttributePairs = GetClassAttributePairs(context, receiver);
+            foreach (var classAttributePair in classAttributePairs)
             {
+                var classSymbol = classAttributePair.Key;
+                
                 var properties = classSymbol.GetMembers().OfType<IPropertySymbol>()
                     .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
-
-                context.AddSource($"{classSymbol.Name}FilterDto.g.cs",
-                    SourceText.From(GetFilterDtoCode(classSymbol.Name, properties), Encoding.UTF8));
+                
+                var realNamespace = GetNamespaceRecursively(classSymbol.ContainingNamespace);
+                
+                foreach (var attr in classAttributePair.Value)
+                {
+                    var param = attr.ConstructorArguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
+                    context.AddSource($"{classSymbol.Name}FilterDto.g.cs",
+                        SourceText.From(GetFilterDtoCode(classSymbol.Name, properties, param.Value?.ToString() ?? realNamespace), Encoding.UTF8));
+                }
             }
         }
 
-        private static List<INamedTypeSymbol> GetClassSymbols(GeneratorExecutionContext context, SyntaxReceiver receiver)
+        private static Dictionary<INamedTypeSymbol, IList<AttributeData>> GetClassAttributePairs(GeneratorExecutionContext context,
+            SyntaxReceiver receiver)
         {
             var compilation = context.Compilation;
-            var classSymbols = new List<INamedTypeSymbol>();
+            var classSymbols = new Dictionary<INamedTypeSymbol, IList<AttributeData>>();
             foreach (var clazz in receiver.CandidateClasses)
             {
                 var model = compilation.GetSemanticModel(clazz.SyntaxTree);
                 var classSymbol = model.GetDeclaredSymbol(clazz);
-                if (classSymbol.GetAttributes().Any(ad => ad.AttributeClass.Name == nameof(AutoFilterDtoAttribute)))
+                var attributes = classSymbol.GetAttributes();
+                if (attributes.Any(ad => ad.AttributeClass.Name == nameof(AutoFilterDtoAttribute)))
                 {
-                    classSymbols.Add((INamedTypeSymbol)classSymbol);
+                    classSymbols.Add((INamedTypeSymbol) classSymbol, attributes.ToList() );
                 }
             }
 
             return classSymbols;
         }
 
-        internal string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties)
+        internal string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties,
+            string @namespace = null)
         {
             var start = $@"
 using System;
@@ -57,7 +69,7 @@ using AutoFilterer;
 using AutoFilterer.Attributes;
 using AutoFilterer.Types;
 
-namespace AutoFilterer.Filters
+namespace {@namespace ?? "AutoFilterer.Filters"}
 {{
     public partial class {className}Filter : PaginationFilterBase
     {{
@@ -74,10 +86,21 @@ namespace AutoFilterer.Filters
 
                 body.AppendLine($"\t\tpublic {propertyType} {property.Name} {{ get; set; }}");
             }
+
             var end = "\t}\n}";
 
 
             return start + body.ToString() + end;
+        }
+
+        private string GetNamespaceRecursively(INamespaceSymbol symbol)
+        {
+            if (symbol.ContainingNamespace == null)
+            {
+                return symbol.Name;
+            }
+
+            return (GetNamespaceRecursively(symbol.ContainingNamespace) + "." + symbol.Name).Trim('.');
         }
     }
 }
