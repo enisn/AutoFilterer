@@ -1,14 +1,13 @@
-﻿using AutoFilterer.Abstractions;
-using AutoFilterer.Attributes;
+﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
-using AutoFilterer.Types;
+#endif
+using AutoFilterer.Abstractions;
+using AutoFilterer.Attributes;
+using AutoFilterer.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Dynamics
 {
@@ -72,8 +71,8 @@ namespace AutoFilterer.Dynamics
                     var value = Convert.ChangeType((string)filterValue, targetProperty.PropertyType);
                     var exp = new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(body, targetProperty, filterProperty: null, value);
 
-                    var combined = Combine(finalExpression, exp);
-                    finalExpression = Combine(body, combined);
+                    var combined = finalExpression.Combine(exp, CombineWith);
+                    finalExpression = body.Combine(combined, CombineWith);
                 }
                 else
                 {
@@ -88,16 +87,14 @@ namespace AutoFilterer.Dynamics
                         {
                             var exp = filterable.BuildExpression(body, targetProperty, filterProperty: null, value);
 
-                            var combined = Combine(finalExpression, exp);
-                            finalExpression = Combine(body, combined);
+                            var combined = finalExpression.Combine(exp, CombineWith);
+                            finalExpression = body.Combine(combined, CombineWith);
                         }
                     }
                     else
                     {
-
                         throw new NotImplementedException("Inner objects are not supported yet!");
                     }
-
                 }
             }
 
@@ -107,33 +104,5 @@ namespace AutoFilterer.Dynamics
         }
 
         private bool IsPrimitive(string key) => !key.Contains('.');
-
-        private protected virtual Expression Combine(Expression body, Expression extend)
-        {
-            return Combine(body, extend, this.CombineWith);
-        }
-
-        private protected virtual Expression Combine(Expression left, Expression right, CombineType combineType)
-        {
-            if (left == null)
-                return right;
-            if (right == null)
-                return left;
-
-            if (left is ParameterExpression || left is MemberExpression)
-                return right;
-            if (right is ParameterExpression || right is MemberExpression)
-                return left;
-
-            switch (combineType)
-            {
-                case CombineType.And:
-                    return Expression.AndAlso(left, right);
-                case CombineType.Or:
-                    return Expression.OrElse(left, right);
-                default:
-                    return right;
-            }
-        }
     }
 }

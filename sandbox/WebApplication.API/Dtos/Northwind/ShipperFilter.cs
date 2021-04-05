@@ -1,11 +1,9 @@
-﻿using AutoFilterer.Types;
+﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+#endif
+using AutoFilterer;
 using AutoFilterer.Attributes;
+using AutoFilterer.Types;
 
 namespace WebApplication.API.Dtos.Northwind
 {

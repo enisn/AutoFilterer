@@ -1,4 +1,7 @@
-﻿using AutoFilterer.Tests.Environment.Dtos;
+﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
 using AutoFilterer.Tests.Core;
 using System;
@@ -55,7 +58,7 @@ namespace AutoFilterer.Tests.Types
             var filter = new BookFilter_Orderable
             {
                 Sort = nameof(Book.Title),
-                SortBy = Enums.Sorting.Ascending
+                SortBy = Sorting.Ascending
             };
 
             // Act
@@ -77,7 +80,7 @@ namespace AutoFilterer.Tests.Types
             var filter = new BookFilter_Orderable
             {
                 Sort = nameof(Book.Title),
-                SortBy = Enums.Sorting.Descending
+                SortBy = Sorting.Descending
             };
 
             // Act
@@ -99,7 +102,7 @@ namespace AutoFilterer.Tests.Types
             var filter = new BookFilter_Orderable
             {
                 Sort = nameof(Book.TotalPage),
-                SortBy = Enums.Sorting.Ascending
+                SortBy = Sorting.Ascending
             };
 
             // Act
@@ -121,7 +124,7 @@ namespace AutoFilterer.Tests.Types
             var filter = new BookFilter_Orderable
             {
                 Sort = nameof(Book.TotalPage),
-                SortBy = Enums.Sorting.Ascending
+                SortBy = Sorting.Ascending
             };
 
             // Act
@@ -143,7 +146,7 @@ namespace AutoFilterer.Tests.Types
             var filter = new BookFilter_Orderable
             {
                 Sort = "Preferences.SecurityLevel",
-                SortBy = Enums.Sorting.Ascending
+                SortBy = Sorting.Ascending
             };
 
             // Act

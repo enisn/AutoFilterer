@@ -6,6 +6,7 @@
     <UserSecretsId>c6c1cf7a-5843-45cf-bb4b-b21f9e31fc33</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+    <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -1,12 +1,11 @@
-﻿using AutoFilterer.Abstractions;
+﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
-using System;
-using System.Collections.Generic;
+#endif
+using AutoFilterer.Abstractions;
+using AutoFilterer;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Attributes
 {

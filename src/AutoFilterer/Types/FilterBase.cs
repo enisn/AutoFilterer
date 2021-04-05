@@ -1,15 +1,14 @@
-﻿using AutoFilterer.Abstractions;
-using AutoFilterer.Attributes;
+﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Abstractions;
+using AutoFilterer.Attributes;
+using AutoFilterer.Extensions;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Types
 {
@@ -36,15 +35,6 @@ namespace AutoFilterer.Types
             return query.Where(lambda);
         }
 
-        public virtual Expression<Func<TEntity,bool>> BuildLambda<TEntity>()
-        {
-            var parameter = Expression.Parameter(typeof(TEntity), "x");
-
-            var exp = BuildExpression(typeof(TEntity), parameter);
-
-            return Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
-        }
-
         public virtual Expression BuildExpression(Type entityType, Expression body)
         {
             Expression finalExpression = body;
@@ -53,8 +43,6 @@ namespace AutoFilterer.Types
             {
                 try
                 {
-                    var entityProperty = entityType.GetProperty(filterProperty.Name);
-
                     var val = filterProperty.GetValue(this);
                     if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
                         continue;
@@ -72,12 +60,11 @@ namespace AutoFilterer.Types
                         var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
                         var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
-                        innerExpression = Combine(innerExpression, expression, attribute.CombineWith);
+                        innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
                     }
 
-                    //var expression = attribute.BuildExpression(body, entityProperty, filterProperty, val);
-                    var combined = Combine(finalExpression, innerExpression);
-                    finalExpression = Combine(combined, body);
+                    var combined = finalExpression.Combine(innerExpression, CombineWith);
+                    finalExpression = combined.Combine(body, CombineWith);
                 }
                 catch (Exception ex)
                 {
@@ -86,34 +73,6 @@ namespace AutoFilterer.Types
             }
 
             return finalExpression;
-        }
-
-        private protected virtual Expression Combine(Expression body, Expression extend)
-        {
-            return Combine(body, extend, this.CombineWith);
-        }
-
-        private protected virtual Expression Combine(Expression left, Expression right, CombineType combineType)
-        {
-            if (left == null)
-                return right;
-            if (right == null)
-                return left;
-
-            if (left is ParameterExpression || left is MemberExpression)
-                return right;
-            if (right is ParameterExpression || right is MemberExpression)
-                return left;
-
-            switch (combineType)
-            {
-                case CombineType.And:
-                    return Expression.And(left, right);
-                case CombineType.Or:
-                    return Expression.Or(left, right);
-                default:
-                    return right;
-            }
         }
     }
 }

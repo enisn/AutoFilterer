@@ -1,6 +1,12 @@
-﻿using AutoFilterer.Dynamics.Tests.Environment.Models;
+using AutoFilterer.Dynamics.Tests.Environment.Models;
 using AutoFilterer.Extensions;
 using AutoFilterer.Tests.Core;
+#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
+using AutoFilterer.Dynamics.Tests.Environment.Models;
+using AutoFilterer.Dynamics.Tests.Environment.Statics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -36,7 +42,7 @@ namespace AutoFilterer.Dynamics.Tests
         {
             // Arrange
             DynamicFilter filter = new DynamicFilter { { "TotalPage", "5" },  { "IsPublished", "True" } };
-            filter.CombineWith = Enums.CombineType.And;
+            filter.CombineWith = CombineType.And;
 
             // Act
             var actualQuery = list.AsQueryable().ApplyFilter(filter);
@@ -59,7 +65,7 @@ namespace AutoFilterer.Dynamics.Tests
         {
             // Arrange
             DynamicFilter filter = new DynamicFilter { { "TotalPage", "5" },  { "IsPublished", "True" } };
-            filter.CombineWith = Enums.CombineType.Or;
+            filter.CombineWith = CombineType.Or;
 
             // Act
             var actualQuery = list.AsQueryable().ApplyFilter(filter);

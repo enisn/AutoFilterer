@@ -1,5 +1,6 @@
-﻿using AutoFilterer.Extensions;
-using AutoFilterer.Tests.Core;
+#if LEGACY_NAMESPACE
+using AutoFilterer.Enums;
+#endif
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
 using System;
@@ -17,7 +18,7 @@ namespace AutoFilterer.Tests.Attributes
             // Arrange
             var filter = new BookFilter_MultiplePropertyWithOrDto
             {
-                CombineWith = Enums.CombineType.Or,
+                CombineWith = CombineType.Or,
                 Query = "12"
             };
 
@@ -38,7 +39,7 @@ namespace AutoFilterer.Tests.Attributes
             // Arrange
             var filter = new BookFilter_MultiplePropertyWithAndDto
             {
-                CombineWith = Enums.CombineType.Or,
+                CombineWith = CombineType.Or,
                 Query = "a"
             };
 

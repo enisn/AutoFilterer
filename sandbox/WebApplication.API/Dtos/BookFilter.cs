@@ -1,5 +1,8 @@
-﻿using AutoFilterer.Attributes;
+﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
+#endif
+using AutoFilterer;
+using AutoFilterer.Attributes;
 using AutoFilterer.Types;
 using System;
 using WebApplication.API.Models;
