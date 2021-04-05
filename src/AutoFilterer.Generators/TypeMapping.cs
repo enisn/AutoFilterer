@@ -34,10 +34,10 @@ namespace AutoFilterer.Generators
             { "decimal", "Range<decimal>" },
             { "decimal?", "Range<decimal>" },
             // Special cases for some types:
-            { "DateTime", "Range<DateTime>" },
-            { "DateTime?", "Range<DateTime>" },
-            { "TimeSpan", "Range<TimeSpan>" },
-            { "TimeSpan?", "Range<TimeSpan>" },
+            { "System.DateTime", "Range<System.DateTime>" },
+            { "System.DateTime?", "Range<System.DateTime>" },
+            { "System.TimeSpan", "Range<System.TimeSpan>" },
+            { "System.TimeSpan?", "Range<System.TimeSpan>" },
         };
     }
 }
