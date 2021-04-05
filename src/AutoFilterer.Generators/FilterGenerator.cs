@@ -84,7 +84,7 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
                 if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped))
                     propertyType = mapped;
 
-                body.AppendLine($"\t\tpublic {propertyType} {property.Name} {{ get; set; }}");
+                body.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
             }
 
             var end = "\t}\n}";
