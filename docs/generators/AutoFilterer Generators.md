@@ -2,7 +2,7 @@
 
 AutoFilterer.Generators aims to generate filter objects automatically from entities via using [dotnet source generators]([Introducing C# Source Generators | .NET Blog (microsoft.com)](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/)). 
 
-
+> **WARNING:** This feature is beta for now and might will be have braking changes future.
 
 ## Usage
 
@@ -25,24 +25,38 @@ AutoFilterer.Generators aims to generate filter objects automatically from entit
 
   
 
-- You'll see `BookFilter` objects exists in your project.  You can start to use it
+- You'll see `BookFilter` objects exists in your project.  You can start to use it. Ready to use get from query directly:
 
-```csharp
-var filter = new BookFilter();
-filter.Title="a";
-filter.Page = 1;
-filter.PerPage = 12;
-
-var filteredBooks = db.Books.ApplyFilter(filter).ToList();
-```
-
+  ```csharp
+  public Task<IActionResult> GetAsync([FromQuery] BookFilter filter)
+  {
+    return Ok(db.Books.ApplyFilter(filter));
+   	// or place your fancy code instead of my ugly line :)
+  }
+  ```
+  
 
 
 ## Features
 
-Generators tries to create best filter object that fit you requirements. So it uses a couple of mappings:
+Generators tries to create best filter object that fit you requirements. 
+
+So it uses a couple of mappings:
 
 - Numeric properties will be created as `Range<T>`
 - String properties will be created as `string` with `[ToLowerContains]` attribute
 - DateTime properties will be created as `Range<DateTime>` 
 - Complex Types aren't supported yet.
+
+
+
+Namespace can be customized with attribute parameter.
+
+```csharp
+[AutoFilterDto("My.SpecialNamespace.Filters")]
+public class MyAwesomeEntity
+{
+  /...
+}
+```
+
