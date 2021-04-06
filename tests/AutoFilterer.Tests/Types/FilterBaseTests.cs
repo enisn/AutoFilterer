@@ -1,10 +1,10 @@
-﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
+#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
 #endif
-using AutoFilterer.Extensions;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
 using AutoFilterer.Types;
 using Moq;
 using System;

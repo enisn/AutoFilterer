@@ -1,8 +1,13 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AutoFilterer.Dynamics.Tests.Environment.Statics
+namespace AutoFilterer.Tests.Core
 {
     public class AutoMoqDataAttribute : AutoDataAttribute
     {
