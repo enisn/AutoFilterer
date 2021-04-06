@@ -2,7 +2,6 @@ using AutoFilterer.Extensions;
 using AutoFilterer.Tests.Core;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
-using AutoFilterer.Tests.Environment.Statics;
 #if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
 #endif

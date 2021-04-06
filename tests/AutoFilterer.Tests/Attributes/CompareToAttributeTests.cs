@@ -6,6 +6,8 @@ using AutoFilterer.Tests.Environment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
 using Xunit;
 
 namespace AutoFilterer.Tests.Attributes
