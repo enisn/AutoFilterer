@@ -84,6 +84,10 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
                 if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped))
                     propertyType = mapped;
 
+                if (propertyType.Equals(nameof(String), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    body.AppendLine("\t\t[ToLowerContainsComparison]");
+                }
                 body.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
             }
 
