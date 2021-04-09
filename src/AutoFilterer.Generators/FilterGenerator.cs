@@ -84,7 +84,7 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
                 if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped))
                     propertyType = mapped;
 
-                if (propertyType == "string")
+                if (propertyType.Equals(nameof(String), StringComparison.InvariantCultureIgnoreCase))
                 {
                     body.AppendLine("\t\t[ToLowerContainsComparison]");
                 }
