@@ -2,6 +2,8 @@
 
 namespace WebApplication.API.Models
 {
+    // Generate in root namespace
+    [GenerateAutoFilter("WebApplication")]
     public class Book
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();

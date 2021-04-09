@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AutoFilterer.Dynamics\AutoFilterer.Dynamics.csproj" />
+    <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer" />
     <ProjectReference Include="..\..\src\AutoFilterer.Swagger\AutoFilterer.Swagger.csproj" />
   </ItemGroup>
 
