@@ -43,7 +43,7 @@ BookFilter source code looks like:
     public string Title { get; set; }
     public Range<int> Year { get; set; }
     public Range<int> TotalPage { get; set; }
-    public System.DateTime PublishTime { get; set; }
+    public Range<System.DateTime> PublishTime { get; set; }
   }
   ```
   
