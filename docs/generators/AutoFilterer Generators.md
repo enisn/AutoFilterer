@@ -1,6 +1,6 @@
 # AutoFilterer Generators
 
-AutoFilterer.Generators aims to generate filter objects automatically from entities via using [dotnet source generators]([Introducing C# Source Generators | .NET Blog (microsoft.com)](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/)). 
+AutoFilterer.Generators aims to generate filter objects automatically from entities via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
 
 > **WARNING:** This feature is beta for now and might will be have braking changes future.
 
