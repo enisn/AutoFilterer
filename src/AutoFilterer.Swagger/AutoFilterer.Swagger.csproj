@@ -6,7 +6,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageTags>netstandard, EntityFramework, netcore, aspnetcore, auto filter, filtering, sorting, ordering, pagination</PackageTags>
     <PackageReleaseNotes>Fix inner objects documenting at Swagger UI</PackageReleaseNotes>
-    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,13 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutoFilterer\AutoFilterer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>

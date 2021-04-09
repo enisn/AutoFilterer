@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\common.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <Authors>enisn</Authors>
+    <Description>This library aims to generate filter objects automatically from entities via using dotnet source generators.</Description>
   </PropertyGroup>
 
   <ItemGroup>
