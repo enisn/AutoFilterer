@@ -342,3 +342,5 @@ healthchecksdb
 
 # AspNetCore Environments
 appsettings.*.json
+
+.DS_Store
