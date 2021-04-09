@@ -1,14 +1,12 @@
-﻿#if LEGACY_NAMESPACE
+using AutoFilterer.Dynamics.Tests.Environment.Models;
+using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
+#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
 #endif
-using AutoFilterer.Dynamics.Tests.Environment.Models;
-using AutoFilterer.Dynamics.Tests.Environment.Statics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoFilterer.Extensions;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace AutoFilterer.Dynamics.Tests
