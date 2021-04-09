@@ -20,7 +20,7 @@ namespace AutoFilterer.Types
             this.Max = parsed.Max;
         }
 
-        public Range(T? min, T? max) : this()
+        public Range(T? min = null, T? max = null) : this()
         {
             Min = min;
             Max = max;
