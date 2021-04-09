@@ -1,13 +1,13 @@
 ﻿using System;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class AutoFilterDtoAttribute : Attribute
+public class GenerateAutoFilterAttribute : Attribute
 {
-    public AutoFilterDtoAttribute()
+    public GenerateAutoFilterAttribute()
     {
     }
 
-    public AutoFilterDtoAttribute(string @namespace)
+    public GenerateAutoFilterAttribute(string @namespace)
     {
         Namespace = @Namespace;
     }

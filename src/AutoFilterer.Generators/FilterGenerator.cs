@@ -51,7 +51,7 @@ namespace AutoFilterer.Generators
                 var model = compilation.GetSemanticModel(clazz.SyntaxTree);
                 var classSymbol = model.GetDeclaredSymbol(clazz);
                 var attributes = classSymbol.GetAttributes();
-                if (attributes.Any(ad => ad.AttributeClass.Name == nameof(AutoFilterDtoAttribute)))
+                if (attributes.Any(ad => ad.AttributeClass.Name == nameof(GenerateAutoFilterAttribute)))
                 {
                     classSymbols.Add((INamedTypeSymbol) classSymbol, attributes.ToList() );
                 }

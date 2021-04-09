@@ -10,7 +10,7 @@ using Xunit;
 
 namespace AutoFilterer.Generators.Tests
 {
-    [AutoFilterDto]
+    [GenerateAutoFilter]
     
     public class Book
     {
@@ -20,7 +20,7 @@ namespace AutoFilterer.Generators.Tests
         public DateTime PublishTime { get; set; }
     }
     
-    [AutoFilterDto("MyCustomNamespace")]
+    [GenerateAutoFilter("MyCustomNamespace")]
     public class BookInCustomNamespace
     {
         public string Title { get; set; }
@@ -65,7 +65,7 @@ namespace AutoFilterer.Generators.Tests
             books.AsQueryable().ApplyFilter(filter);
         }
         
-        [AutoFilterDto("MappingTest")]
+        [GenerateAutoFilter("MappingTest")]
         public class AllTypesTestType
         {
             public sbyte _Sbyte { get; set; }
