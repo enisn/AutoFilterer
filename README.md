@@ -2,7 +2,7 @@
 <tr>
 <td width="15%">
 
- ![Logo](https://github.com/enisn/AutoFilterer/blob/master/content/auto_filterer_icon.png?raw=true) 
+ ![Logo](https://github.com/enisn/AutoFilterer/blob/master/art/auto_filterer_icon.png?raw=true) 
 
 </td>
 <td>
