@@ -78,13 +78,13 @@ public class MyAwesomeEntity
   ```csharp
   namespace My.SpecialNamespace.Filters
   {
-    public partial MyAwesomeEntity
+    public partial MyAwesomeEntityFilter
     {
       // You can add new members. 
       public string ExtraParameter { get; set; }
     	
       // Also you can create constructor.
-      public MyAwesomeEntity()
+      public MyAwesomeEntityFilter()
       {
         // And set default values.
         SortBy = Sorting.Descending;
