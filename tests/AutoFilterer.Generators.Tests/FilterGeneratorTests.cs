@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoFilterer.Attributes;
 using AutoFilterer.Enums;
+using Castle.Core.Internal;
 using Xunit;
 
 namespace AutoFilterer.Generators.Tests
@@ -102,6 +104,23 @@ namespace AutoFilterer.Generators.Tests
             Assert.NotNull(typeof(MappingTest.AllTypesTestTypeFilter));
             
             var filter = new MappingTest.AllTypesTestTypeFilter();
+        }
+        
+        [GenerateAutoFilter("MappingTest")]
+        public class StringAttributeTestType
+        {
+            public string Title { get; set; }
+        }
+
+        [Fact]
+        public void ShouldHaveToLowerContainsComparisonAttribute()
+        {
+            var attribute = 
+                typeof(MappingTest.StringAttributeTestTypeFilter)
+                .GetProperty(nameof(MappingTest.StringAttributeTestTypeFilter.Title))
+                .GetAttribute<ToLowerContainsComparisonAttribute>();
+            
+            Assert.NotNull(attribute);
         }
     }
 }
