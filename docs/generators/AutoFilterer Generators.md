@@ -1,8 +1,8 @@
 # AutoFilterer Generators
 
-AutoFilterer.Generators aims to generate filter objects automatically from entities via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
+AutoFilterer.Generators aims to generate filter objects from entities automatically via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
 
-> **WARNING:** This feature is beta for now and might will be have braking changes future.
+> **WARNING:** This feature is beta for now and might will have braking changes in future.
 
 ## Usage
 
@@ -25,7 +25,7 @@ AutoFilterer.Generators aims to generate filter objects automatically from entit
 
   
 
-- You'll see `BookFilter` objects exists in your project.  You can start to use it. Ready to use get from query directly:
+- You'll see `BookFilter` objects exists in your project. It's ready to use. Can be directly used as query parameter:
 
   ```csharp
   public Task<IActionResult> GetAsync([FromQuery] BookFilter filter)
@@ -35,7 +35,7 @@ AutoFilterer.Generators aims to generate filter objects automatically from entit
   }
   ```
   
-  BookFilter source code looks like:
+  In the decleration, BookFilter source code looks like:
   
   ```csharp
   public partial class BookFilter : PaginationFilterBase
