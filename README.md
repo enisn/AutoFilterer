@@ -10,13 +10,11 @@
  # AutoFilterer
 
 AutoFilterer is a filtering framework for dotnet.
-The main purpose of this library is to generate LINQ expressions from DTOs for entities automatically. Creating queries without writing any of LINQ Expression for **IQueryable** is provided by AutoFilterer. All parameters and usage, target to be compatible with Open API 3.0 Specifications, unlike oData & GraphQL.
-
-- ✅ Generated queries are tested on **Entity Framework** and **MongoDB**. 
+The main purpose of this library is to generate LINQ expressions from DTOs for entities automatically. Creating queries without writing any of query code for **IQueryable** is provided by AutoFilterer. All parameters and usage, target to be compatible with Open API 3.0 Specifications, unlike oData & GraphQL.
 
 > This library **does not** generate database queries directly. It generates LINQ Expressions.
 
-You can visit [Wiki](../../wiki) for more documents
+You can visit [Wiki](../../wiki) for documentation
 
 [![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)](https://www.nuget.org/packages/AutoFilterer/)
 [![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
@@ -30,16 +28,15 @@ You can visit [Wiki](../../wiki) for more documents
 </tr>
 </table>
 
-# Getting Started
+## Getting Started
 
 - Install `AutoFilterer` NuGet package from [here](https://www.nuget.org/packages/AutoFilterer/).
 
-You may visit [visit documentation](../../wiki) for better understanding of implementation.
-
+Vsit [visit documentation](../../wiki) to learn how to use AutoFilterer.
 
 ***
 
-# Showcase
+## Showcase
 
 You can TRY [LIVE DEMO](https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books).
 
@@ -53,7 +50,7 @@ You can TRY [LIVE DEMO](https://autofilterer-showcase.herokuapp.com/swagger/inde
 
 ***
 
-# Usage
+## Usage
 A quick example is presented below. Reading [Wiki](../../wiki) is highly recommended for detailed features.
 
 - Create a filter model and make sure property names match to Entity properties.
@@ -79,7 +76,17 @@ public class ProductFilter : PaginationFilterBase
 
 Don't forget to [visit Wiki](../../wiki) for better understanding of usage.
 
-## Swagger
+***
+
+## AutoFilterer.Swagger
 All parameters support OpenAPI 3.0 Specifications 👍
 
 Improve your swagger documentation via using [AutoFilterer.Swagger](https://github.com/enisn/AutoFilterer/tree/master/src/AutoFilterer.Swagger)
+
+***
+
+## AutoFilterer.Generators
+AutoFilterer.Generators aims to generate filter objects from entities automatically via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
+
+Visit [documentation of Generators](docs/generators/AutoFilterer-Generators.md)
+
