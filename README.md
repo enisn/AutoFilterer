@@ -59,8 +59,10 @@ A quick example is presented below. Reading [Wiki](../../wiki) is highly recomme
 public class ProductFilter : PaginationFilterBase
 {
   public Range<double> Price { get; set; }
+
   [ToLowerContainsComparison]
   public string Name { get; set; }
+  
   [StringFilteringOptions(StringFilterOption.Equals)]
   public string Locale { get; set; }
 }
