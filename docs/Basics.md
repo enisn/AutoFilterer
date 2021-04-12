@@ -4,7 +4,7 @@
 
 
 
-*TODO: Mova following content here:*
+*TODO: Move following content here:*
 
 [Basics · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Basics)
 
