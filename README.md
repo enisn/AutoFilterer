@@ -9,8 +9,8 @@
 
  # AutoFilterer
 
-AutoFilterer is a mini filtering & querying framework for .NET Standard. The project aims applying filters automatically and all parameters are compatible with Open API 3.0 specifications unlike oData or graphql.
-This project aims to create queries without writing any of LINQ Expression with **IQueryable**. Just prepare your filter model and apply it into your DbSet/IQueryable.
+AutoFilterer is a filtering framework for dotnet.
+The main purpose of this library is to generate LINQ expressions from DTOs for entities automatically. Creating queries without writing any of LINQ Expression for **IQueryable** is provided by AutoFilterer. All parameters and usage, target to be compatible with Open API 3.0 Specifications, unlike oData & GraphQL.
 
 - ✅ Generated queries are tested on **Entity Framework** and **MongoDB**. 
 
@@ -54,7 +54,30 @@ You can TRY [LIVE DEMO](https://autofilterer-showcase.herokuapp.com/swagger/inde
 ***
 
 # Usage
-Just [visit Wiki](../../wiki) for better understanding of usage.
+A quick example is presented below. Reading [Wiki](../../wiki) is highly recommended for detailed features.
+
+- Create a filter model and make sure property names match to Entity properties.
+
+```csharp
+public class ProductFilter : PaginationFilterBase
+{
+  public Range<double> Price { get; set; }
+  [ToLowerContainsComparison]
+  public string Name { get; set; }
+  [StringFilteringOptions(StringFilterOption.Equals)]
+  public string Locale { get; set; }
+}
+```
+
+```csharp
+  public IActionResult GetProducts([FromQuery]ProductFilter filter)
+  {
+    var products = db.Products.ApplyFilter(filter).ToList();
+    return Ok(products);
+  }
+```
+
+Don't forget to [visit Wiki](../../wiki) for better understanding of usage.
 
 ## Swagger
 All parameters support OpenAPI 3.0 Specifications 👍

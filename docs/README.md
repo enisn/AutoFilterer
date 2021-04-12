@@ -7,7 +7,7 @@ The main purpose of this library is to generate LINQ expressions from DTOs for e
 
 ## Index
 
-- [Getting Started](Getting Started.md)
+- [Getting Started](Getting-Started.md)
 - [Live Demo](https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books).
 
 ## AutoFilterer.Swagger
@@ -19,7 +19,7 @@ See [AutoFilterer.Swagger](https://github.com/enisn/AutoFilterer/tree/master/src
 
 ## AutoFilterer.Generators
 
-[AutoFilterer.Generators](generators/AutoFilterer Generators.md) aims to generate filter objects from entities automatically via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
+[AutoFilterer.Generators](generators/AutoFilterer-Generators.md) aims to generate filter objects from entities automatically via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
 
 
 
