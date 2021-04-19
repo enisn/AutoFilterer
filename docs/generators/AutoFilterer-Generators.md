@@ -49,7 +49,7 @@ AutoFilterer.Generators aims to generate filter objects from entities automatica
 
 ## Features
 
-Generators tries to create best filter object that fit you requirements. 
+Generators tries to create best filter object that fit your requirements. 
 
 - So it uses a couple of mappings:
   - Numeric properties will be created as `Range<T>`
