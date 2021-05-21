@@ -10,7 +10,7 @@
  # AutoFilterer
 
 AutoFilterer is a filtering framework for dotnet.
-The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically. Creating queries without writing any query code for **IQueryable** is the most powerful feature that is provided. The first aim of AutoFilterer is to be compatible with Open API 3.0 Specifications, unlike oData & GraphQL.
+The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically. Creating queries without writing any expression code is the most powerful feature that is provided. The first aim of AutoFilterer is to be compatible with Open API 3.0 Specifications, unlike oData & GraphQL.
 
 > This library **does not** generate database queries directly. It generates LINQ Expressions.
 
