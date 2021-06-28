@@ -41,23 +41,28 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Category>(entity =>
             {
-                entity.HasIndex(e => e.CategoryName)
-                    .HasName("CategoryName");
+                entity.HasIndex(e => e.CategoryName);
+
+                entity.Property(p => p.CategoryName).HasColumnName("CategoryName");
             });
 
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.HasIndex(e => e.City)
-                    .HasName("City");
+                entity.HasIndex(e => e.City);
 
-                entity.HasIndex(e => e.CompanyName)
-                    .HasName("CompanyName");
+                entity.Property(e => e.City).HasColumnName("City");
 
-                entity.HasIndex(e => e.PostalCode)
-                    .HasName("PostalCode");
+                entity.HasIndex(e => e.CompanyName);
 
-                entity.HasIndex(e => e.Region)
-                    .HasName("Region");
+                entity.Property(e => e.CompanyName).HasColumnName("CompanyName");
+
+                entity.HasIndex(e => e.PostalCode);
+
+                entity.Property(e => e.PostalCode).HasColumnName("PostalCode");
+
+                entity.HasIndex(e => e.Region);
+
+                entity.Property(e => e.Region).HasColumnName("Region");
 
                 entity.Property(e => e.CustomerId).IsFixedLength();
             });
@@ -123,23 +128,29 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.HasIndex(e => e.CustomerId)
-                    .HasName("CustomersOrders");
+                entity.HasIndex(e => e.CustomerId);
 
-                entity.HasIndex(e => e.EmployeeId)
-                    .HasName("EmployeesOrders");
+                entity.Property(e => e.CustomerId)
+                    .HasColumnName("CustomersOrders");
 
-                entity.HasIndex(e => e.OrderDate)
-                    .HasName("OrderDate");
+                entity.HasIndex(e => e.EmployeeId);
 
-                entity.HasIndex(e => e.ShipPostalCode)
-                    .HasName("ShipPostalCode");
+                entity.Property(e => e.EmployeeId)
+                    .HasColumnName("EmployeesOrders");
 
-                entity.HasIndex(e => e.ShipVia)
-                    .HasName("ShippersOrders");
+                entity.HasIndex(e => e.OrderDate);
 
-                entity.HasIndex(e => e.ShippedDate)
-                    .HasName("ShippedDate");
+                entity.HasIndex(e => e.ShipPostalCode);
+
+                entity.HasIndex(e => e.ShipVia);
+
+                entity.Property(e => e.ShipVia)
+                    .HasColumnName("ShippersOrders");
+
+                entity.Property(e => e.ShipVia)
+                    .HasColumnName("ShippersOrders");
+
+                entity.HasIndex(e => e.ShippedDate);
 
                 entity.Property(e => e.CustomerId).IsFixedLength();
 
@@ -166,11 +177,10 @@ namespace WebApplication.API.Contexts.Contexts
                 entity.HasKey(e => new { e.OrderId, e.ProductId })
                     .HasName("PK_Order_Details");
 
-                entity.HasIndex(e => e.OrderId)
-                    .HasName("OrdersOrder_Details");
+                entity.HasIndex(e => e.OrderId);
 
-                entity.HasIndex(e => e.ProductId)
-                    .HasName("ProductsOrder_Details");
+                entity.Property(e => e.ProductId)
+                    .HasColumnName("ProductsOrder_Details");
 
                 entity.Property(e => e.Discount).HasDefaultValueSql("(0)");
 
@@ -200,14 +210,17 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.HasIndex(e => e.CategoryId)
-                    .HasName("CategoryID");
+                entity.HasIndex(e => e.CategoryId);
 
-                entity.HasIndex(e => e.ProductName)
-                    .HasName("ProductName");
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("CategoryID");
 
-                entity.HasIndex(e => e.SupplierId)
-                    .HasName("SuppliersProducts");
+                entity.HasIndex(e => e.ProductName);
+
+                entity.HasIndex(e => e.SupplierId);
+
+                entity.Property(e => e.SupplierId)
+                    .HasColumnName("SuppliersProducts");
 
                 entity.Property(e => e.Discontinued).HasConversion(new BoolToZeroOneConverter<int>()).HasDefaultValueSql("(0)");
 
@@ -241,11 +254,9 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Supplier>(entity =>
             {
-                entity.HasIndex(e => e.CompanyName)
-                    .HasName("CompanyName");
+                entity.HasIndex(e => e.CompanyName);
 
-                entity.HasIndex(e => e.PostalCode)
-                    .HasName("PostalCode");
+                entity.HasIndex(e => e.PostalCode);
             });
 
             modelBuilder.Entity<Territory>(entity =>
