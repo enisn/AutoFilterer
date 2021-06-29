@@ -43,26 +43,26 @@ namespace WebApplication.API.Contexts.Contexts
             {
                 entity.HasIndex(e => e.CategoryName);
 
-                entity.Property(p => p.CategoryName).HasColumnName("CategoryName");
+                entity.Property(p => p.CategoryName);
             });
 
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.HasIndex(e => e.City);
 
-                entity.Property(e => e.City).HasColumnName("City");
+                entity.Property(e => e.City);
 
                 entity.HasIndex(e => e.CompanyName);
 
-                entity.Property(e => e.CompanyName).HasColumnName("CompanyName");
+                entity.Property(e => e.CompanyName);
 
                 entity.HasIndex(e => e.PostalCode);
 
-                entity.Property(e => e.PostalCode).HasColumnName("PostalCode");
+                entity.Property(e => e.PostalCode);
 
                 entity.HasIndex(e => e.Region);
 
-                entity.Property(e => e.Region).HasColumnName("Region");
+                entity.Property(e => e.Region);
 
                 entity.Property(e => e.CustomerId).IsFixedLength();
             });
@@ -97,11 +97,9 @@ namespace WebApplication.API.Contexts.Contexts
 
             modelBuilder.Entity<Employee>(entity =>
             {
-                entity.HasIndex(e => e.LastName)
-                    .HasName("LastName");
+                entity.HasIndex(e => e.LastName);
 
-                entity.HasIndex(e => e.PostalCode)
-                    .HasName("PostalCode");
+                entity.HasIndex(e => e.PostalCode);
 
                 entity.HasOne(d => d.ReportsToNavigation)
                     .WithMany(p => p.InverseReportsToNavigation)
@@ -130,13 +128,11 @@ namespace WebApplication.API.Contexts.Contexts
             {
                 entity.HasIndex(e => e.CustomerId);
 
-                entity.Property(e => e.CustomerId)
-                    .HasColumnName("CustomersOrders");
+                entity.Property(e => e.CustomerId);
 
                 entity.HasIndex(e => e.EmployeeId);
 
-                entity.Property(e => e.EmployeeId)
-                    .HasColumnName("EmployeesOrders");
+                entity.Property(e => e.EmployeeId);
 
                 entity.HasIndex(e => e.OrderDate);
 
@@ -144,11 +140,9 @@ namespace WebApplication.API.Contexts.Contexts
 
                 entity.HasIndex(e => e.ShipVia);
 
-                entity.Property(e => e.ShipVia)
-                    .HasColumnName("ShippersOrders");
+                entity.Property(e => e.ShipVia);
 
-                entity.Property(e => e.ShipVia)
-                    .HasColumnName("ShippersOrders");
+                entity.Property(e => e.ShipVia);
 
                 entity.HasIndex(e => e.ShippedDate);
 
@@ -179,8 +173,7 @@ namespace WebApplication.API.Contexts.Contexts
 
                 entity.HasIndex(e => e.OrderId);
 
-                entity.Property(e => e.ProductId)
-                    .HasColumnName("ProductsOrder_Details");
+                entity.Property(e => e.ProductId);
 
                 entity.Property(e => e.Discount).HasDefaultValueSql("(0)");
 
@@ -212,15 +205,13 @@ namespace WebApplication.API.Contexts.Contexts
             {
                 entity.HasIndex(e => e.CategoryId);
 
-                entity.Property(e => e.CategoryId)
-                    .HasColumnName("CategoryID");
+                entity.Property(e => e.CategoryId);
 
                 entity.HasIndex(e => e.ProductName);
 
                 entity.HasIndex(e => e.SupplierId);
 
-                entity.Property(e => e.SupplierId)
-                    .HasColumnName("SuppliersProducts");
+                entity.Property(e => e.SupplierId);
 
                 entity.Property(e => e.Discontinued).HasConversion(new BoolToZeroOneConverter<int>()).HasDefaultValueSql("(0)");
 
