@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using AutoFilterer.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using AutoFilterer.Extensions;
-using System.Text;
-using System.Threading.Tasks;
 using WebApplication.API.Repository;
 
 namespace WebApplication.API.Controllers
@@ -21,12 +17,13 @@ namespace WebApplication.API.Controllers
 
         /// <summary>
         /// This endpoint uses auto genererated filter object with `AutoFilterer.Generators` package.
-        /// 
+        /// </summary>
+        /// <remarks>
         /// You can jump to source code:
         /// - [BooksGeneratorsController.cs](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Controllers/BooksGeneratorsController.cs#L32)
         /// - [Book.cs](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Models/Book.cs#L6)
-        /// </summary>
         /// <param name="filter"></param>
+        /// </remarks>
         /// <returns></returns>
         [HttpGet]
         public IActionResult Get([FromQuery] WebApplication.BookFilter filter)
