@@ -15,5 +15,10 @@ namespace AutoFilterer.Tests.Environment.Models
         public int ReadCount { get; set; }
         public bool IsPublished { get; set; }
         public int? Views { get; set; }
+
+        public override string ToString()
+        {
+            return $"[{Id}] {Title} - {Author} | TotalPage: {TotalPage} | ReadCount: {ReadCount}";
+        }
     }
 }
