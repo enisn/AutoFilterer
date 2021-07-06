@@ -73,7 +73,7 @@ namespace AutoFilterer.Attributes
         {
             if (FilterableType != null)
             {
-                return ((IFilterableType) Activator.CreateInstance(FilterableType)).BuildExpression(expressionBody, targetProperty, filterProperty, value);
+                return ((IFilterableType)Activator.CreateInstance(FilterableType)).BuildExpression(expressionBody, targetProperty, filterProperty, value);
             }
 
             var attribute = filterProperty.GetCustomAttributes<FilteringOptionsBaseAttribute>().FirstOrDefault(x => !(x is CompareToAttribute));
@@ -83,6 +83,11 @@ namespace AutoFilterer.Attributes
                 return attribute.BuildExpression(expressionBody, targetProperty, filterProperty, value);
             }
 
+            return BuildDefaultExpression(expressionBody, targetProperty, filterProperty, value);
+        }
+
+        public virtual Expression BuildDefaultExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+        {
             if (value is IFilter filter)
             {
                 if (typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType) || (targetProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(targetProperty.PropertyType)))

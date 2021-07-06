@@ -9,7 +9,6 @@ namespace AutoFilterer
             set
             {
                 FilterBase.IgnoreExceptions = value;
-                
             }
         }
     }
