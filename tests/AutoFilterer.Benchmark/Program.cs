@@ -6,7 +6,7 @@ namespace AutoFilterer.Benchmark
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<AutoFiltererStartup>();
+            BenchmarkRunner.Run<AutoFiltererStartup>(args: args);
         }
     }
 }

@@ -92,3 +92,11 @@ AutoFilterer.Generators aims to generate filter objects from entities automatica
 
 Visit [documentation of Generators](docs/generators/AutoFilterer-Generators.md)
 
+---
+
+## Performance
+
+See Benchmark Results from [here](docs/Benchmark-Results.md)
+
+
+
