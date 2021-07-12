@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31410.414
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{CD6599CA-1650-46F4-8DDC-04A122412F67}"
 	ProjectSection(SolutionItems) = preProject
@@ -36,7 +36,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Generators", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Generators.Tests", "tests\AutoFilterer.Generators.Tests\AutoFilterer.Generators.Tests.csproj", "{85818CC1-FB78-4B39-82D1-953B059D3DF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFilterer.Tests.Core", "tests\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj", "{07F714D8-4ECD-4897-8709-41FB29FCAC13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Tests.Core", "tests\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj", "{07F714D8-4ECD-4897-8709-41FB29FCAC13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFilterer.Benchmark", "AutoFilterer.Benchmark\AutoFilterer.Benchmark.csproj", "{A4900BFC-7E29-4ED9-B397-11AE6883BE99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{A9CD1B3A-7E1E-4FC6-904B-6930731BD85E} = {35117D10-C053-4FCE-93AF-689BC94454F0}
 		{85818CC1-FB78-4B39-82D1-953B059D3DF0} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
+		{A4900BFC-7E29-4ED9-B397-11AE6883BE99} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7AD042FE-9723-4702-8D75-2733C4AE8E76}
