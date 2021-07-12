@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\tests\AutoFilterer.Tests\AutoFilterer.Tests.csproj" />
+    <ProjectReference Include="..\AutoFilterer.Tests\AutoFilterer.Tests.csproj" />
   </ItemGroup>
 
 </Project>

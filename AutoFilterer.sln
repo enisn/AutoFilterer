@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Generators.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Tests.Core", "tests\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj", "{07F714D8-4ECD-4897-8709-41FB29FCAC13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoFilterer.Benchmark", "AutoFilterer.Benchmark\AutoFilterer.Benchmark.csproj", "{A4900BFC-7E29-4ED9-B397-11AE6883BE99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Benchmark", "tests\AutoFilterer.Benchmark\AutoFilterer.Benchmark.csproj", "{D58AD271-731E-428B-867A-296EEC4B7AB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,10 +82,10 @@ Global
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4900BFC-7E29-4ED9-B397-11AE6883BE99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,7 +100,7 @@ Global
 		{A9CD1B3A-7E1E-4FC6-904B-6930731BD85E} = {35117D10-C053-4FCE-93AF-689BC94454F0}
 		{85818CC1-FB78-4B39-82D1-953B059D3DF0} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
-		{A4900BFC-7E29-4ED9-B397-11AE6883BE99} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
+		{D58AD271-731E-428B-867A-296EEC4B7AB9} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7AD042FE-9723-4702-8D75-2733C4AE8E76}
