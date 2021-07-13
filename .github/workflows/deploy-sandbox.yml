@@ -1,7 +1,5 @@
 name: 'Deploy to Heroku'
-on: 
-  schedule:
-    - cron:  '30 0 */2 * *'
+on: workflow_dispatch # Will be triggered manually
 jobs:
   build:
     runs-on: ubuntu-latest
