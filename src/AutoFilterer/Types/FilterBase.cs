@@ -17,6 +17,8 @@ namespace AutoFilterer.Types
     /// </summary>
     public class FilterBase : IFilter
     {
+        public static bool IgnoreExceptions { get; set; } = true;
+
         [IgnoreFilter]
         public virtual CombineType CombineWith { get; set; }
 
@@ -47,20 +49,28 @@ namespace AutoFilterer.Types
                     if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
                         continue;
 
-                    var attribute = filterProperty.GetCustomAttribute<CompareToAttribute>(inherit: true) ?? new CompareToAttribute(filterProperty.Name);
+                    var attributes = filterProperty.GetCustomAttributes<CompareToAttribute>(inherit: true);
+
+                    if (!attributes.Any())
+                    {
+                        attributes = new[] { new CompareToAttribute(filterProperty.Name) };
+                    }
 
                     Expression innerExpression = null;
 
-                    foreach (var targetPropertyName in attribute.PropertyNames)
+                    foreach (var attribute in attributes)
                     {
-                        var targetProperty = entityType.GetProperty(targetPropertyName);
-                        if (targetProperty == null)
-                            continue;
+                        foreach (var targetPropertyName in attribute.PropertyNames)
+                        {
+                            var targetProperty = entityType.GetProperty(targetPropertyName);
+                            if (targetProperty == null)
+                                continue;
 
-                        var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
+                            var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
-                        var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
-                        innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
+                            var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
+                            innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
+                        }
                     }
 
                     var combined = finalExpression.Combine(innerExpression, CombineWith);
@@ -68,6 +78,11 @@ namespace AutoFilterer.Types
                 }
                 catch (Exception ex)
                 {
+                    if (!IgnoreExceptions)
+                    {
+                        throw;
+                    }
+
                     Debug.WriteLine(ex?.ToString());
                 }
             }
