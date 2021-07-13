@@ -76,6 +76,7 @@ namespace WebApplication.API
 
             app.UseDocumentation(cfg =>
             {
+                cfg.NavBarStyle = NavBarStyle.Default;
                 cfg.RootPathHandling = HandlingType.Redirect;
                 cfg.GetMdlStyle = "https://code.getmdl.io/1.3.0/material.deep_purple-light_blue.min.css";
                 var swashbuckleLink = new CustomLink("Swagger UI", "/swagger", false);
