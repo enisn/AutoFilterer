@@ -1,0 +1,17 @@
+name: 'Deploy to Heroku'
+on: {} # Will be triggered manually
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build, Push and Deploy to Heroku #set the whatever name you want to this step
+        id: heroku
+        uses: mtsmachado8/heroku-deploy@v1.0.0  # use the latest version of the action
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }} # your heroku email
+          api_key: ${{ secrets.HEROKU_API_KEY }} # your  heroku api key
+          app_name: ${{ secrets.HEROKU_APP_NAME }} # you aplication name
+          dockerfile_path: '' # set the path to the folder wher the Dokerfile is located
+          options: '' # Docker Build Options
