@@ -7,6 +7,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
