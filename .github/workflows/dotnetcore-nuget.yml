@@ -24,5 +24,11 @@ jobs:
     - name: Pack
       run: dotnet pack -o packages --configuration Release
     - name: Push
-      run: dotnet nuget push packages/*.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate
+      #run: dotnet nuget push packages/*.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate
+      run: |
+        dotnet nuget push packages/AutoFilterer.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate"
+        dotnet nuget push packages/AutoFilterer.Swagger.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate"
+        dotnet nuget push packages/AutoFilterer.Dynamics.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate"
+        dotnet nuget push packages/AutoFilterer.Generators.nupkg --source ${{secrets.NUGET_SOURCE}} --api-key ${{secrets.NUGET_KEY}}  --skip-duplicate"
+        echo "Nuget Release Completed!"
       #continue-on-error: true
