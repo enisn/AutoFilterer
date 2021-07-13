@@ -6,9 +6,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build, Push and Deploy to Heroku #set the whatever name you want to this step
+      - name: Build, Push and Deploy to Heroku
         id: heroku
-        uses: mtsmachado8/heroku-deploy@v1.0.0  # use the latest version of the action
+        uses: mtsmachado8/heroku-deploy@v2.0.8 
         with:
           email: ${{ secrets.HEROKU_EMAIL }} # your heroku email
           api_key: ${{ secrets.HEROKU_API_KEY }} # your  heroku api key
