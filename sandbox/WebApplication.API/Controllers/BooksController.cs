@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebApplication.API.Dtos;
+using ;
 using WebApplication.API.Models;
 using WebApplication.API.Repository;
 using AutoFilterer.Extensions;
@@ -35,7 +35,7 @@ namespace WebApplication.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(Book[]), 200)]
-        public IActionResult Get([FromQuery]BookFilter filter)
+        public IActionResult Get([FromQuery] WebApplication.API.Dtos.BookFilter filter)
         {
             var result = repository.Books.ApplyFilter(filter);
 
