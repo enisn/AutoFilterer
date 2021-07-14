@@ -38,15 +38,9 @@ Vsit [visit documentation](../../wiki) to learn how to use AutoFilterer.
 
 ## Showcase
 
-You can TRY <a href="https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books" target="_blank">LIVE DEMO</a>.
+<a href="https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books" target="_blank">TRY LIVE DEMO</a> now.
 
-- All querying supports Open API 3.0 Specifications:
-
-![image](https://user-images.githubusercontent.com/23705418/82128447-f9961180-97c3-11ea-87b3-452c38d9f676.png)
-
-- And Result:
-
-![image](https://user-images.githubusercontent.com/23705418/82128521-6ad5c480-97c4-11ea-9f78-575733c101dd.png)
+![autofilterer showcase](art/showcase.png)
 
 ***
 
