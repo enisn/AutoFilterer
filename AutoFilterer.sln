@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Tests.Core", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoFilterer.Benchmark", "tests\AutoFilterer.Benchmark\AutoFilterer.Benchmark.csproj", "{D58AD271-731E-428B-867A-296EEC4B7AB9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinApi.TodoApp", "sandbox\MinApi.TodoApp\MinApi.TodoApp.csproj", "{E6DF0509-8040-42D7-ACCC-9C14E0736FD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +88,10 @@ Global
 		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D58AD271-731E-428B-867A-296EEC4B7AB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6DF0509-8040-42D7-ACCC-9C14E0736FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6DF0509-8040-42D7-ACCC-9C14E0736FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6DF0509-8040-42D7-ACCC-9C14E0736FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6DF0509-8040-42D7-ACCC-9C14E0736FD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{85818CC1-FB78-4B39-82D1-953B059D3DF0} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 		{07F714D8-4ECD-4897-8709-41FB29FCAC13} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
 		{D58AD271-731E-428B-867A-296EEC4B7AB9} = {3B6FA8E9-4A8B-4E6D-9B51-4C39D3794080}
+		{E6DF0509-8040-42D7-ACCC-9C14E0736FD2} = {9D9A2A41-92A6-4E01-91AF-8CFB82498C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7AD042FE-9723-4702-8D75-2733C4AE8E76}
