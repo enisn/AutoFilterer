@@ -129,5 +129,25 @@ namespace AutoFilterer.Tests.Types
             // Assert
             Assert.Equal(expectedQuery.Count(), actualQuery.Count());
         }
+
+        [Theory, AutoMoqData(count: 64)]
+        public void BuildExpression_MinMaxWithCompareTo_ShouldCompareMultipleProperty(List<Book> dummyData, int min)
+        {
+            // Arrange
+            var max = min + random.Next(0, 20);
+            var filter = new BookFilter_Range_WithAttribute
+            {
+                Value = new Range<int>(min, max)
+            };
+
+            var query = dummyData.AsQueryable();
+
+            // Act
+            var actualQuery = query.ApplyFilter(filter);
+            var expectedQuery = query.Where(x => min <= x.TotalPage && x.TotalPage <= max || min <= x.ReadCount && x.ReadCount <= max);
+
+            // Assert
+            Assert.Equal(expectedQuery.Count(), actualQuery.Count());
+        }
     }
 }
