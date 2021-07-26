@@ -26,15 +26,15 @@ namespace WebApplication.API.Controllers
         /// <remarks>
         /// This API is made with following 2 file with writing a couple lines of code:
         /// 
-        /// - [Controller source-code](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Controllers/BooksController.cs#L40)
+        /// - [Controller source-code](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Controllers/BooksController.cs#L39)
         /// 
-        /// - [FilterBase source-code](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Dtos/BookFilter.cs)
+        /// - [BookFilter source-code](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Dtos/BookFilter.cs)
         /// </remarks>
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(Book[]), 200)]
-        public IActionResult Get([FromQuery] WebApplication.API.Dtos.BookFilter filter)
+        public IActionResult Get([FromQuery] Dtos.BookFilter filter)
         {
             var result = repository.Books.ApplyFilter(filter);
 
