@@ -14,6 +14,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using WebApplication.API.Contexts;
 using WebApplication.API.Contexts.Contexts;
 using WebApplication.API.Repository;
 
@@ -46,6 +47,12 @@ namespace WebApplication.API
                 => opts.UseNpgsql(Configuration.GetConnectionString("Northwind"))
                 );
 
+            services.AddDbContext<LiveDemoDbContext>(opts =>
+            {
+                //opts.UseInMemoryDatabase("live-demo");
+                opts.UseNpgsql(Configuration.GetConnectionString("Northwind"));
+            });
+
             services.AddSingleton<BooksRepository>();
 
             services.AddDocumentation();
@@ -73,6 +80,16 @@ namespace WebApplication.API
         {
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<LiveDemoDbContext>();
+                try
+                {
+                    context.Database.ExecuteSqlRaw(context.Database.GenerateCreateScript());
+                }
+                catch { }
+            }
 
             app.UseDocumentation(cfg =>
             {
