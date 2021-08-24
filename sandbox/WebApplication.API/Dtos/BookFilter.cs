@@ -27,7 +27,7 @@ namespace WebApplication.API.Dtos
         [ToLowerContainsComparison]
         public string Author { get; set; }
 
-        public OperatorFilter<int> TotalPage { get; set; }
+        public Range<int> TotalPage { get; set; }
 
         public OperatorFilter<int> Year { get; set; }
     }
