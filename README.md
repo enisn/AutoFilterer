@@ -93,5 +93,8 @@ Visit [documentation of Generators](docs/generators/AutoFilterer-Generators.md)
 
 See Benchmark Results from [here](docs/Benchmark-Results.md)
 
+---
 
+## Stats
+![Alt](https://repobeats.axiom.co/api/embed/77652bec1cd20431b359e4c9042a0f343da5d252.svg "Repobeats analytics image")
 
