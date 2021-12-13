@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Environment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos;
+
+public class PreferencesFilter_NullableProperty : FilterBase
 {
-    public class PreferencesFilter_NullableProperty : FilterBase
-    {
-        public int? ReadLimit { get; set; }
-    }
+    public int? ReadLimit { get; set; }
 }

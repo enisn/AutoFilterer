@@ -1,12 +1,11 @@
 ﻿#if LEGACY_NAMESPACE
-namespace AutoFilterer.Enums
+namespace AutoFilterer.Enums;
 #else
-namespace AutoFilterer
+namespace AutoFilterer;
 #endif
+
+public enum Sorting
 {
-    public enum Sorting
-    {
-        Ascending,
-        Descending
-    }
+    Ascending,
+    Descending
 }

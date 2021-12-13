@@ -12,6 +12,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
     <PackageIcon>auto_filterer_icon.png</PackageIcon>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
 

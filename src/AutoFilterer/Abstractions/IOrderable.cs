@@ -4,14 +4,13 @@ using AutoFilterer.Enums;
 using AutoFilterer.Attributes;
 using System.Linq;
 
-namespace AutoFilterer.Abstractions
+namespace AutoFilterer.Abstractions;
+
+public interface IOrderable
 {
-    public interface IOrderable
-    {
-        [IgnoreFilter] Sorting SortBy { get; set; }
+    [IgnoreFilter] Sorting SortBy { get; set; }
 
-        [IgnoreFilter] string Sort { get; }
+    [IgnoreFilter] string Sort { get; }
 
-        IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source);
-    }
+    IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source);
 }

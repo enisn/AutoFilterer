@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace AutoFilterer.Attributes
+namespace AutoFilterer.Attributes;
+
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
+public abstract class OrderingOptionsBaseAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-    public abstract class OrderingOptionsBaseAttribute : Attribute
-    {
-    }
 }

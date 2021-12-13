@@ -6,27 +6,26 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AutoFilterer.Tests.Attributes
+namespace AutoFilterer.Tests.Attributes;
+
+public class ToLowerContainsComparisonAttributeTests
 {
-    public class ToLowerContainsComparisonAttributeTests
+    [Theory, AutoMoqData(count: 16)]
+    public void BuildExpression_ShouldGenerateQueryCorrect_WithoutAttribute(List<Book> dummyData)
     {
-        [Theory, AutoMoqData(count: 16)]
-        public void BuildExpression_ShouldGenerateQueryCorrect_WithoutAttribute(List<Book> dummyData)
+        // Arrange
+        var filter = new BookFilter_LowerContains
         {
-            // Arrange
-            var filter = new BookFilter_LowerContains
-            {
-                Title = "a"
-            };
-            IQueryable<Book> query = dummyData.AsQueryable();
+            Title = "a"
+        };
+        IQueryable<Book> query = dummyData.AsQueryable();
 
-            // Act
-            var filteredQuery = query.ApplyFilter(filter);
-            var result = filteredQuery.ToList();
-            // Assert
-            var actualResult = query.Where(x => x.Title.ToLower().Contains(filter.Title.ToLower())).ToList();
+        // Act
+        var filteredQuery = query.ApplyFilter(filter);
+        var result = filteredQuery.ToList();
+        // Assert
+        var actualResult = query.Where(x => x.Title.ToLower().Contains(filter.Title.ToLower())).ToList();
 
-            Assert.Equal(result.Count, actualResult.Count);
-        }
+        Assert.Equal(result.Count, actualResult.Count);
     }
 }

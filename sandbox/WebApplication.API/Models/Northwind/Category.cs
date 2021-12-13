@@ -5,30 +5,30 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication.API.Models.Northwind
+namespace WebApplication.API.Models.Northwind;
+
+[Table("categories", Schema = "public")]
+public partial class Category
 {
-    [Table("categories", Schema = "public")]
-    public partial class Category
+    public Category()
     {
-        public Category()
-        {
-            Products = new HashSet<Product>();
-        }
-
-        [Key]
-        [Column("category_id")]
-        public int CategoryId { get; set; }
-        [Required]
-        [StringLength(15)]
-        [Column("category_name")]
-        public string CategoryName { get; set; }
-        [Column("description")]
-        public string Description { get; set; }
-        [Column("picture")][JsonIgnore]
-        public byte[] Picture { get; set; }
-
-        [JsonIgnore]
-        [InverseProperty(nameof(Product.Category))]
-        public virtual ICollection<Product> Products { get; set; }
+        Products = new HashSet<Product>();
     }
+
+    [Key]
+    [Column("category_id")]
+    public int CategoryId { get; set; }
+    [Required]
+    [StringLength(15)]
+    [Column("category_name")]
+    public string CategoryName { get; set; }
+    [Column("description")]
+    public string Description { get; set; }
+    [Column("picture")]
+    [JsonIgnore]
+    public byte[] Picture { get; set; }
+
+    [JsonIgnore]
+    [InverseProperty(nameof(Product.Category))]
+    public virtual ICollection<Product> Products { get; set; }
 }

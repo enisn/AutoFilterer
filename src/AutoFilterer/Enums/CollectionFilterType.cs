@@ -1,15 +1,14 @@
 ﻿using System;
 
 #if LEGACY_NAMESPACE
-namespace AutoFilterer.Enums
+namespace AutoFilterer.Enums;
 #else
-namespace AutoFilterer
+namespace AutoFilterer;
 #endif
+
+[Flags]
+public enum CollectionFilterType
 {
-    [Flags]
-    public enum CollectionFilterType
-    {
-        Any,
-        All,
-    }
+    Any,
+    All,
 }

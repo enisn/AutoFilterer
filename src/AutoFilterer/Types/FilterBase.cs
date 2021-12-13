@@ -10,84 +10,83 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace AutoFilterer.Types
+namespace AutoFilterer.Types;
+
+/// <summary>
+/// Base class of filter Data Transfer Objects.
+/// </summary>
+public class FilterBase : IFilter
 {
-    /// <summary>
-    /// Base class of filter Data Transfer Objects.
-    /// </summary>
-    public class FilterBase : IFilter
+    public static bool IgnoreExceptions { get; set; } = true;
+
+    [IgnoreFilter]
+    public virtual CombineType CombineWith { get; set; }
+
+    public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
     {
-        public static bool IgnoreExceptions { get; set; } = true;
+        var parameter = Expression.Parameter(typeof(TEntity), "x");
 
-        [IgnoreFilter]
-        public virtual CombineType CombineWith { get; set; }
+        var exp = BuildExpression(typeof(TEntity), parameter);
+        if (exp == null)
+            return query;
 
-        public virtual IQueryable<TEntity> ApplyFilterTo<TEntity>(IQueryable<TEntity> query)
+        if (exp is MemberExpression || exp is ParameterExpression)
+            return query;
+
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
+        return query.Where(lambda);
+    }
+
+    public virtual Expression BuildExpression(Type entityType, Expression body)
+    {
+        Expression finalExpression = body;
+        var _type = this.GetType();
+        foreach (var filterProperty in _type.GetProperties())
         {
-            var parameter = Expression.Parameter(typeof(TEntity), "x");
-
-            var exp = BuildExpression(typeof(TEntity), parameter);
-            if (exp == null)
-                return query;
-
-            if (exp is MemberExpression || exp is ParameterExpression)
-                return query;
-
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(exp, parameter);
-            return query.Where(lambda);
-        }
-
-        public virtual Expression BuildExpression(Type entityType, Expression body)
-        {
-            Expression finalExpression = body;
-            var _type = this.GetType();
-            foreach (var filterProperty in _type.GetProperties())
+            try
             {
-                try
+                var val = filterProperty.GetValue(this);
+                if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
+                    continue;
+
+                var attributes = filterProperty.GetCustomAttributes<CompareToAttribute>(inherit: true);
+
+                if (!attributes.Any())
                 {
-                    var val = filterProperty.GetValue(this);
-                    if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
-                        continue;
-
-                    var attributes = filterProperty.GetCustomAttributes<CompareToAttribute>(inherit: true);
-
-                    if (!attributes.Any())
-                    {
-                        attributes = new[] { new CompareToAttribute(filterProperty.Name) };
-                    }
-
-                    Expression innerExpression = null;
-
-                    foreach (var attribute in attributes)
-                    {
-                        foreach (var targetPropertyName in attribute.PropertyNames)
-                        {
-                            var targetProperty = entityType.GetProperty(targetPropertyName);
-                            if (targetProperty == null)
-                                continue;
-
-                            var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
-
-                            var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
-                            innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
-                        }
-                    }
-
-                    var combined = finalExpression.Combine(innerExpression, CombineWith);
-                    finalExpression = combined.Combine(body, CombineWith);
+                    attributes = new[] { new CompareToAttribute(filterProperty.Name) };
                 }
-                catch (Exception ex)
+
+                Expression innerExpression = null;
+
+                foreach (var attribute in attributes)
                 {
-                    if (!IgnoreExceptions)
+                    foreach (var targetPropertyName in attribute.PropertyNames)
                     {
-                        throw;
-                    }
+                        var targetProperty = entityType.GetProperty(targetPropertyName);
+                        if (targetProperty == null)
+                            continue;
 
-                    Debug.WriteLine(ex?.ToString());
+                        var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
+
+                        var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
+                        innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
+                    }
                 }
+
+                var combined = finalExpression.Combine(innerExpression, CombineWith);
+                finalExpression = combined.Combine(body, CombineWith);
             }
+            catch (Exception ex)
+            {
+                if (!IgnoreExceptions)
+                {
+                    throw;
+                }
 
-            return finalExpression;
+                Debug.WriteLine(ex?.ToString());
+            }
         }
+
+        return finalExpression;
     }
 }

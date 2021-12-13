@@ -4,24 +4,23 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication.API.Models.Northwind
+namespace WebApplication.API.Models.Northwind;
+
+[Table("customer_demographics", Schema = "public")]
+public partial class CustomerDemographic
 {
-    [Table("customer_demographics", Schema = "public")]
-    public partial class CustomerDemographic
+    public CustomerDemographic()
     {
-        public CustomerDemographic()
-        {
-            CustomerCustomerDemos = new HashSet<CustomerCustomerDemo>();
-        }
-
-        [Key]
-        [Column("customer_type_id")]
-        [StringLength(10)]
-        public string CustomerTypeId { get; set; }
-        [Column("customer_desc")]
-        public string CustomerDesc { get; set; }
-
-        [InverseProperty(nameof(CustomerCustomerDemo.CustomerType))]
-        public virtual ICollection<CustomerCustomerDemo> CustomerCustomerDemos { get; set; }
+        CustomerCustomerDemos = new HashSet<CustomerCustomerDemo>();
     }
+
+    [Key]
+    [Column("customer_type_id")]
+    [StringLength(10)]
+    public string CustomerTypeId { get; set; }
+    [Column("customer_desc")]
+    public string CustomerDesc { get; set; }
+
+    [InverseProperty(nameof(CustomerCustomerDemo.CustomerType))]
+    public virtual ICollection<CustomerCustomerDemo> CustomerCustomerDemos { get; set; }
 }

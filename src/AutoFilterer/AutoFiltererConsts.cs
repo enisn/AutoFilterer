@@ -1,15 +1,14 @@
 ﻿using AutoFilterer.Types;
 
-namespace AutoFilterer
+namespace AutoFilterer;
+
+public static class AutoFiltererConsts
 {
-    public static class AutoFiltererConsts
+    public static bool IgnoreExceptions
     {
-        public static bool IgnoreExceptions
+        set
         {
-            set
-            {
-                FilterBase.IgnoreExceptions = value;
-            }
+            FilterBase.IgnoreExceptions = value;
         }
     }
 }

@@ -2,10 +2,9 @@
 
 using AutoFilterer.Types;
 
-namespace WebApplication.API.Dtos.Northwind
+namespace WebApplication.API.Dtos.Northwind;
+
+public class EmployeeTerritoryFilter : FilterBase
 {
-    public class EmployeeTerritoryFilter : FilterBase
-    {
-        public string[] TerritoryId { get; set; }
-    }
+    public string[] TerritoryId { get; set; }
 }
