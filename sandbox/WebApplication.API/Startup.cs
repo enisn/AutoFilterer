@@ -17,94 +17,93 @@ using System.Text.Json.Serialization;
 using WebApplication.API.Contexts.Contexts;
 using WebApplication.API.Repository;
 
-namespace WebApplication.API
+namespace WebApplication.API;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllersWithViews()
+            .AddNewtonsoftJson(opts =>
+            {
+                opts.SerializerSettings.Converters.Add(new StringEnumConverter());
+                opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                opts.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                opts.SerializerSettings.MaxDepth = 3;
+            })
+            .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+        services.AddDbContext<NorthwindDbContext>(opts
+            //=> opts.UseSqlServer(Configuration.GetConnectionString("Northwind"))
+            => opts.UseNpgsql(Configuration.GetConnectionString("Northwind"))
+            );
+
+        services.AddSingleton<BooksRepository>();
+
+        services.AddDocumentation();
+
+        services.AddSwaggerGen(c =>
         {
-            Configuration = configuration;
-        }
+            c.UseAutoFiltererParameters();
 
-        public IConfiguration Configuration { get; }
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Sample book",
+                Version = "v1",
+            });
+            c.DescribeAllEnumsAsStrings();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+            var docFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+            string filePath = Path.Combine(AppContext.BaseDirectory, docFile);
+            if (File.Exists(filePath))
+                c.IncludeXmlComments(filePath);
+        });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseHttpsRedirection();
+        app.UseRouting();
+
+        app.UseDocumentation(cfg =>
         {
-            services.AddControllersWithViews()
-                .AddNewtonsoftJson(opts =>
-                {
-                    opts.SerializerSettings.Converters.Add(new StringEnumConverter());
-                    opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    opts.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    opts.SerializerSettings.MaxDepth = 3;
-                })
-                .AddJsonOptions(opts => opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+            cfg.NavBarStyle = NavBarStyle.Default;
+            cfg.RootPathHandling = HandlingType.Redirect;
+            cfg.GetMdlStyle = "https://code.getmdl.io/1.3.0/material.deep_purple-light_blue.min.css";
+            var swashbuckleLink = new CustomLink("Swagger UI", "/swagger", false);
+            cfg
+                .AddCustomLink(swashbuckleLink)
+                .AddFooterLink(swashbuckleLink)
+                .AddFooterLink(new CustomLink("Swagger.json", "/swagger/v1/swagger.json", true))
+                .AddFooterLink(new CustomLink("See on Gitub", "https://github.com/enisn/AutoFilterer", true));
+        });
 
-            services.AddDbContext<NorthwindDbContext>(opts
-                //=> opts.UseSqlServer(Configuration.GetConnectionString("Northwind"))
-                => opts.UseNpgsql(Configuration.GetConnectionString("Northwind"))
-                );
-
-            services.AddSingleton<BooksRepository>();
-
-            services.AddDocumentation();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.UseAutoFiltererParameters();
-
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Sample book",
-                    Version = "v1",
-                });
-                c.DescribeAllEnumsAsStrings();
-
-                var docFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
-                string filePath = Path.Combine(AppContext.BaseDirectory, docFile);
-                if (File.Exists(filePath))
-                    c.IncludeXmlComments(filePath);
-            });
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
         {
-            app.UseHttpsRedirection();
-            app.UseRouting();
+            options.DefaultModelExpandDepth(3);
+            options.EnableDeepLinking();
+            options.DisplayRequestDuration();
+            options.ShowExtensions();
 
-            app.UseDocumentation(cfg =>
-            {
-                cfg.NavBarStyle = NavBarStyle.Default;
-                cfg.RootPathHandling = HandlingType.Redirect;
-                cfg.GetMdlStyle = "https://code.getmdl.io/1.3.0/material.deep_purple-light_blue.min.css";
-                var swashbuckleLink = new CustomLink("Swagger UI", "/swagger", false);
-                cfg
-                    .AddCustomLink(swashbuckleLink)
-                    .AddFooterLink(swashbuckleLink)
-                    .AddFooterLink(new CustomLink("Swagger.json", "/swagger/v1/swagger.json", true))
-                    .AddFooterLink(new CustomLink("See on Gitub", "https://github.com/enisn/AutoFilterer", true));
-            });
+            options.RoutePrefix = "swagger";
 
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.DefaultModelExpandDepth(3);
-                options.EnableDeepLinking();
-                options.DisplayRequestDuration();
-                options.ShowExtensions();
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
 
-                options.RoutePrefix = "swagger";
+        });
 
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
-
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }

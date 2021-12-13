@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Environment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos;
+
+public class BookFilter_Range_Views : FilterBase
 {
-    public class BookFilter_Range_Views : FilterBase
-    {
-        public Range<int> Views { get; set; }
-    }
+    public Range<int> Views { get; set; }
 }

@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Environment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos;
+
+public class BookFilter_Range_TotalPage : FilterBase
 {
-    public class BookFilter_Range_TotalPage : FilterBase
-    {
-        public Range<int> TotalPage { get; set; }
-    }
+    public Range<int> TotalPage { get; set; }
 }

@@ -6,11 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Environment.Dtos
+namespace AutoFilterer.Tests.Environment.Dtos;
+
+public class PreferencesFilter_ArraySearchWithAttribute : FilterBase
 {
-    public class PreferencesFilter_ArraySearchWithAttribute : FilterBase
-    {
-        [ArraySearchFilter]
-        public int[] SecurityLevel { get; set; }
-    }
+    [ArraySearchFilter]
+    public int[] SecurityLevel { get; set; }
 }

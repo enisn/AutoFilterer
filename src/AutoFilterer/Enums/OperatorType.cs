@@ -1,16 +1,15 @@
 ﻿#if LEGACY_NAMESPACE
-namespace AutoFilterer.Enums
+namespace AutoFilterer.Enums;
 #else
-namespace AutoFilterer
+namespace AutoFilterer;
 #endif
+
+public enum OperatorType
 {
-    public enum OperatorType
-    {
-        Equal,
-        NotEqual,
-        GreaterThan,
-        GreaterThanOrEqual,
-        LessThan,
-        LessThanOrEqual,
-    }
+    Equal,
+    NotEqual,
+    GreaterThan,
+    GreaterThanOrEqual,
+    LessThan,
+    LessThanOrEqual,
 }

@@ -12,14 +12,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace AutoFilterer.Tests.Types
-{
-    public class FilterBaseTests : IDisposable
-    {
-        private MockRepository mockRepository;
-        private static readonly Random random = new Random();
+namespace AutoFilterer.Tests.Types;
 
-        private readonly List<User> dummyData = new List<User>
+public class FilterBaseTests : IDisposable
+{
+    private MockRepository mockRepository;
+    private static readonly Random random = new Random();
+
+    private readonly List<User> dummyData = new List<User>
         {
             new User
             {
@@ -79,213 +79,212 @@ namespace AutoFilterer.Tests.Types
         };
 
 
-        public FilterBaseTests()
+    public FilterBaseTests()
+    {
+        this.mockRepository = new MockRepository(MockBehavior.Strict);
+
+
+    }
+
+    public void Dispose()
+    {
+        this.mockRepository.VerifyAll();
+    }
+
+    private FilterBase CreateFilterBase()
+    {
+        return new FilterBase();
+    }
+
+    [Theory, AutoMoqData]
+    public void ApplyFilterTo_WithEmptyFilterBase_ShouldMatchExpected(List<Book> data)
+    {
+        // Arrange
+        var filter = new BookFilterBase();
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var expected = data.AsQueryable().ToList();
+
+        Assert.Equal(expected.Count, result.Count);
+        foreach (var item in expected)
+            Assert.Contains(item, result);
+    }
+
+    [Theory, AutoMoqData]
+    public void ApplyFilterTo_WithEmptyPaginationFilterBase_ShouldMatchExpected(List<Book> data)
+    {
+        // Arrange
+        var filter = new BookFilter_Orderable();
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var expected = data.AsQueryable().ToList();
+
+        Assert.Equal(expected.Count, result.Count);
+        foreach (var item in expected)
+            Assert.Contains(item, result);
+    }
+
+    [Theory, AutoMoqData]
+    public void ApplyFilterTo_WithSingleField_ShouldMatchCount(List<User> dummyData)
+    {
+        // Arrange
+        var filterBase = new UserFilterBase
         {
-            this.mockRepository = new MockRepository(MockBehavior.Strict);
+            Email = dummyData.FirstOrDefault().Email,
+        };
 
+        IQueryable<User> query = dummyData.AsQueryable();
 
-        }
+        // Act
+        var result = query.ApplyFilter(filterBase).ToList();
 
-        public void Dispose()
+        // Assert
+        Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email));
+    }
+
+    [Theory, AutoMoqData]
+    public void ApplyFilterTo_WithTwoField_ShouldMatchCount(List<User> dummyData)
+    {
+        // Arrange
+        var filterBase = new UserFilterBase
         {
-            this.mockRepository.VerifyAll();
-        }
+            Email = dummyData.FirstOrDefault().Email,
+            IsActive = dummyData.FirstOrDefault().IsActive,
+        };
 
-        private FilterBase CreateFilterBase()
+        IQueryable<User> query = dummyData.AsQueryable();
+
+        // Act
+        filterBase.CombineWith = CombineType.And;
+        var result = query.ApplyFilter(filterBase).ToList();
+        filterBase.CombineWith = CombineType.Or;
+        var orResult = query.ApplyFilter(filterBase).ToList();
+
+
+        // Assert
+        Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email && x.IsActive == filterBase.IsActive));
+        Assert.True(orResult.Count == dummyData.Count(x => x.Email == filterBase.Email || x.IsActive == filterBase.IsActive));
+    }
+
+    [Theory, AutoMoqData]
+    public void BuildExpression_WithContainsString_ShouldMatchCount(List<User> dummyData)
+    {
+        // Arrange
+        var partOfName = dummyData.FirstOrDefault()?.FullName?.Substring(0, 4);
+        var filterBase = new UserFilterBase
         {
-            return new FilterBase();
-        }
+            FullName = partOfName,
+        };
 
-        [Theory, AutoMoqData]
-        public void ApplyFilterTo_WithEmptyFilterBase_ShouldMatchExpected(List<Book> data)
+        var query = dummyData.AsQueryable();
+
+        // Act
+        var result = query.ApplyFilter(filterBase).ToList();
+
+        // Assert
+        Assert.True(result.Count == dummyData.Count(x => x.FullName.Contains(filterBase.FullName, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+    [Theory, AutoMoqData(15)]
+    public void BuildExpression_WithSingleBooleanParameter_ShouldMatchCount(bool? isActive, List<User> dummyData)
+    {
+        // Arrange
+        var filterBase = new UserFilterBase
         {
-            // Arrange
-            var filter = new BookFilterBase();
+            IsActive = isActive
+        };
 
-            // Act
-            var query = data.AsQueryable().ApplyFilter(filter);
-            var result = query.ToList();
+        var query = dummyData.AsQueryable();
 
-            // Assert
-            var expected = data.AsQueryable().ToList();
+        // Act
+        var result = query.ApplyFilter(filterBase).ToList();
 
-            Assert.Equal(expected.Count, result.Count);
-            foreach (var item in expected)
-                Assert.Contains(item, result);
-        }
+        // Assert
 
-        [Theory, AutoMoqData]
-        public void ApplyFilterTo_WithEmptyPaginationFilterBase_ShouldMatchExpected(List<Book> data)
+        Func<User, bool> condition = _ => true;
+        if (isActive != null)
+            condition = x => x.IsActive == isActive;
+
+        Assert.True(result.Count == dummyData.Count(condition));
+    }
+
+
+    [Theory]
+    [InlineData("1994")]
+    [InlineData("90")]
+    [InlineData("0")]
+    public void BuildExpression_InnerSingleObjectWithSingleParameter_ShouldMatchCount(string givenName)
+    {
+        // Arrange
+
+        var filterBase = new UserFilterBase
         {
-            // Arrange
-            var filter = new BookFilter_Orderable();
+            Preferences = new PreferencesFilterBase { GivenName = givenName }
+        };
 
-            // Act
-            var query = data.AsQueryable().ApplyFilter(filter);
-            var result = query.ToList();
+        var query = dummyData.AsQueryable();
 
-            // Assert
-            var expected = data.AsQueryable().ToList();
+        // Act
+        var filteredQuery = query.ApplyFilter(filterBase);
+        var result = filteredQuery.ToList();
 
-            Assert.Equal(expected.Count, result.Count);
-            foreach (var item in expected)
-                Assert.Contains(item, result);
-        }
+        // Assert
+        var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
 
-        [Theory, AutoMoqData]
-        public void ApplyFilterTo_WithSingleField_ShouldMatchCount(List<User> dummyData)
+        Assert.True(result.Count == actualResult.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, actualResult);
+    }
+
+    [Fact]
+    public void BuildExpression_InnerSingleObjectWithCollectionFilter_ShouldMatchCount()
+    {
+        // Arrange
+
+        var filter = new UserFilterBase
         {
-            // Arrange
-            var filterBase = new UserFilterBase
-            {
-                Email = dummyData.FirstOrDefault().Email,
-            };
+            Books = new BookFilterBase { Title = "Normal" }
+        };
 
-            IQueryable<User> query = dummyData.AsQueryable();
+        var query = dummyData.AsQueryable();
 
-            // Act
-            var result = query.ApplyFilter(filterBase).ToList();
+        // Act
+        var filteredQuery = query.ApplyFilter(filter);
+        Console.WriteLine(filteredQuery);
+        var result = filteredQuery.ToList();
 
-            // Assert
-            Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email));
-        }
+        // Assert
+        var actualResult = dummyData.Where(x => x.Books.Any(a => a.Title.Contains(filter.Books.Title, StringComparison.InvariantCultureIgnoreCase))).ToList();
 
-        [Theory, AutoMoqData]
-        public void ApplyFilterTo_WithTwoField_ShouldMatchCount(List<User> dummyData)
+        Assert.True(result.Count == actualResult.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, actualResult);
+    }
+
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_IntoNullableProperty_ShouldMatchCount(List<Preferences> dummyData)
+    {
+        // Arrange
+        var filter = new PreferencesFilter_NullableProperty
         {
-            // Arrange
-            var filterBase = new UserFilterBase
-            {
-                Email = dummyData.FirstOrDefault().Email,
-                IsActive = dummyData.FirstOrDefault().IsActive,
-            };
+            ReadLimit = dummyData.FirstOrDefault(x => random.Next(0, 100) < 50)?.ReadLimit
+        };
 
-            IQueryable<User> query = dummyData.AsQueryable();
+        var query = dummyData.AsQueryable();
 
-            // Act
-            filterBase.CombineWith = CombineType.And;
-            var result = query.ApplyFilter(filterBase).ToList();
-            filterBase.CombineWith = CombineType.Or;
-            var orResult = query.ApplyFilter(filterBase).ToList();
+        // Act
+        var actualQuery = query.ApplyFilter(filter);
+        var expectedQuery = query.Where(x => x.ReadLimit.Value == filter.ReadLimit);
 
-
-            // Assert
-            Assert.True(result.Count == dummyData.Count(x => x.Email == filterBase.Email && x.IsActive == filterBase.IsActive));
-            Assert.True(orResult.Count == dummyData.Count(x => x.Email == filterBase.Email || x.IsActive == filterBase.IsActive));
-        }
-
-        [Theory, AutoMoqData]
-        public void BuildExpression_WithContainsString_ShouldMatchCount(List<User> dummyData)
-        {
-            // Arrange
-            var partOfName = dummyData.FirstOrDefault()?.FullName?.Substring(0, 4);
-            var filterBase = new UserFilterBase
-            {
-                FullName = partOfName,
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            var result = query.ApplyFilter(filterBase).ToList();
-
-            // Assert
-            Assert.True(result.Count == dummyData.Count(x => x.FullName.Contains(filterBase.FullName, StringComparison.InvariantCultureIgnoreCase)));
-        }
-
-        [Theory, AutoMoqData(15)]
-        public void BuildExpression_WithSingleBooleanParameter_ShouldMatchCount(bool? isActive, List<User> dummyData)
-        {
-            // Arrange
-            var filterBase = new UserFilterBase
-            {
-                IsActive = isActive
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            var result = query.ApplyFilter(filterBase).ToList();
-
-            // Assert
-
-            Func<User, bool> condition = _ => true;
-            if (isActive != null)
-                condition = x => x.IsActive == isActive;
-
-            Assert.True(result.Count == dummyData.Count(condition));
-        }
-
-
-        [Theory]
-        [InlineData("1994")]
-        [InlineData("90")]
-        [InlineData("0")]
-        public void BuildExpression_InnerSingleObjectWithSingleParameter_ShouldMatchCount(string givenName)
-        {
-            // Arrange
-
-            var filterBase = new UserFilterBase
-            {
-                Preferences = new PreferencesFilterBase { GivenName = givenName }
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            var filteredQuery = query.ApplyFilter(filterBase);
-            var result = filteredQuery.ToList();
-
-            // Assert
-            var actualResult = dummyData.Where(x => x.Preferences.GivenName.EndsWith(filterBase.Preferences.GivenName)).ToList();
-
-            Assert.True(result.Count == actualResult.Count);
-            foreach (var item in actualResult)
-                Assert.Contains(item, actualResult);
-        }
-
-        [Fact]
-        public void BuildExpression_InnerSingleObjectWithCollectionFilter_ShouldMatchCount()
-        {
-            // Arrange
-
-            var filter = new UserFilterBase
-            {
-                Books = new BookFilterBase { Title = "Normal" }
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            var filteredQuery = query.ApplyFilter(filter);
-            Console.WriteLine(filteredQuery);
-            var result = filteredQuery.ToList();
-
-            // Assert
-            var actualResult = dummyData.Where(x => x.Books.Any(a => a.Title.Contains(filter.Books.Title, StringComparison.InvariantCultureIgnoreCase))).ToList();
-
-            Assert.True(result.Count == actualResult.Count);
-            foreach (var item in actualResult)
-                Assert.Contains(item, actualResult);
-        }
-
-        [Theory, AutoMoqData(count:64)]
-        public void BuildExpression_IntoNullableProperty_ShouldMatchCount(List<Preferences> dummyData)
-        {
-            // Arrange
-            var filter = new PreferencesFilter_NullableProperty
-            {
-                ReadLimit = dummyData.FirstOrDefault(x => random.Next(0, 100) < 50)?.ReadLimit
-            };
-
-            var query = dummyData.AsQueryable();
-
-            // Act
-            var actualQuery = query.ApplyFilter(filter);
-            var expectedQuery = query.Where(x => x.ReadLimit.Value == filter.ReadLimit);
-
-            // Assert
-            Assert.Equal(expectedQuery.Count(), actualQuery.Count());
-        }
+        // Assert
+        Assert.Equal(expectedQuery.Count(), actualQuery.Count());
     }
 }

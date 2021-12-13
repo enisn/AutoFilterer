@@ -7,13 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoFilterer.Tests.Core
+namespace AutoFilterer.Tests.Core;
+
+public class AutoMoqDataAttribute : AutoDataAttribute
 {
-    public class AutoMoqDataAttribute : AutoDataAttribute
+    public AutoMoqDataAttribute(int count = 3)
+        : base(() => new Fixture { RepeatCount = count, }.Customize(new AutoMoqCustomization()))
     {
-        public AutoMoqDataAttribute(int count = 3)
-            : base(() => new Fixture { RepeatCount = count,  }.Customize(new AutoMoqCustomization()))
-        {
-        }
     }
 }

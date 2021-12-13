@@ -10,13 +10,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebApplication.API.Dtos.Northwind
-{
-    public class CustomerDemographicFilter : PaginationFilterBase
-    {
-        public string[] CustomerTypeId { get; set; }
+namespace WebApplication.API.Dtos.Northwind;
 
-        [StringFilterOptions(StringFilterOption.Contains)]
-        public string CustomerDesc { get; set; }
-    }
+public class CustomerDemographicFilter : PaginationFilterBase
+{
+    public string[] CustomerTypeId { get; set; }
+
+    [StringFilterOptions(StringFilterOption.Contains)]
+    public string CustomerDesc { get; set; }
 }
