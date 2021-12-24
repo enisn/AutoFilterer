@@ -3,7 +3,6 @@ using MarkdownDocumenting.Elements;
 using MarkdownDocumenting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +58,6 @@ public class Startup
                 Title = "Sample book",
                 Version = "v1",
             });
-            c.DescribeAllEnumsAsStrings();
 
             var docFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
             string filePath = Path.Combine(AppContext.BaseDirectory, docFile);
