@@ -2,11 +2,8 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoFilterer.Swagger.OperationFilters;
 
@@ -17,10 +14,10 @@ public class InnerFilterPropertiesOperationFilter : IOperationFilter
         var ignoredProps = GetIgnoredProperties();
         for (int i = 0; i < operation.Parameters.Count; i++)
         {
-            var item = operation.Parameters[i];
-            if (IsIgnored(item.Name, ignoredProps))
+            var parameter = operation.Parameters[i];
+            if (IsIgnored(parameter.Name, ignoredProps))
             {
-                operation.Parameters.Remove(item);
+                operation.Parameters.Remove(parameter);
                 i--;
             }
         }
