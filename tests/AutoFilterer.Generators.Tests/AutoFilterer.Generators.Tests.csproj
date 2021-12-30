@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\common.props" />
 
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer" />
+    <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer"/>
     <ProjectReference Include="..\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj" />
   </ItemGroup>
 
