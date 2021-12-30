@@ -25,22 +25,22 @@ public class OperatorFilter<T> : IFilterableType
         Expression expression = null;
 
         if (Eq != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
 
         if (Gt != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.GreaterThan).BuildExpression(expressionBody, targetProperty, filterProperty, Gt), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.GreaterThan.BuildExpression(expressionBody, targetProperty, filterProperty, Gt), CombineWith);
 
         if (Lt != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.LessThan).BuildExpression(expressionBody, targetProperty, filterProperty, Lt), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.LessThan.BuildExpression(expressionBody, targetProperty, filterProperty, Lt), CombineWith);
 
         if (Gte != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Gte), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.GreaterThanOrEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Gte), CombineWith);
 
         if (Lte != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.LessThanOrEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Lte), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.LessThanOrEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Lte), CombineWith);
 
         if (Not != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
 
         return expression;
     }

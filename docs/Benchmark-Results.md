@@ -1,22 +1,20 @@
 ``` ini
-BenchmarkDotNet=v0.13.0, OS=Windows 10.0.19042.1083 (20H2/October2020Update)
+
+BenchmarkDotNet=v0.13.0, OS=Windows 10.0.22000
 Intel Core i7-10750H CPU 2.60GHz, 1 CPU, 12 logical and 6 physical cores
-.NET SDK=6.0.100-preview.5.21302.13
-  [Host]     : .NET 5.0.7 (5.0.721.25508), X64 RyuJIT
-  DefaultJob : .NET 5.0.7 (5.0.721.25508), X64 RyuJIT
+.NET SDK=6.0.100
+  [Host]     : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
+  DefaultJob : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
 
 
 ```
-
-| Method                            |      Mean |     Error |    StdDev | Completed Work Items |  Gen 0 |  Gen 1 | Gen 2 | Allocated | Code Size |
-| --------------------------------- | --------: | --------: | --------: | -------------------: | -----: | -----: | ----: | --------: | --------: |
-| EqualsSingleProperly_Lambda       |  3.184 μs | 0.0153 μs | 0.0144 μs |               0.0000 | 0.2861 |      - |     - |      2 KB |      3 KB |
-| EqualsSingleProperly_AutoFilterer |  8.348 μs | 0.0576 μs | 0.0539 μs |               0.0000 | 0.6409 |      - |     - |      4 KB |      0 KB |
-| StringFilter_Lambda               | 26.384 μs | 0.1595 μs | 0.1414 μs |               0.0001 | 2.4414 | 0.0305 |     - |     15 KB |     23 KB |
-| StringFilter_AutoFilterer         | 14.163 μs | 0.1540 μs | 0.1440 μs |               0.0000 | 1.0681 |      - |     - |      7 KB |      0 KB |
-| MinAndMax_Lambda                  |  5.176 μs | 0.0661 μs | 0.0586 μs |               0.0000 | 0.4501 |      - |     - |      3 KB |      7 KB |
-| MinAndMax_AutoFilterer            |  8.756 μs | 0.0653 μs | 0.0579 μs |               0.0000 | 0.6561 |      - |     - |      4 KB |      0 KB |
-| ComplexFilter_Lambda              | 18.311 μs | 0.1326 μs | 0.1175 μs |               0.0001 | 1.5259 |      - |     - |      9 KB |     14 KB |
-| ComplexFilter_AutoFilterer        | 25.776 μs | 0.1496 μs | 0.1399 μs |               0.0001 | 2.1057 |      - |     - |     13 KB |      0 KB |
-
-- You can find benchmark test methods source codes from [here](https://github.com/enisn/AutoFilterer/blob/develop/tests/AutoFilterer.Benchmark/AutoFiltererStartup.cs). 
+|                            Method |      Mean |     Error |    StdDev | Code Size |  Gen 0 | Gen 1 | Gen 2 | Allocated | Completed Work Items | Lock Contentions |
+|---------------------------------- |----------:|----------:|----------:|----------:|-------:|------:|------:|----------:|---------------------:|-----------------:|
+|       EqualsSingleProperly_Lambda |  3.268 μs | 0.0635 μs | 0.0780 μs |      6 KB | 0.3319 |     - |     - |      2 KB |                    - |                - |
+| EqualsSingleProperly_AutoFilterer |  4.135 μs | 0.0616 μs | 0.0546 μs |      0 KB | 0.2670 |     - |     - |      2 KB |                    - |                - |
+|               StringFilter_Lambda | 23.582 μs | 0.2512 μs | 0.2350 μs |     20 KB | 2.6245 |     - |     - |     16 KB |                    - |                - |
+|         StringFilter_AutoFilterer |  8.117 μs | 0.1265 μs | 0.1122 μs |      0 KB | 0.6561 |     - |     - |      4 KB |                    - |                - |
+|                  MinAndMax_Lambda |  4.763 μs | 0.0723 μs | 0.0676 μs |     11 KB | 0.4654 |     - |     - |      3 KB |                    - |                - |
+|            MinAndMax_AutoFilterer |  4.245 μs | 0.0349 μs | 0.0310 μs |      0 KB | 0.2823 |     - |     - |      2 KB |                    - |                - |
+|              ComplexFilter_Lambda | 16.613 μs | 0.0699 μs | 0.0620 μs |     17 KB | 1.7090 |     - |     - |     11 KB |                    - |                - |
+|        ComplexFilter_AutoFilterer | 13.625 μs | 0.1886 μs | 0.1764 μs |      0 KB | 0.7019 |     - |     - |      4 KB |                    - |                - |

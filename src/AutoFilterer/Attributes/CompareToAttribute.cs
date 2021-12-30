@@ -92,8 +92,7 @@ public class CompareToAttribute : FilteringOptionsBaseAttribute
         {
             if (typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType) || (targetProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(targetProperty.PropertyType)))
             {
-                var collectionAttribute = new CollectionFilterAttribute();
-                return collectionAttribute.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+                return Singleton<CollectionFilterAttribute>.Instance.BuildExpression(expressionBody, targetProperty, filterProperty, value);
             }
             else
             {
@@ -108,11 +107,11 @@ public class CompareToAttribute : FilteringOptionsBaseAttribute
         }
         else if (filterProperty.PropertyType.IsArray && !typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType))
         {
-            return new ArraySearchFilterAttribute().BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return Singleton<ArraySearchFilterAttribute>.Instance.BuildExpression(expressionBody, targetProperty, filterProperty, value);
         }
         else
         {
-            return new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, value);
         }
     }
 }

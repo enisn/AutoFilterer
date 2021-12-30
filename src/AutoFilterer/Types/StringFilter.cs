@@ -57,10 +57,10 @@ public class StringFilter : IFilterableType
         Expression expression = null;
 
         if (Eq != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
 
         if (Not != null)
-            expression = expression.Combine(new OperatorComparisonAttribute(OperatorType.NotEqual).BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
 
         if (Equals != null)
             expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Equals), CombineWith);
