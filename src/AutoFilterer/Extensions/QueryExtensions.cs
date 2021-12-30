@@ -96,9 +96,28 @@ public static class QueryExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <param name="filter">Only <see cref="IOrderable"/> implemented objects are availabe.</param>
-    /// <returns></returns>
+    /// <returns>Final queryable.</returns>
     public static IOrderedQueryable<T> ApplyOrder<T>(this IQueryable<T> source, IOrderable filter)
     {
         return filter.ApplyOrder(source);
+    }
+
+    /// <summary>
+    /// Applies filter without Skip().Take() methods. It uses only Where() method over your <see cref="IQueryable"/>.
+    /// <list type="bullet">
+    /// You can use this method to get total count of applied query:
+    /// </list>
+    /// <code>
+    /// var books = db.Books.ApplyFilter(filter).ToList();
+    /// var count = db.Books.ApplyFilterWithoutPagination(filter).Count();
+    /// </code>
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="filter">Only <see cref="IPaginationFilter"/> implemented objects are available.</param>
+    /// <returns>Final queryable.</returns>
+    public static IQueryable<TSource> ApplyFilterWithoutPagination<TSource>(this IQueryable<TSource> source, IPaginationFilter filter)
+    {
+        return filter.ApplyFilterWithoutPagination(source);
     }
 }
