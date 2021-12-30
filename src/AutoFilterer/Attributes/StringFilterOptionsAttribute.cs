@@ -55,4 +55,16 @@ public class StringFilterOptionsAttribute : FilteringOptionsBaseAttribute
 
         return comparison;
     }
+
+    #region Static
+    public static StringFilterOptionsAttribute Contains { get; }
+    public static StringFilterOptionsAttribute EndsWith { get; }
+    public static StringFilterOptionsAttribute StartsWith { get; }
+    static StringFilterOptionsAttribute()
+    {
+        Contains = new StringFilterOptionsAttribute(StringFilterOption.Contains);
+        EndsWith = new StringFilterOptionsAttribute(StringFilterOption.EndsWith);
+        StartsWith = new StringFilterOptionsAttribute(StringFilterOption.StartsWith);
+    }
+    #endregion
 }

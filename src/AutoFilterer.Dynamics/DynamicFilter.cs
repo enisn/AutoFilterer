@@ -21,15 +21,15 @@ public class DynamicFilter : Dictionary<string, string>, IFilter
 
     private static readonly Dictionary<string, IFilterableType> specialKeywords = new Dictionary<string, IFilterableType>
         {
-            { "eq", new OperatorComparisonAttribute(OperatorType.Equal) },
-            { "not", new OperatorComparisonAttribute(OperatorType.NotEqual) },
-            { "gt", new OperatorComparisonAttribute(OperatorType.GreaterThan) },
-            { "gte", new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual) },
-            { "lt", new OperatorComparisonAttribute(OperatorType.LessThan) },
-            { "lte", new OperatorComparisonAttribute(OperatorType.LessThanOrEqual) },
-            { "contains", new StringFilterOptionsAttribute(StringFilterOption.Contains) },
-            { "endswith", new StringFilterOptionsAttribute(StringFilterOption.EndsWith) },
-            { "startswith", new StringFilterOptionsAttribute(StringFilterOption.StartsWith) },
+            { "eq", OperatorComparisonAttribute.Equal },
+            { "not", OperatorComparisonAttribute.NotEqual },
+            { "gt", OperatorComparisonAttribute.GreaterThan },
+            { "gte", OperatorComparisonAttribute.GreaterThanOrEqual },
+            { "lt", OperatorComparisonAttribute.LessThan },
+            { "lte", OperatorComparisonAttribute.LessThanOrEqual },
+            { "contains", StringFilterOptionsAttribute.Contains },
+            { "endswith", StringFilterOptionsAttribute.EndsWith },
+            { "startswith", StringFilterOptionsAttribute.StartsWith },
         };
 
     public CombineType CombineWith { get; set; }
@@ -71,7 +71,7 @@ public class DynamicFilter : Dictionary<string, string>, IFilter
             {
                 var targetProperty = entityType.GetProperty(key);
                 var value = Convert.ChangeType((string)filterValue, targetProperty.PropertyType);
-                var exp = new OperatorComparisonAttribute(OperatorType.Equal).BuildExpression(body, targetProperty, filterProperty: null, value);
+                var exp = OperatorComparisonAttribute.Equal.BuildExpression(body, targetProperty, filterProperty: null, value);
 
                 var combined = finalExpression.Combine(exp, CombineWith);
                 finalExpression = body.Combine(combined, CombineWith);

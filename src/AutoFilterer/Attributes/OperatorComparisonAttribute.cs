@@ -44,4 +44,24 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
 
         return Expression.Empty();
     }
+
+    #region Static
+
+    public static OperatorComparisonAttribute Equal { get; }
+    public static OperatorComparisonAttribute NotEqual { get; }
+    public static OperatorComparisonAttribute GreaterThan { get; }
+    public static OperatorComparisonAttribute GreaterThanOrEqual { get; }
+    public static OperatorComparisonAttribute LessThan { get; }
+    public static OperatorComparisonAttribute LessThanOrEqual { get; }
+
+    static OperatorComparisonAttribute()
+    {
+        Equal = new OperatorComparisonAttribute(OperatorType.Equal);
+        NotEqual = new OperatorComparisonAttribute(OperatorType.NotEqual);
+        GreaterThan = new OperatorComparisonAttribute(OperatorType.GreaterThan);
+        GreaterThanOrEqual = new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual);
+        LessThan = new OperatorComparisonAttribute(OperatorType.LessThan);
+        LessThanOrEqual = new OperatorComparisonAttribute(OperatorType.LessThanOrEqual);
+    }
+    #endregion
 }
