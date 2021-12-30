@@ -2,7 +2,11 @@
 using AutoFilterer.Enums;
 #endif
 using AutoFilterer.Extensions;
+using AutoFilterer.Tests.Core;
 using AutoFilterer.Tests.Environment.Dtos;
+using AutoFilterer.Tests.Environment.Models;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Xunit;
 
@@ -83,5 +87,21 @@ public class ExpressionExtensionsTests
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Theory, AutoMoqData(count: 16)]
+    public void ApplyFilterWithoutPagination_ShouldApplyWithoutSkipTake(List<Book> books)
+    {
+        // Arrange
+        var filter = new BookFilter_PaginationFilterBase { PerPage = 2 };
+        var actualQuery = books.AsQueryable().ApplyFilterWithoutPagination(filter);
+        var expectedQuery = books.AsQueryable();
+
+        // Act
+        var actual = actualQuery.ToList();
+        var expected = expectedQuery.ToList();
+
+        // Assert
+        Assert.Equal(expected.Count, actual.Count);
     }
 }
