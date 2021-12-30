@@ -1,10 +1,6 @@
 name: Nuget Publish Pipeline
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: []
+on: workflow_dispatch
 
 jobs:
   build:
