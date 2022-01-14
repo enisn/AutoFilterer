@@ -34,7 +34,7 @@ public class FilterGenerator : ISourceGenerator
         foreach (var classSyntax in receiver.Classes)
         {
             var attribute = classSyntax.AttributeLists.SelectMany(sm => sm.Attributes).FirstOrDefault(x => x.Name.ToString().EnsureEndsWith("Attribute").Equals(typeof(GenerateAutoFilterAttribute).Name));
-            var namespaceParam = attribute.ArgumentList.Arguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
+            var namespaceParam = attribute.ArgumentList?.Arguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
 
             var model = context.Compilation.GetSemanticModel(classSyntax.SyntaxTree);
             var symbol = model.GetDeclaredSymbol(classSyntax);
