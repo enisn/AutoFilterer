@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <Version>2.9.0</Version>
+    <Version>2.9.1</Version>
     <Authors>enisn</Authors>
     <Description>A Filtering framework. The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically.</Description>
     <PackageReleaseNotes>Minor performance improvements and multiple CompareTo attribute is allowed</PackageReleaseNotes>
@@ -14,7 +14,6 @@
     <PackageIcon>auto_filterer_icon.png</PackageIcon>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
 
   <ItemGroup>
     <None Include="..\..\art\auto_filterer_icon.png">
