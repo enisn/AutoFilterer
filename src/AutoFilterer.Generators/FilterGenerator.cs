@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using DotNurse.CodeAnalysis;
+using AutoFilterer.Generators.Extensions;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Diagnostics;
 
 namespace AutoFilterer.Generators;
 
@@ -14,30 +18,35 @@ public class FilterGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
-        context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
+        context.RegisterForSyntaxNotifications(() => new AttributeSyntaxReceiver<GenerateAutoFilterAttribute>());
     }
 
     public void Execute(GeneratorExecutionContext context)
     {
-        if (!(context.SyntaxReceiver is SyntaxReceiver receiver))
+        if (!(context.SyntaxReceiver is AttributeSyntaxReceiver<GenerateAutoFilterAttribute> receiver))
             return;
 
-        var classAttributePairs = GetClassAttributePairs(context, receiver);
-        foreach (var classAttributePair in classAttributePairs)
+        //if (!Debugger.IsAttached)
+        //{
+        //    Debugger.Launch();
+        //}
+
+        foreach (var classSyntax in receiver.Classes)
         {
-            var classSymbol = classAttributePair.Key;
+            var attribute = classSyntax.AttributeLists.SelectMany(sm => sm.Attributes).FirstOrDefault(x => x.Name.ToString().EnsureEndsWith("Attribute").Equals(typeof(GenerateAutoFilterAttribute).Name));
+            var namespaceParam = attribute.ArgumentList?.Arguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
 
-            var properties = classSymbol.GetMembers().OfType<IPropertySymbol>()
-                .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
+            var model = context.Compilation.GetSemanticModel(classSyntax.SyntaxTree);
+            var symbol = model.GetDeclaredSymbol(classSyntax);
+            var attrs = symbol.GetAttributes();
 
-            var realNamespace = GetNamespaceRecursively(classSymbol.ContainingNamespace);
+            var realNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
 
-            foreach (var attr in classAttributePair.Value)
-            {
-                var param = attr.ConstructorArguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
-                context.AddSource($"{classSymbol.Name}FilterDto.g.cs",
-                    SourceText.From(GetFilterDtoCode(classSymbol.Name, properties, param.Value?.ToString() ?? realNamespace), Encoding.UTF8));
-            }
+            var properties = symbol.GetMembers().OfType<IPropertySymbol>()
+            .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
+
+            context.AddSource($"{symbol.Name}FilterDto.g.cs",
+                   SourceText.From(GetFilterDtoCode(symbol.Name, properties, namespaceParam?.ToString().Trim('\"') ?? realNamespace), Encoding.UTF8));
         }
     }
 
