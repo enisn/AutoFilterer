@@ -28,19 +28,34 @@ public class StringFilter : IFilterableType
     public virtual new string Equals { get; set; }
 
     /// <summary>
-    /// Provides parameter to String.Conains method query.
+    /// Provides parameter to String.Contains method query.
     /// </summary>
     public virtual string Contains { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to !String.Contains method query.
+    /// </summary>
+    public virtual string NotContains { get; set; }
 
     /// <summary>
     /// Provides parameter to String.StartsWith method query.
     /// </summary>
     public virtual string StartsWith { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to !String.StartsWith method query.
+    /// </summary>
+    public virtual string NotStartsWith { get; set; }
 
     /// <summary>
     /// Provides parameter to String.EndsWith method query.
     /// </summary>
     public virtual string EndsWith { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to !String.EndsWith method query.
+    /// </summary>
+    public virtual string NotEndsWith { get; set; }
 
     /// <summary>
     /// <inheritdoc />
@@ -68,11 +83,20 @@ public class StringFilter : IFilterableType
         if (Contains != null)
             expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Contains), CombineWith);
 
+        if (NotContains != null)
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotContains)), CombineWith);
+
         if (StartsWith != null)
             expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, StartsWith), CombineWith);
 
+        if (NotStartsWith != null)
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotStartsWith)), CombineWith);
+
         if (EndsWith != null)
             expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, EndsWith), CombineWith);
+        
+        if (NotEndsWith != null)
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotEndsWith)), CombineWith);
 
         return expression;
     }
