@@ -23,10 +23,11 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
     {
         var prop = Expression.Property(expressionBody, targetProperty.Name);
         var param = Expression.Constant(value);
+        var targetIsNullable = targetProperty.PropertyType.IsNullable() || targetProperty.PropertyType == typeof(string);
 
         if (targetProperty.PropertyType.IsNullable())
             prop = Expression.Property(prop, nameof(Nullable<bool>.Value));
-
+        
         switch (OperatorType)
         {
             case OperatorType.Equal:
@@ -42,9 +43,9 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
             case OperatorType.LessThanOrEqual:
                 return Expression.LessThanOrEqual(prop, param);
             case OperatorType.IsNull:
-                return Expression.Equal( Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null));
+                return targetIsNullable ? Expression.Equal(Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null)) : null;
             case OperatorType.IsNotNull:
-                return Expression.NotEqual( Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null));
+                return targetIsNullable ? Expression.Not(Expression.Equal(Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null))) : null;
         }
 
         return Expression.Empty();
@@ -58,9 +59,7 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
     public static OperatorComparisonAttribute GreaterThanOrEqual { get; }
     public static OperatorComparisonAttribute LessThan { get; }
     public static OperatorComparisonAttribute LessThanOrEqual { get; }
-
     public static OperatorComparisonAttribute IsNull { get; }
-
     public static OperatorComparisonAttribute IsNotNull { get; }
 
     static OperatorComparisonAttribute()
