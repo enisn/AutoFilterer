@@ -18,7 +18,8 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
 
     public OperatorType OperatorType { get; }
 
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty,
+        PropertyInfo filterProperty, object value)
     {
         var prop = Expression.Property(expressionBody, targetProperty.Name);
         var param = Expression.Constant(value);
@@ -40,6 +41,10 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
                 return Expression.LessThan(prop, param);
             case OperatorType.LessThanOrEqual:
                 return Expression.LessThanOrEqual(prop, param);
+            case OperatorType.IsNull:
+                return Expression.Equal( Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null));
+            case OperatorType.IsNotNull:
+                return Expression.NotEqual( Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null));
         }
 
         return Expression.Empty();
@@ -54,6 +59,10 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
     public static OperatorComparisonAttribute LessThan { get; }
     public static OperatorComparisonAttribute LessThanOrEqual { get; }
 
+    public static OperatorComparisonAttribute IsNull { get; }
+
+    public static OperatorComparisonAttribute IsNotNull { get; }
+
     static OperatorComparisonAttribute()
     {
         Equal = new OperatorComparisonAttribute(OperatorType.Equal);
@@ -62,6 +71,9 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
         GreaterThanOrEqual = new OperatorComparisonAttribute(OperatorType.GreaterThanOrEqual);
         LessThan = new OperatorComparisonAttribute(OperatorType.LessThan);
         LessThanOrEqual = new OperatorComparisonAttribute(OperatorType.LessThanOrEqual);
+        IsNull = new OperatorComparisonAttribute(OperatorType.IsNull);
+        IsNotNull = new OperatorComparisonAttribute(OperatorType.IsNotNull);
     }
+
     #endregion
 }
