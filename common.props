@@ -4,7 +4,7 @@
     <Version>2.10.0</Version>
     <Authors>enisn</Authors>
     <Description>A Filtering framework. The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically.</Description>
-    <PackageReleaseNotes>Minor performance improvements and multiple CompareTo attribute is allowed</PackageReleaseNotes>
+    <PackageReleaseNotes>New query types were added.</PackageReleaseNotes>
     <NoWarn>$(NoWarn);CS1591;CS0436</NoWarn>
     <NeutralLanguage>en</NeutralLanguage>
     <RepositoryUrl>https://github.com/enisn/AutoFilterer</RepositoryUrl>
