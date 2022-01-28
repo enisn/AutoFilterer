@@ -60,4 +60,53 @@ public class StringFilterTests
         foreach (var item in actualResult)
             Assert.Contains(item, result);
     }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithNotContains_ShouldMatchCount(List<Book> data)
+    {
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                NotContains = "ab"
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => !x.Title.Contains(filter.Title.NotContains)).ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithNotContainsCaseInsensitive_ShouldMatchCount(List<Book> data)
+    {
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                NotContains = "Ab",
+                Compare = StringComparison.InvariantCultureIgnoreCase
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => !x.Title.Contains(filter.Title.NotContains, StringComparison.InvariantCultureIgnoreCase)).ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
 }
