@@ -109,4 +109,128 @@ public class StringFilterTests
         foreach (var item in actualResult)
             Assert.Contains(item, result);
     }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithIsNull_ShouldMatchCount(List<Book> data)
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            data[i].Title = null;
+        }
+        
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                IsNull = true
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => x.Title == null).ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        Assert.Equal(5, actualResult.Count);
+        Assert.Equal(5, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithIsNotNull_ShouldMatchCount(List<Book> data)
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            data[i].Title = null;
+        }
+        
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                IsNotNull = true
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => x.Title != null).ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        Assert.Equal(64 - 5, actualResult.Count);
+        Assert.Equal(64 - 5, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithIsEmpty_ShouldMatchCount(List<Book> data)
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            data[i].Title = "";
+        }
+        
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                IsEmpty = true
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => x.Title == "").ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        Assert.Equal(5, actualResult.Count);
+        Assert.Equal(5, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
+    
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_TitleWithIsNotEmpty_ShouldMatchCount(List<Book> data)
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            data[i].Title = "";
+        }
+        
+        // Arrange
+        var filter = new BookFilter_StringFilter_Title
+        {
+            Title = new StringFilter
+            {
+                IsNotEmpty = true
+            }
+        };
+
+        // Act
+        var query = data.AsQueryable().ApplyFilter(filter);
+        var result = query.ToList();
+
+        // Assert
+        var actualResult = data.AsQueryable().Where(x => x.Title != "").ToList();
+
+        Assert.Equal(actualResult.Count, result.Count);
+        Assert.Equal(64 - 5, actualResult.Count);
+        Assert.Equal(64 - 5, result.Count);
+        foreach (var item in actualResult)
+            Assert.Contains(item, result);
+    }
 }

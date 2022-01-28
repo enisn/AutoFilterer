@@ -12,4 +12,6 @@ public enum OperatorType
     GreaterThanOrEqual,
     LessThan,
     LessThanOrEqual,
+    IsNull,
+    IsNotNull,
 }

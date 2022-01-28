@@ -18,6 +18,8 @@ public class OperatorFilter<T> : IFilterableType
     public virtual T? Lt { get; set; }
     public virtual T? Gte { get; set; }
     public virtual T? Lte { get; set; }
+    public virtual bool? IsNull { get; set; }
+    public virtual bool? IsNotNull { get; set; }
 
     public virtual CombineType CombineWith { get; set; }
     public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
@@ -41,6 +43,30 @@ public class OperatorFilter<T> : IFilterableType
 
         if (Not != null)
             expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
+
+        if (IsNull != null)
+        {
+            if (IsNull.Value)
+            {
+                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull.Value), CombineWith);
+            }
+            else
+            {
+                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull.Value), CombineWith);
+            }
+        }
+        
+        if (IsNotNull != null)
+        {
+            if (IsNotNull.Value)
+            {
+                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull.Value), CombineWith);
+            }
+            else
+            {
+                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull.Value), CombineWith);
+            }
+        }
 
         return expression;
     }

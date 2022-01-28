@@ -53,6 +53,22 @@ namespace AutoFilterer.Tests.Types
                 if (f.TotalPage.Lte!= null)
                     query = query.Where(x => x.TotalPage <= f.TotalPage.Lt);
 
+                if (f.TotalPage.IsNull != null)
+                {
+                    if (f.TotalPage.IsNull.Value)
+                        query = query.Where(x => x.TotalPage == null);
+                    else
+                        query = query.Where(x => x.TotalPage != null);
+                }
+                
+                if (f.TotalPage.IsNotNull != null)
+                {
+                    if (f.TotalPage.IsNotNull.Value)
+                        query = query.Where(x => x.TotalPage != null);
+                    else
+                        query = query.Where(x => x.TotalPage == null);
+                }
+                
                 return query;
             }
         }
@@ -260,7 +276,7 @@ namespace AutoFilterer.Tests.Types
             foreach (var item in actualResult)
                 Assert.Contains(item, result);
         }
-
+        
         [Theory, AutoMoqData(count: 64)]
         public void BuildExpression_TotalPageLtEqWithOr_ShouldMatchCount(List<Book> data, int max, int exact)
         {
@@ -283,6 +299,68 @@ namespace AutoFilterer.Tests.Types
             var actualResult = data.AsQueryable().Where(x => x.TotalPage < max || x.TotalPage == exact).ToList();
 
             Assert.Equal(actualResult.Count, result.Count);
+            foreach (var item in actualResult)
+                Assert.Contains(item, result);
+        }
+        
+        [Theory, AutoMoqData(count: 64)]
+        public void BuildExpression_ViewsIsNull_ShouldMatchCount(List<Book> data)
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                data[i].Views = null;
+            }
+            
+            // Arrange
+            var filter = new BookFilter_OperatorFilter_Views
+            {
+                Views = new OperatorFilter<int>
+                {
+                    IsNull = true
+                }
+            };
+
+            // Act
+            var query = data.AsQueryable().ApplyFilter(filter);
+            var result = query.ToList();
+
+            // Assert
+            var actualResult = data.AsQueryable().Where(x => x.Views == null).ToList();
+
+            Assert.Equal(actualResult.Count, result.Count);
+            Assert.Equal(5, actualResult.Count);
+            Assert.Equal(5, result.Count);
+            foreach (var item in actualResult)
+                Assert.Contains(item, result);
+        }
+        
+        [Theory, AutoMoqData(count: 64)]
+        public void BuildExpression_ViewsIsNotNull_ShouldMatchCount(List<Book> data)
+        {
+            for (var i = 0; i < 5; i++)
+            {
+                data[i].Views = null;
+            }
+            
+            // Arrange
+            var filter = new BookFilter_OperatorFilter_Views
+            {
+                Views = new OperatorFilter<int>
+                {
+                    IsNotNull = true
+                }
+            };
+
+            // Act
+            var query = data.AsQueryable().ApplyFilter(filter);
+            var result = query.ToList();
+
+            // Assert
+            var actualResult = data.AsQueryable().Where(x => x.Views != null).ToList();
+
+            Assert.Equal(actualResult.Count, result.Count);
+            Assert.Equal(64 - 5, actualResult.Count);
+            Assert.Equal(64 - 5, result.Count);
             foreach (var item in actualResult)
                 Assert.Contains(item, result);
         }

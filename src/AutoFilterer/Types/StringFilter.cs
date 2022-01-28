@@ -56,6 +56,26 @@ public class StringFilter : IFilterableType
     /// Provides parameter to !String.EndsWith method query.
     /// </summary>
     public virtual string NotEndsWith { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to check is null.
+    /// </summary>
+    public virtual bool? IsNull { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to check is not null.
+    /// </summary>
+    public virtual bool? IsNotNull { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to check is empty string.
+    /// </summary>
+    public virtual bool? IsEmpty { get; set; }
+    
+    /// <summary>
+    /// Provides parameter to check is not empty string.
+    /// </summary>
+    public virtual bool? IsNotEmpty { get; set; }
 
     /// <summary>
     /// <inheritdoc />
@@ -77,6 +97,12 @@ public class StringFilter : IFilterableType
         if (Not != null)
             expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
 
+        if (IsNull != null)
+            expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull), CombineWith);
+
+        if (IsNotNull != null)
+            expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull), CombineWith);
+        
         if (Equals != null)
             expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Equals), CombineWith);
 
@@ -98,6 +124,31 @@ public class StringFilter : IFilterableType
         if (NotEndsWith != null)
             expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotEndsWith)), CombineWith);
 
+
+        if (IsEmpty != null)
+        {
+            if (IsEmpty.Value)
+            { 
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, ""), CombineWith);
+            }
+            else
+            {
+                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, "")), CombineWith);
+            }
+        }
+        
+        if (IsNotEmpty != null)
+        {
+            if (IsNotEmpty.Value)
+            {
+                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, "")), CombineWith);
+            }
+            else
+            {
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, ""), CombineWith);
+            }
+        }
+        
         return expression;
     }
 }

@@ -20,6 +20,7 @@ public class PerformanceTests
     {
         // Arrange
         filter.CombineWith = CombineType.And;
+        
         Stopwatch sw = new Stopwatch();
 
         // Act
@@ -60,6 +61,22 @@ public class PerformanceTests
 
             if (f.TotalPage.Lte != null)
                 query = query.Where(x => x.TotalPage <= f.TotalPage.Lt);
+            
+            if (f.TotalPage.IsNull != null)
+            {
+                if (f.TotalPage.IsNull.Value)
+                    query = query.Where(x => x.TotalPage == null);
+                else
+                    query = query.Where(x => x.TotalPage != null);
+            }
+                
+            if (f.TotalPage.IsNotNull != null)
+            {
+                if (f.TotalPage.IsNotNull.Value)
+                    query = query.Where(x => x.TotalPage != null);
+                else
+                    query = query.Where(x => x.TotalPage == null);
+            }
 
             return query;
         }
