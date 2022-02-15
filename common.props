@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <Version>2.11.0</Version>
+    <Version>2.12.0</Version>
     <Authors>enisn</Authors>
     <Description>A Filtering framework. The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically.</Description>
     <PackageReleaseNotes>New query types were added.</PackageReleaseNotes>
@@ -13,6 +13,10 @@
     <DefineConstants>LEGACY_NAMESPACE</DefineConstants>
     <PackageIcon>auto_filterer_icon.png</PackageIcon>
     <LangVersion>latest</LangVersion>
+
+    <!--Source-Linking-->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
