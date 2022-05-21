@@ -34,7 +34,7 @@ You can visit [Wiki](../../wiki) for documentation
 
 Vsit [visit documentation](../../wiki) to learn how to use AutoFilterer.
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/enisn/AutoFilterer)
+[↗️ Open in Visual Studio Code](https://open.vscode.dev/enisn/AutoFilterer)
 ***
 
 ## Showcase
