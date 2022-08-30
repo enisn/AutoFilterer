@@ -17,10 +17,6 @@
                 "path" : "AutoFilterer-Generators.md"
             },
             {
-                "text" : "AutoFilterer Generators",
-                "path" : "generators/AutoFilterer-Generators.md"
-            },
-            {
                 "text" : "AutoFilterer Dynamics",
                 "path" : "AutoFilterer-Dynamics.md" 
             }
