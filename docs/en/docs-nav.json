@@ -1,45 +1,40 @@
-{  
-   "items":[  
-      {  
-         "text":"Sample Menu Item - 1",
-         "items":[  
-            {  
-               "text":"Sample Menu Item - 1.1",
-               "items":[  
-                  {  
-                     "text":"Sample Menu Item - 1.1.1",
-                     "path":"SampleMenuItem_1_1_1.md"
-                  }
-               ]
-            },
-            {  
-               "text":"Sample Menu Item - 1.2",
-               "items":[  
-                  {  
-                     "text":"Sample Menu Item - 1.2.1",
-                     "path":"SampleMenuItem_1_2_1.md"
-                  },
-                  {  
-                     "text":"Sample Menu Item - 1.2.2",
-                     "path":"SampleMenuItem_1_2_2.md"
-                  }
-               ]
-            }
-         ]
-      },
-      {  
-         "text":"Sample Menu Item - 2",
-         "items":[  
-            {  
-               "text":"Sample Menu Item - 2.1",
-               "items":[  
-                  {  
-                     "text":"Sample Menu Item - 2.1.1",
-                     "path":"SampleMenuItem_2_1_1.md"
-                  }
-               ]
-            }
-         ]
-      }
-   ]
+{
+  "items": [
+    {
+        "text":"Getting Started",
+        "path": "Getting-Started.md"
+    },
+    {
+      "text": "Filtering",
+      "path": "Filtering.md"
+    },
+    {
+      "text": "Pagination",
+      "path": "Pagination.md"
+    },
+    {
+      "text": "Sorting",
+      "path": "Sorting.md"
+    },
+    {
+      "text": "Attributes",
+      "path": "attributes/README.md"
+    },
+    {
+      "text": "Generators",
+      "path": "generators/AutoFilterer-Generators.md"
+    },
+    {
+      "text": "Types",
+      "path": "types/README.md"
+    },
+    {
+      "text": "Architecture",
+      "path": "Architecture.md"
+    },
+    {
+      "text": "Extensibility",
+      "path": "Extensibility.md"
+    }
+  ]
 }
