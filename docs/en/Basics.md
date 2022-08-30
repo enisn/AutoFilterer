@@ -1,41 +1,51 @@
 # Basics
+- Let say you have a Model like that:
 
-*TODO*
+```csharp
+public class Blog
+{
+    public string BlogId { get; set; }
+    public int CategoryId { get; set; }
+    public int Priority { get; set; }
+    public bool IsPublished { get; set; }
+    public DateTime PublishDate { get; set; }
+}
+```
 
+- Let's create a filtering DTO like that:
 
+```csharp
+public class BlogFilterDto : FilterBase<Blog>
+{
+    public int CategoryId { get; set; }
+    public int Priority { get; set; }
+    public bool? IsPublished { get; set; }
+}
+```
 
-*TODO: Move following content here:*
+- Let's create a sample Controller and get the DTO from querystring
 
-[Basics · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Basics)
+```csharp
+public class BlogsController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get([FromQuery]BlogFilterDto filter)
+    {
+        using(var db = new MyDbContext())
+        {
+            var blogList = db.Blogs.ApplyFilter(filter).ToList();
+            return Ok(blogList);
+        }
+    }
+}
+```
 
+- Just send following requests to check result:
 
+  * `/Blogs?IsPublished=False`
+  * `/Blogs?CategoryId=4`
+  * `/Blogs?Priority=4`
+  * `/Blogs?IsPublished=True&Priority=1`
+  * `/Blogs?IsPublished=True&Priority=5&CategoryId=1`
 
-## AspNetCore Interop (QueryString Basics)
-
-*TODO: Move following content here:*
-
-[Customization of QueryString · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Customization-of-QueryString)
-
-
-
-## Property Mapping
-
-*TODO: Move following content here also:*
-
-[Property Name Mapping · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Property-Name-Mapping)
-
-
-
-## Nested Filter Objects
-
-*TODO: Place here usage of nested filter objects support.*
-
-*that might help: [AutoFilterer/ProductFilter.cs at master · enisn/AutoFilterer (github.com)](https://github.com/enisn/AutoFilterer/blob/master/sandbox/WebApplication.API/Dtos/Northwind/ProductFilter.cs#L34-L36)*
-
-[Nested Relational Queries · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Nested-Relational-Queries)
-
-## Using without AspNetCore
-
-*TODO: Place following content here:*
-
-[Using Without AspNet · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Using-Without-AspNet)
+***
