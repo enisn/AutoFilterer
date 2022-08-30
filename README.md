@@ -14,10 +14,10 @@ The main purpose of the library is to generate LINQ expressions for Entities ove
 
 > This library **does not** generate database queries directly. It generates LINQ Expressions.
 
-You can visit [Wiki](../../wiki) for documentation
+You can check [Documentation](https://enisn-projects.io/docs/en/AutoFilterer/) for getting started.
 
 [![Nuget](https://img.shields.io/nuget/v/AutoFilterer?logo=nuget)](https://www.nuget.org/packages/AutoFilterer/)
-[![WiKi](https://img.shields.io/badge/Visit-Wiki-orange)](../../wiki)
+[![Docs](https://img.shields.io/badge/Visit-Docs-orange)](https://enisn-projects.io/docs/en/AutoFilterer/)
 [![CodeFactor](https://www.codefactor.io/repository/github/enisn/autofilterer/badge)](https://www.codefactor.io/repository/github/enisn/autofilterer)
 <a href="https://codeclimate.com/github/enisn/AutoFilterer/maintainability"><img src="https://api.codeclimate.com/v1/badges/9d3ef7b380c4257c04fd/maintainability" /></a>
 [![.NET Pipeline](https://github.com/enisn/AutoFilterer/actions/workflows/dotnetcore.yml/badge.svg)](https://github.com/enisn/AutoFilterer/actions/workflows/dotnetcore.yml)
@@ -32,7 +32,7 @@ You can visit [Wiki](../../wiki) for documentation
 
 - Install `AutoFilterer` NuGet package from [here](https://www.nuget.org/packages/AutoFilterer/).
 
-Vsit [visit documentation](../../wiki) to learn how to use AutoFilterer.
+Vsit [visit documentation](https://img.shields.io/badge/Visit-docs-orange) to learn how to use AutoFilterer.
 
 [↗️ Open in Visual Studio Code](https://open.vscode.dev/enisn/AutoFilterer)
 ***
