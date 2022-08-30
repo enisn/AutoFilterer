@@ -1,19 +1,14 @@
 # Filtering
-AutoFilterer aims to keep strong type models and just removes complicated algorithms.
+AutoFilterer aim is keeping models strong-typed and removing complicated algorithms while filtering. With AutoFilterer, you define only filter object with rules and  do not write any LINQ Expression, AutoFilterer does it for you.
 
-# Showcase
+## Implementation
+Create a filter object that inherits from `FilterBase`. Create a property for each field you want to filter.
 
-```csharp
-[HttpGet]
-public IActionResult Get([FromQuery]BookFilter filter)
-{
-    var result = db.Books.ApplyFilter(filter).ToList();
-    return Ok(result);
-}
-```
 
-# Implementation
-You just need to create a Filter object that includes properties which is able to filter.
+- Property names should match entity property names. If not use `[CompareTo]` attribute.
+
+- **ValueTypes** should be **nullable** in case the value is not sent. Otherwise, even the value isn't sent, the filter will be applied with the default value of ValueType.
+
 
 ```csharp
 public class BookFilter : FilterBase // <-- Just inherit FilterBase
@@ -26,28 +21,25 @@ public class BookFilter : FilterBase // <-- Just inherit FilterBase
 }
 ```
 
+> _(If property names doesn't match or can't match, you can use `[CompareTo]` attribute to define entity property name. Check out [Property name mapping](examples/Property-Name-Mapping.md) for more info)_.
 
+## Usage
 
+```csharp
+[HttpGet]
+public IActionResult Get([FromQuery]BookFilter filter)
+{
+    var result = db.Books.ApplyFilter(filter).ToList();
+    return Ok(result);
+}
+```
 
-*TODO: Move following topics here:*
+Those properties can be used in the following ways in querystring.
 
-[Filtering · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Filtering)
+`/books?title=Middlemarch`
+`/books?title=Nostromo&year=1904`
 
-[Array Search · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Array-Search)
+## Further reading
 
-[Advanced Queries · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Advanced-Queries)
-
-[Operator Comparisons · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Operator-Comparisons)
-
-[String Comparisons · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/String-Comparisons)
-
-[OperatorComparison · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/OperatorComparison)
-
-[OperatorFilter · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/OperatorFilter)
-
-[StringFilter · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/StringFilter)
-
-[Working with Range · enisn/AutoFilterer Wiki (github.com)](https://github.com/enisn/AutoFilterer/wiki/Working-with-Range)
-
-
-
+- [String Comparisons](comparisons/String-Comparisons.md)
+- [Operator Comparisons](comparisons/Operator-Comparisons.md)
