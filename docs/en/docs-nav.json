@@ -2,7 +2,25 @@
   "items": [
     {
         "text":"Getting Started",
-        "path": "Getting-Started.md"
+        "path": "Getting-Started.md",
+        "items":[
+            {
+                "text" : "Basics",
+                "path" : "Basics.md"
+            },
+            {
+                "text" : "AutoFilterer Swagger",
+                "path" : "AutoFilterer-Swagger.md"
+            },
+            {
+                "text" : "AutoFilterer Generators",
+                "path" : "AutoFilterer-Generators.md"
+            },
+            {
+                "text" : "AutoFilterer Generators",
+                "path" : "generators/AutoFilterer-Generators.md"
+            }
+        ]
     },
     {
       "text": "Filtering",
@@ -17,12 +35,111 @@
       "path": "Sorting.md"
     },
     {
-      "text": "Attributes",
-      "path": "attributes/README.md"
+        "text": "Examples",
+        "items":[
+            {
+                "text" : "Property Name Mapping",
+                "path" : "examples/Property-Name-Mapping.md"
+            },
+            {
+                "text": "Working with Range",
+                "path" : "examples/Working-with-Range.md"
+            },
+            {
+                "text" : "Combining Parameters (OR - AND)",
+                "path" : "examples/Combine-Parameters-Or-And.md"
+            },
+            {
+                "text" : "Customization of QueryString",
+                "path" : "examples/Customization-of-QueryString.md"
+            },
+            {
+                "text" : "Customization of Pagination Parameters.md",
+                "path" : "examples/Customizing-Pagination-Parameters.md"
+            },
+            {
+                "text" : "Customization of Sorting Parameters.md",
+                "path" : "examples/Customizing-Sorting-Parameters.md"
+            },
+            {
+                "text": "Custom Expression for Properties",
+                "path": "Custom-Expression-for-Property.md"
+            }
+        ]
     },
     {
-      "text": "Generators",
-      "path": "generators/AutoFilterer-Generators.md"
+        "text" : "Features",
+        "items" :[
+            {
+                "text" : "Nested Relational Queries",
+                "path": "features/Nested-Relational-Queries.md"
+            }
+        ]
+    },
+    {
+        "text" : "Comparisons",
+        "items" :[
+            {
+                "text": "Pre-Defined",
+                "items": [
+                    {
+                        "text" : "String Comparisons",
+                        "path": "comparisons/String-Comparisons.md"
+                    },
+                    {
+                        "text": "Operator Comparisons",
+                        "path": "comparisons/Operator-Comparisons.md"
+                    },
+                    {
+                        "text" : "Working with Range",
+                        "path": "examples/Working-with-Range.md"
+                    }
+                ]
+            },
+            {
+                "text": "Dynamic",
+                "items": [
+                    {
+                        "text" : "StringFilter",
+                        "path": "comparisons/StringFilter.md"
+                    },
+                    {
+                        "text" : "OperatorFilter",
+                        "path": "comparisons/OperatorFilter.md"
+                    }
+                ]
+            }
+        ]
+    }
+    {
+        "text": "Performance",
+        "items" :[
+            {
+                "text" : "Benchmark-Results.md",
+                "path" : "Benchmark-Results.md"
+            }
+        ]
+    },
+    {
+        "text": "Migration Guides",
+        "items" :[
+            {
+                "text" : "Migration to v2.0",
+                "path" : "migration-guides/Migration-to-v2.md"
+            },
+            {
+                "text" : "Migration to v2.1",
+                "path" : "migration-guides/Migration-to-v2.1.md"
+            }
+        ]
+    },
+    {
+        "text": "Using without Asp.NET",
+        "path" : "Using-Without-AspNet.md"
+    },
+    {
+      "text": "Attributes",
+      "path": "attributes/README.md"
     },
     {
       "text": "Types",
