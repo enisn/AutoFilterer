@@ -1,49 +1,56 @@
-# Using String Comparisons
+# String Comparisons
 
-- Let's add a string column to model:
+AutoFilterer provides a strong API to define string comparisons in the DTOs.
+`StringFilterOptions` attribute is used to define a comparison. The attribute is optional. Default value is `Equals`.
 
+## Options
+There are 4 options available for string comparisons:
+
+- `Equals`: Generates a filter that checks if the value is equal to the specified value.
+  ```csharp
+    [StringFilterOptions(StringComparison.Equals)]
+    public string Name { get; set; }
+    ```
+
+    Generated LINQ expression: `x => Name == "John"`
+
+- `StartsWith`: Generates a filter that checks if the value starts with the specified value.
+    ```csharp
+    [StringFilterOptions(StringComparison.StartsWith)]
+    public string Name { get; set; }
+    ```
+    Generated LINQ expression: `x => Name.StartsWith("John")`
+
+- `EndsWith`: Generates a filter that checks if the value ends with the specified value.
+    ```csharp
+    [StringFilterOptions(StringComparison.EndsWith)]
+    public string Name { get; set; }
+    ```
+    Generated LINQ expression: `x => Name.EndsWith("John")`
+- `Contains`: Generates a filter that checks if the value contains the specified value.
+    ```csharp
+    [StringFilterOptions(StringComparison.Contains)]
+    public string Name { get; set; }
+    ```
+    Generated LINQ expression: `x => Name.Contains("John")`
+
+## Comparisons
+`System.StringComparison` is used to define the comparison type as a second parameter. It can be used to filter case-insensitive queries.
 
 ```csharp
-public class Blog
-{
-    public string BlogId { get; set; }
-    public int CategoryId { get; set; }
-    public string Title { get; set; } // <-- We'll work on this string field
-    public int Priority { get; set; }
-    public bool IsPublished { get; set; }
-    public DateTime PublishDate { get; set; }
-}
+[StringFilterOptions(StringFilterOption.Contains, StringComparison.InvariantCultureIgnoreCase)]
+public string Name { get; set; }
 ```
 
-- And of course add DTO too
+Generated LINQ expression: `x => Name.Contains("John", StringComparison.InvariantCultureIgnoreCase)`
+
+## Common Issues
+Database providers don't support same logic while generating database queries from LINQ expressions. `StringComparison.InvariantCultureIgnoreCase` is not supported by all database providers. As a workaround, you can use `ToLower()` method and database provider accepts it's a case insensitive query. MongoDB and SqlServer uses that logic to generate case-insensitive queries.
+
+Achieving `ToLower()` expression generation, you need to use `ToLowerContainsComparison` attribute. It'll generate a a proper `x => x.Name.ToLower().Contains("John")` expression.
 
 ```csharp
-public class BlogFilterDto : FilterBase<Blog>
-{
-    public int? CategoryId { get; set; }
-    public int? Priority { get; set; }
-    public string Title { get; set; } // <-- Same property name with Entity's property
-    public bool? IsPublished { get; set; }
-}
-```
+    [ToLowerContainsComparison]
+    public string Name { get; set; }
+`` 
 
-- Let's add `StringFilterOptions` attribute on the string field to search as **Contains** instead of exact value:
-
-```csharp
-public class BlogFilterDto : FilterBase<Blog>
-{
-    public int? CategoryId { get; set; }
-    public int? Priority { get; set; }
-    [StringFilterOptions(StringFilterOption.Contains)]
-    public string Title { get; set; }
-    public bool? IsPublished { get; set; }
-}
-```
-
-- You can send following requests to check result. That's awesome!
-
-  * `/Blogs?Title=Hello`
-  * `/Blogs?Title=Hello%20World`
-  * `/Blogs?Title=a`
-
-***
