@@ -1,9 +1,20 @@
-### OperatorFilter
-This filter includes some simple comparisons: 
-`eq`, `not`, `gt`, `gte`, `lt`, `lte`
+# OperatorFilter
+It's used to compare types that implements `IComparable` interface. _(Mostly numeric fields)_. `OperatorFilter` is a type that implements `IFilterableType`.So it can be used as a type of a property in Filter object. It's used for dynamic comparison. Both comparison type and comparison value are sent by client.
 
-#### Implementation
-Place **OperatorFilter<T>** to your Filter model:
+## Properties
+OperatorFilter includes following properties;
+
+- `Eq`: Provides parameter for equal operator `==` in expression.
+- `Not`: Provides parameter to not equal operator `!=` in expression.
+- `Gt`: Provides parameter to greater than operator `>` in expression.
+- `Lt`: Provides parameter to less than operator `<` in expression.
+- `Gte`: Provides parameter to greater than or equal operator `>=` in expression.
+- `Lte`: Provides parameter to less than or equal operator `<=` in expression.
+- `IsNull`: Provides parameter to `== null` comparison in expression.
+- `IsNotNull`: Provides parameter to `!= null` comparison inexpression.
+
+## Usage
+Use `OperatorFilter` as type of a property in Filter object.
 
 ```csharp
 public class BookFilter : FilterBase
@@ -12,32 +23,11 @@ public class BookFilter : FilterBase
 }
 ```
 
-Use **ApplyFilter()** method as always:
+That property can be used in the following ways in querystring.
 
-```csharp
-public IList<Book> GetBooks(BookFilter filter)
-{
-    return db.Books.ApplyFilter(filter).ToList();
-}
-```
-
-#### Usage
-- You can launch swagger document to see all arguments.
-
-- Just try sample request like below to get books which has 300 pages at least.
 `/books?totalPage.gte=300`
+`/books?totalPage.isNull=true`
+`/books?totalPage.gte=120&totalPage.lte=200`
 
-- And handler controller as always:
-
-```csharp
-[HttpGet]
-public IActionResult Get([FromQuery]BookFilter filter)
-{
-    var result = db.Books.ApplyFilter(filter).ToList();
-    return Ok();
-}
-```
-
-## What is next?
-You may also see:
+## Further reading
 - [StringFilter](StringFilter)
