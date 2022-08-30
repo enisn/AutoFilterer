@@ -1,0 +1,2 @@
+# Using without AspNet
+This project only generates LINQ Expressions over filter objects. This is not built on AspNet or does not depend on AspNet. But real-life scenarios comes from AspNet. So you can use this library in any project which includes collections. Let's make some samples in following documents.
