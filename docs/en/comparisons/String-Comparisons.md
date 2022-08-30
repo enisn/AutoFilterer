@@ -1,4 +1,4 @@
-# Using string comparisons
+# Using String Comparisons
 
 - Let's add a string column to model:
 

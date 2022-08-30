@@ -1,4 +1,4 @@
-# Custom Expression for Property
+# Custom Expression for a Property
 Sometimes one of your property can be used for filtering multiple properties of something special. So you can create your own attributes to make custom expression for your custom queries. Following entity models will be used in this document:
 
 - Blog.cs
