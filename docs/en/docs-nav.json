@@ -19,6 +19,10 @@
             {
                 "text" : "AutoFilterer Generators",
                 "path" : "generators/AutoFilterer-Generators.md"
+            },
+            {
+                "text" : "AutoFilterer Dynamics",
+                "path" : "AutoFilterer-Dynamics.md" 
             }
         ]
     },
@@ -70,6 +74,10 @@
     {
         "text" : "Features",
         "items" :[
+            {
+                "text": "Array Search",
+                "path": "features/Array-Search.md"
+            },
             {
                 "text" : "Nested Relational Queries",
                 "path": "features/Nested-Relational-Queries.md"
