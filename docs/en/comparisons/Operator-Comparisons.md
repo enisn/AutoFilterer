@@ -31,3 +31,5 @@ But **StringFilterOptions** generates query as
 `x => x.Title.Equals("something", StringComparison.InvariantCultureIgnoreCase)`.
 
 MongoDb doesn't support last one. So you can use **OperatorComparison** if you're using mongodb or something else which doesn't support `Equals` method.
+
+_TODO: Refactor this page_
