@@ -32,7 +32,7 @@ You can check [Documentation](https://enisn-projects.io/docs/en/AutoFilterer/) f
 
 - Install `AutoFilterer` NuGet package from [here](https://www.nuget.org/packages/AutoFilterer/).
 
-Vsit [visit documentation](https://img.shields.io/badge/Visit-docs-orange) to learn how to use AutoFilterer.
+Vsit [visit documentation](https://enisn-projects.io/docs/en/AutoFilterer/) to learn how to use AutoFilterer.
 
 [↗️ Open in Visual Studio Code](https://open.vscode.dev/enisn/AutoFilterer)
 ***
@@ -46,7 +46,7 @@ Vsit [visit documentation](https://img.shields.io/badge/Visit-docs-orange) to le
 ***
 
 ## Usage
-A quick example is presented below. Reading [Wiki](../../wiki) is highly recommended for detailed features.
+A quick example is presented below. Reading [documentation](https://enisn-projects.io/docs/en/AutoFilterer/) is highly recommended for detailed features.
 
 - Create a filter model and make sure property names match to Entity properties.
 
