@@ -14,15 +14,11 @@
             },
             {
                 "text" : "AutoFilterer Generators",
-                "path" : "AutoFilterer-Generators.md"
-            },
-            {
-                "text" : "AutoFilterer Generators",
                 "path" : "generators/AutoFilterer-Generators.md"
             },
             {
                 "text" : "AutoFilterer Dynamics",
-                "path" : "generators/AutoFilterer-Generators.md" 
+                "path" : "AutoFilterer-Dynamics.md" 
             }
         ]
     },
