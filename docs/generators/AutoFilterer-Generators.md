@@ -1,1 +1,1 @@
-Content was moved to [here](en/generators/AutoFilterer-Generators.md)
+Content was moved to [here](../en/generators/AutoFilterer-Generators.md)
