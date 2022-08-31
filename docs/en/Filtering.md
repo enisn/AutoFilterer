@@ -11,11 +11,10 @@ Create a filter object that inherits from `FilterBase`. Create a property for ea
 
 
 ```csharp
-public class BookFilter : FilterBase // <-- Just inherit FilterBase
+public class BookFilter : FilterBase // 👈 Inherit from FilterBase
 {
     public string Title { get; set; }
-    public string Author { get; set; }
-    public int? Year { get; set; } // <-- ValueTypes must be nullable
+    public int? Year { get; set; } // 👈 Value Types have to be nullable
     // ...
     // Only written properties can be filterable
 }
@@ -25,15 +24,29 @@ public class BookFilter : FilterBase // <-- Just inherit FilterBase
 
 ## Usage
 
+`FilterBase` implements `IFilter` interface that has `ApplyFilter` method. That means, the class you inherit from `FilterBase` is able to generate filters on collections.
+
+
 ```csharp
-[HttpGet]
-public IActionResult Get([FromQuery]BookFilter filter)
+public IActionResult GetBooks([FromQuery]BookFilter filter)
 {
-    var result = db.Books.ApplyFilter(filter).ToList();
-    return Ok(result);
+    var query = filter.ApplyFilterTo(db.Books);
+
+    return Ok(query.ToList());
 }
 ```
 
+### ApplyFilter() Extension method
+
+You can also use `ApplyFilter` extension method for `IQueryable<T>` types.
+
+
+```csharp
+public IActionResult GetBooks([FromQuery]BookFilter filter)
+{
+    return Ok(db.Books.ApplyFilter(filter).ToList());
+}
+```
 Those properties can be used in the following ways in querystring.
 
 `/books?title=Middlemarch`
