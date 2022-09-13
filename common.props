@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
-    <Version>2.12.0</Version>
+    <Version>2.12.1</Version>
     <Authors>enisn</Authors>
     <Description>A Filtering framework. The main purpose of the library is to generate LINQ expressions for Entities over DTOs automatically.</Description>
     <PackageReleaseNotes>New query types were added.</PackageReleaseNotes>
@@ -16,6 +16,7 @@
 
     <!--Source-Linking-->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
