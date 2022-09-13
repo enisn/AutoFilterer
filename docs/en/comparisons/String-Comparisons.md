@@ -52,5 +52,5 @@ Achieving `ToLower()` expression generation, you need to use `ToLowerContainsCom
 ```csharp
     [ToLowerContainsComparison]
     public string Name { get; set; }
-`` 
+```
 
