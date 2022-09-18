@@ -156,6 +156,16 @@
     {
       "text": "Extensibility",
       "path": "Extensibility.md"
+    },
+    {
+        "text": "Support",
+        "path": "Support.md",
+        "items":[
+            {
+                "text": "Premium Support",
+                "path": "PremiumSupport.md"
+            }
+        ]
     }
   ]
 }
