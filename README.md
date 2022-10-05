@@ -85,13 +85,13 @@ Improve your swagger documentation via using [AutoFilterer.Swagger](https://gith
 ## AutoFilterer.Generators
 AutoFilterer.Generators aims to generate filter objects from entities automatically via using [dotnet source generators](https://devblogs.microsoft.com/dotnet/introducing-c-source-generators/). 
 
-Visit [documentation of Generators](https://enisn-projects.io/docs/en/AutoFilterer/latest/Benchmark-Results)
+Visit [documentation of Generators](https://enisn-projects.io/docs/en/AutoFilterer/latest/generators/AutoFilterer-Generators)
 
 ---
 
 ## Performance
 
-See Benchmark Results from [here](docs/Benchmark-Results.md)
+See Benchmark Results from [here](https://enisn-projects.io/docs/en/AutoFilterer/latest/Benchmark-Results)
 
 ---
 
