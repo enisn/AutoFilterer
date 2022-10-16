@@ -26,9 +26,3 @@ public class Formatter<T>
 
     public string Format(T obj) => Cache.GetOrAdd(_expression, e => e.Compile()).Invoke(obj);
 }
-
-public static class FormatterExtensions
-{
-    public static IQueryable<string> Select<T>(this IQueryable<T> queryable, Formatter<T> formatter) =>
-        queryable.Select<T, string>(formatter);
-}
