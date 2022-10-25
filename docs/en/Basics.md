@@ -1,6 +1,6 @@
 # Basics
-- Let say you have a Model like that:
 
+Entity:
 ```csharp
 public class Blog
 {
@@ -12,10 +12,9 @@ public class Blog
 }
 ```
 
-- Let's create a filtering DTO like that:
-
+Create a filter object for Blog Entity:
 ```csharp
-public class BlogFilterDto : FilterBase<Blog>
+public class BlogFilterDto : FilterBase
 {
     public int CategoryId { get; set; }
     public int Priority { get; set; }
@@ -23,7 +22,7 @@ public class BlogFilterDto : FilterBase<Blog>
 }
 ```
 
-- Let's create a sample Controller and get the DTO from querystring
+- Create a sample Controller and get the DTO from querystring:
 
 ```csharp
 public class BlogsController : ControllerBase
