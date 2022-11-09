@@ -28,7 +28,12 @@ AutoFilterer.Generators aims to generate filter objects from entities automatica
 - You'll see `BookFilter` objects exists in your project. It's ready to use. Can be directly used as query parameter:
 
   ```csharp
-    dbContext.Books.ApplyFilter(filter));
+  public List<Book> GetList(BookFilter filter)
+  {
+    return dbContext.Books
+      .ApplyFilter(filter))
+      .ToList();
+  }
   ```
   
   In the decleration, BookFilter source code looks like:
