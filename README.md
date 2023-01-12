@@ -37,14 +37,6 @@ Vsit [visit documentation](https://enisn-projects.io/docs/en/AutoFilterer/) to l
 [↗️ Open in Visual Studio Code](https://open.vscode.dev/enisn/AutoFilterer)
 ***
 
-## Showcase
-
-<a href="https://autofilterer-showcase.herokuapp.com/swagger/index.html#/Books/get_api_Books" target="_blank">TRY LIVE DEMO</a> now.
-
-![autofilterer showcase](art/showcase.png)
-
-***
-
 ## Usage
 A quick example is presented below. Reading [documentation](https://enisn-projects.io/docs/en/AutoFilterer/) is highly recommended for detailed features.
 
@@ -92,6 +84,12 @@ Visit [documentation of Generators](https://enisn-projects.io/docs/en/AutoFilter
 ## Performance
 
 See Benchmark Results from [here](https://enisn-projects.io/docs/en/AutoFilterer/latest/Benchmark-Results)
+
+---
+
+## Sponsors
+
+- [gpproton](https://github.com/gpproton)
 
 ---
 
