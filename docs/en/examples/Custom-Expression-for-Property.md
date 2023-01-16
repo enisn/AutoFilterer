@@ -34,7 +34,7 @@ public class SearchDto : FilterBase
 ```csharp
  public class BlogSearchAttribute : FilteringOptionsBaseAttribute
     {
-        public override Expression BuildExpression(Expression expressionBody, PropertyInfo property, object value)
+        public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
         {
             // Also means:  x => x.Title == "someValue" || x.Content == "someValue"
             return Expression.Or(
