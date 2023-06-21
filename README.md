@@ -90,6 +90,7 @@ See Benchmark Results from [here](https://enisn-projects.io/docs/en/AutoFilterer
 ## Sponsors
 
 - [gpproton](https://github.com/gpproton)
+- [Sumgon](https://github.com/Sumgon)
 
 ---
 
