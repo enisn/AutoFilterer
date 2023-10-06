@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System;
+using AutoFilterer.Types;
 
 namespace AutoFilterer.Attributes;
 
@@ -50,68 +51,84 @@ public class CompareToAttribute : FilteringOptionsBaseAttribute
         }
     }
 
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
+        // TODO: Decide to use context.ExpressionBody itself of use a local variable 'expressionBody'.
+        var expressionBody = context.ExpressionBody;
+
         for (int i = 0; i < PropertyNames.Length; i++)
         {
             var targetPropertyName = PropertyNames[i];
-            var _targetProperty = targetProperty.DeclaringType.GetProperty(targetPropertyName);
+            var _targetProperty = context.TargetProperty.DeclaringType.GetProperty(targetPropertyName);
+
+            var newContext = new ExpressionBuildContext(
+                                    expressionBody,
+                                    _targetProperty,
+                                    context.FilterProperty,
+                                    context.FilterPropertyExpression,
+                                    context.FilterObject,
+                                    context.FilterObjectPropertyValue);
+
             if (FilterableType != null)
             {
-                expressionBody = ((IFilterableType)Activator.CreateInstance(FilterableType)).BuildExpression(expressionBody, _targetProperty, filterProperty, value);
+                expressionBody = ((IFilterableType)Activator.CreateInstance(FilterableType)).BuildExpression(newContext);
             }
             else
             {
-                expressionBody = BuildExpressionForProperty(expressionBody, _targetProperty, filterProperty, value);
+                expressionBody = BuildExpressionForProperty(newContext);
             }
         }
 
         return expressionBody;
     }
 
-    public virtual Expression BuildExpressionForProperty(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public virtual Expression BuildExpressionForProperty(ExpressionBuildContext context)
     {
         if (FilterableType != null)
         {
-            return ((IFilterableType)Activator.CreateInstance(FilterableType)).BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return ((IFilterableType)Activator.CreateInstance(FilterableType)).BuildExpression(context);
         }
 
-        var attribute = filterProperty.GetCustomAttributes<FilteringOptionsBaseAttribute>().FirstOrDefault(x => !(x is CompareToAttribute));
+        var attribute = context.FilterProperty.GetCustomAttributes<FilteringOptionsBaseAttribute>().FirstOrDefault(x => !(x is CompareToAttribute));
 
         if (attribute != null)
         {
-            return attribute.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return attribute.BuildExpression(context);
         }
 
-        return BuildDefaultExpression(expressionBody, targetProperty, filterProperty, value);
+        return BuildDefaultExpression(context);
     }
 
-    public virtual Expression BuildDefaultExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    //public virtual Expression BuildDefaultExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, MemberExpression filterPropertyExpression)
+    public virtual Expression BuildDefaultExpression(ExpressionBuildContext context)
     {
-        if (value is IFilter filter)
+        if (context.FilterObjectPropertyValue is IFilter filter)
         {
-            if (typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType) || (targetProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(targetProperty.PropertyType)))
+            if (typeof(ICollection).IsAssignableFrom(context.TargetProperty.PropertyType) || (context.TargetProperty.PropertyType.IsConstructedGenericType && typeof(IEnumerable).IsAssignableFrom(context.TargetProperty.PropertyType)))
             {
-                return Singleton<CollectionFilterAttribute>.Instance.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+                return Singleton<CollectionFilterAttribute>.Instance.BuildExpression(context);
             }
             else
             {
-                var parameter = Expression.Property(expressionBody, targetProperty.Name);
-                return filter.BuildExpression(targetProperty.PropertyType, parameter);
+                var parameter = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
+
+                return filter.BuildExpression(context.TargetProperty.PropertyType, parameter);
             }
         }
 
-        if (value is IFilterableType filterableProperty)
+
+
+        if (context.FilterObjectPropertyValue is IFilterableType filterableProperty)
         {
-            return filterableProperty.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return filterableProperty.BuildExpression(context);
         }
-        else if (filterProperty.PropertyType.IsArray && !typeof(ICollection).IsAssignableFrom(targetProperty.PropertyType))
+        else if (context.FilterProperty.PropertyType.IsArray && !typeof(ICollection).IsAssignableFrom(context.TargetProperty.PropertyType))
         {
-            return Singleton<ArraySearchFilterAttribute>.Instance.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return Singleton<ArraySearchFilterAttribute>.Instance.BuildExpression(context);
         }
         else
         {
-            return OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, value);
+            return OperatorComparisonAttribute.Equal.BuildExpression(context);
         }
     }
 }

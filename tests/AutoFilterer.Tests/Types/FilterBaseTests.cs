@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using AutoFilterer.Attributes;
 
 namespace AutoFilterer.Tests.Types;
 
@@ -286,5 +287,28 @@ public class FilterBaseTests : IDisposable
 
         // Assert
         Assert.Equal(expectedQuery.Count(), actualQuery.Count());
+    }
+
+    [Theory, AutoMoqData]
+    public void ApplyFilterTo_ShouldUsePropertyExpression(List<Preferences> dummyData)
+    {
+        // Arrange
+        var filter = new GivenNameFilterObject
+        {
+            GivenName = dummyData.First().GivenName
+        };
+
+        var query = dummyData.AsQueryable();
+
+        // Act
+        var actualQuery = query.ApplyFilter(filter);
+
+        // Assert
+        Assert.DoesNotContain("\"", actualQuery.Expression.ToString());
+    }
+
+    public class GivenNameFilterObject : FilterBase
+    {
+        public string GivenName { get; set; }
     }
 }

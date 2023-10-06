@@ -7,8 +7,8 @@ namespace AutoFilterer.Attributes;
 [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
 public class IgnoreFilterAttribute : FilteringOptionsBaseAttribute
 {
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
-        return expressionBody;
+        return context.ExpressionBody;
     }
 }

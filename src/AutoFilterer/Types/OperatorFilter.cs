@@ -22,37 +22,37 @@ public class OperatorFilter<T> : IFilterableType
     public virtual bool? IsNotNull { get; set; }
 
     public virtual CombineType CombineWith { get; set; }
-    public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public virtual Expression BuildExpression(ExpressionBuildContext context)
     {
         Expression expression = null;
 
         if (Eq != null)
-            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(ContextFor(context, nameof(Eq), Eq)), CombineWith);
 
         if (Gt != null)
-            expression = expression.Combine(OperatorComparisonAttribute.GreaterThan.BuildExpression(expressionBody, targetProperty, filterProperty, Gt), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.GreaterThan.BuildExpression(ContextFor(context, nameof(Gt), Gt)), CombineWith);
 
         if (Lt != null)
-            expression = expression.Combine(OperatorComparisonAttribute.LessThan.BuildExpression(expressionBody, targetProperty, filterProperty, Lt), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.LessThan.BuildExpression(ContextFor(context, nameof(Lt), Lt)), CombineWith);
 
         if (Gte != null)
-            expression = expression.Combine(OperatorComparisonAttribute.GreaterThanOrEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Gte), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.GreaterThanOrEqual.BuildExpression(ContextFor(context, nameof(Gte), Gte)), CombineWith);
 
         if (Lte != null)
-            expression = expression.Combine(OperatorComparisonAttribute.LessThanOrEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Lte), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.LessThanOrEqual.BuildExpression(ContextFor(context, nameof(Lte), Lte)), CombineWith);
 
         if (Not != null)
-            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(ContextFor(context, nameof(Not), Not)), CombineWith);
 
         if (IsNull != null)
         {
             if (IsNull.Value)
             {
-                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull.Value), CombineWith);
+                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(ContextFor(context, nameof(IsNull), null)), CombineWith);
             }
             else
             {
-                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull.Value), CombineWith);
+                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(ContextFor(context, nameof(IsNull), null)), CombineWith);
             }
         }
         
@@ -60,14 +60,28 @@ public class OperatorFilter<T> : IFilterableType
         {
             if (IsNotNull.Value)
             {
-                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull.Value), CombineWith);
+                expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(ContextFor(context, nameof(IsNotNull), null)), CombineWith);
             }
             else
             {
-                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull.Value), CombineWith);
+                expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(ContextFor(context, nameof(IsNotNull), null)), CombineWith);
             }
         }
 
         return expression;
+    }
+
+    private ExpressionBuildContext ContextFor(ExpressionBuildContext originalContext, string propertyName, T? value)
+    {
+        var innerProperty = originalContext.FilterProperty.PropertyType.GetProperty(propertyName);
+        var innerPropertyExpression = Expression.Property(originalContext.FilterPropertyExpression, innerProperty);
+
+        return new ExpressionBuildContext(
+            originalContext.ExpressionBody,
+            originalContext.TargetProperty,
+            innerProperty,
+            innerPropertyExpression,
+            originalContext.FilterObject,
+            value);
     }
 }
