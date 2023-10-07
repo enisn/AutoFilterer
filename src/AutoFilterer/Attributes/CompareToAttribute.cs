@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System;
-using AutoFilterer.Types;
 
 namespace AutoFilterer.Attributes;
 
@@ -99,7 +98,6 @@ public class CompareToAttribute : FilteringOptionsBaseAttribute
         return BuildDefaultExpression(context);
     }
 
-    //public virtual Expression BuildDefaultExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, MemberExpression filterPropertyExpression)
     public virtual Expression BuildDefaultExpression(ExpressionBuildContext context)
     {
         if (context.FilterObjectPropertyValue is IFilter filter)
@@ -115,8 +113,6 @@ public class CompareToAttribute : FilteringOptionsBaseAttribute
                 return filter.BuildExpression(context.TargetProperty.PropertyType, parameter);
             }
         }
-
-
 
         if (context.FilterObjectPropertyValue is IFilterableType filterableProperty)
         {

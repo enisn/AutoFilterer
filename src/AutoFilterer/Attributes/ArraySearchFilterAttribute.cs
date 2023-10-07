@@ -27,10 +27,6 @@ public class ArraySearchFilterAttribute : FilteringOptionsBaseAttribute
                                                         Expression.Property(context.ExpressionBody, context.TargetProperty)
                                                 });
 
-        
-
-        // x => filter.Status.Contains(x.Status)
-
         return containsExpression;
     }
 }
