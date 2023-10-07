@@ -27,7 +27,13 @@ public class OperatorFilter<T> : IFilterableType
         Expression expression = null;
 
         if (Eq != null)
-            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(ContextFor(context, nameof(Eq), Eq)), CombineWith);
+        {
+            expression = expression.Combine(
+                OperatorComparisonAttribute.Equal.BuildExpression(
+                    ContextFor(context, nameof(Eq), Eq)
+                ),
+                CombineWith);
+        }
 
         if (Gt != null)
             expression = expression.Combine(OperatorComparisonAttribute.GreaterThan.BuildExpression(ContextFor(context, nameof(Gt), Gt)), CombineWith);

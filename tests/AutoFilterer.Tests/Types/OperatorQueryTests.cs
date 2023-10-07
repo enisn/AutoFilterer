@@ -11,11 +11,17 @@ using AutoFilterer.Types;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using System;
 
 namespace AutoFilterer.Tests.Types
 {
     public class OperatorQueryTests
     {
+        public OperatorQueryTests()
+        {
+            AutoFiltererConsts.IgnoreExceptions = false;
+        }
+
         [Theory, AutoMoqData(count: 64)]
         public void BuildExpression_TotalPageWithAnd_SholdMatchCount(List<Book> data, BookFilter_OperatorFilter_TotalPage filter)
         {
@@ -77,6 +83,7 @@ namespace AutoFilterer.Tests.Types
         public void BuildExpression_TotalPageEqWithAnd_ShouldMatchCount(List<Book> data, int totalPage)
         {
             // Arrange
+
             var filter = new BookFilter_OperatorFilter_TotalPage
             {
                 TotalPage = new OperatorFilter<int>

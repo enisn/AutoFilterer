@@ -22,13 +22,20 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
     {
         var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
 
-        var filterProp = Expression.Property(Expression.Constant(context.FilterObject), context.FilterProperty);
+        var filterProp = context.FilterPropertyExpression;
+
+        if (context.FilterProperty.PropertyType.IsNullable())
+        {
+            filterProp = Expression.Property(filterProp, nameof(Nullable<bool>.Value));
+        }
 
         var targetIsNullable = context.TargetProperty.PropertyType.IsNullable() || context.TargetProperty.PropertyType == typeof(string);
 
         if (context.TargetProperty.PropertyType.IsNullable())
+        {
             prop = Expression.Property(prop, nameof(Nullable<bool>.Value));
-        
+        }
+
         switch (OperatorType)
         {
             case OperatorType.Equal:
