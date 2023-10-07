@@ -24,6 +24,11 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
 
         var filterProp = Expression.Property(Expression.Constant(context.FilterObject), context.FilterProperty);
 
+        if (context.FilterProperty.PropertyType.IsNullable())
+        {
+            filterProp = Expression.Property(filterProp, nameof(Nullable<bool>.Value));
+        }
+
         var targetIsNullable = context.TargetProperty.PropertyType.IsNullable() || context.TargetProperty.PropertyType == typeof(string);
 
         if (context.TargetProperty.PropertyType.IsNullable())
