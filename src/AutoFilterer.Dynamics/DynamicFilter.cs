@@ -68,7 +68,7 @@ public class DynamicFilter : Dictionary<string, string>, IFilter
         {
             var getter = this.GetType().GetMethod("get_Item");
             var filterPropertyExpression = Expression.Call(Expression.Constant(this), getter, Expression.Constant(key));
-            var filterValue = getter.Invoke(this, parameters: [key]);
+            var filterValue = getter.Invoke(this, parameters: new object[] { key });
             if (IsPrimitive(key))
             {
                 var targetProperty = entityType.GetProperty(key);
