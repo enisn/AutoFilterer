@@ -11,6 +11,11 @@ public static class NullableExtensions
 {
     public static bool IsNullable(this Type type)
     {
+        if (type is null)
+        {
+            return false;
+        }
+
         return type.Name == typeof(Nullable<>).Name;
     }
 
