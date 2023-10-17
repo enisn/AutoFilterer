@@ -11,7 +11,7 @@ namespace AutoFilterer.Attributes;
 /// </summary>
 public class ToLowerContainsComparisonAttribute : FilteringOptionsBaseAttribute
 {
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
         var containsMethod = typeof(string).GetMethod(nameof(string.Contains), types: new[] { typeof(string) });
 
@@ -20,9 +20,9 @@ public class ToLowerContainsComparisonAttribute : FilteringOptionsBaseAttribute
         var comparison = Expression.Equal(
                     Expression.Call(
                         method: containsMethod,
-                        instance: Expression.Call(method: toLowerMethod, instance: Expression.Property(expressionBody, targetProperty.Name)
+                        instance: Expression.Call(method: toLowerMethod, instance: Expression.Property(context.ExpressionBody, context.TargetProperty.Name)
                             ),
-                        arguments: new[] { Expression.Call(method: toLowerMethod, instance: Expression.Constant(value)) }),
+                        arguments: new[] { Expression.Call(method: toLowerMethod, instance: context.FilterPropertyExpression) }),
                     Expression.Constant(true));
 
         return comparison;

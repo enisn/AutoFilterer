@@ -7,12 +7,15 @@ namespace AutoFilterer.Attributes;
 
 public class ArraySearchFilterAttribute : FilteringOptionsBaseAttribute
 {
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
-        if (value is ICollection list && list.Count == 0)
-            return Expression.Constant(true);
-        var type = targetProperty.PropertyType;
-        var prop = Expression.Property(expressionBody, targetProperty.Name);
+        if (context.FilterProperty is ICollection list && list.Count == 0)
+        {
+            return Expression.Constant(true); // TODO: Make it better. Maybe return null? When null, it should be ignored and combined with another expressions.
+        }
+
+        var type = context.TargetProperty.PropertyType;
+        var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
 
         var containsMethod = typeof(Enumerable).GetMethods().FirstOrDefault(x => x.Name == nameof(Enumerable.Contains)).MakeGenericMethod(type);
 
@@ -20,8 +23,8 @@ public class ArraySearchFilterAttribute : FilteringOptionsBaseAttribute
                                                 method: containsMethod,
                                                 arguments: new Expression[]
                                                 {
-                                                        Expression.Constant(value),
-                                                        Expression.Property(expressionBody, targetProperty.Name)
+                                                        Expression.Property(Expression.Constant(context.FilterObject), context.FilterProperty),
+                                                        Expression.Property(context.ExpressionBody, context.TargetProperty)
                                                 });
 
         return containsExpression;

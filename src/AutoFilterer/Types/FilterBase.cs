@@ -45,9 +45,13 @@ public class FilterBase : IFilter
         {
             try
             {
-                var val = filterProperty.GetValue(this);
-                if (val == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
+                var filterPropertyValue = filterProperty.GetValue(this);
+                var filterPropertyExpression = Expression.Property(Expression.Constant(this), filterProperty);
+
+                if (filterPropertyValue == null || filterProperty.GetCustomAttribute<IgnoreFilterAttribute>() != null)
+                {
                     continue;
+                }
 
                 var attributes = filterProperty.GetCustomAttributes<CompareToAttribute>(inherit: true);
 
@@ -68,7 +72,9 @@ public class FilterBase : IFilter
 
                         var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
-                        var expression = attribute.BuildExpressionForProperty(bodyParameter, targetProperty, filterProperty, val);
+                        var expression = attribute.BuildExpressionForProperty(
+                            new ExpressionBuildContext(bodyParameter, targetProperty, filterProperty, filterPropertyExpression, this, filterPropertyValue));
+
                         innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
                     }
                 }

@@ -24,34 +24,41 @@ public class StringFilterOptionsAttribute : FilteringOptionsBaseAttribute
 
     public StringComparison? Comparison { get; set; }
 
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
         if (Comparison == null)
-            return BuildExpressionWithoutComparison(this.Option, expressionBody, targetProperty, value);
+        {
+            return BuildExpressionWithoutComparison(this.Option, context);
+        }
         else
-            return BuildExpressionWithComparison(this.Option, expressionBody, targetProperty, value);
+        {
+            return BuildExpressionWithComparison(this.Option, context);
+        }
     }
 
-    private Expression BuildExpressionWithComparison(StringFilterOption option, Expression expressionBody, PropertyInfo property, object value)
+    private Expression BuildExpressionWithComparison(StringFilterOption option, ExpressionBuildContext context)
     {
         var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
+        var filterProp = BuildFilterExpression(context);
 
         var comparison = Expression.Call(
                               method: method,
-                              instance: Expression.Property(expressionBody, property.Name),
-                              arguments: new[] { Expression.Constant(value), Expression.Constant(Comparison) });
+                              instance: Expression.Property(context.ExpressionBody, context.TargetProperty.Name),
+                              arguments: new Expression[] { filterProp, Expression.Constant(Comparison) });
 
         return comparison;
     }
 
-    private Expression BuildExpressionWithoutComparison(StringFilterOption option, Expression expressionBody, PropertyInfo property, object value)
+    private Expression BuildExpressionWithoutComparison(StringFilterOption option, ExpressionBuildContext context)
     {
         var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string) });
 
+        var filterProp = BuildFilterExpression(context);
+
         var comparison = Expression.Call(
                             method: method,
-                            instance: Expression.Property(expressionBody, property.Name),
-                            arguments: new[] { Expression.Constant(value) });
+                            instance: Expression.Property(context.ExpressionBody, context.TargetProperty.Name),
+                            arguments: new[] { filterProp });
 
         return comparison;
     }

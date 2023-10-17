@@ -87,53 +87,54 @@ public class StringFilter : IFilterableType
     /// </summary>
     public virtual StringComparison? Compare { get; set; }
 
-    public virtual Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public virtual Expression BuildExpression(ExpressionBuildContext context)
     {
         Expression expression = null;
 
         if (Eq != null)
-            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(expressionBody, targetProperty, filterProperty, Eq), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.Equal.BuildExpression(ContextFor(context, nameof(Eq), Eq)), CombineWith);
 
         if (Not != null)
-            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(expressionBody, targetProperty, filterProperty, Not), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.NotEqual.BuildExpression(ContextFor(context, nameof(Not), Not)), CombineWith);
 
         if (IsNull != null)
-            expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNull), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.IsNull.BuildExpression(ContextFor(context, nameof(IsNull), null)), CombineWith);
 
         if (IsNotNull != null)
-            expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(expressionBody, targetProperty, filterProperty, IsNotNull), CombineWith);
+            expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(ContextFor(context, nameof(IsNotNull), null)), CombineWith);
         
         if (Equals != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Equals), CombineWith);
+            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(Equals), Equals)), CombineWith);
 
         if (Contains != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, Contains), CombineWith);
+            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(Contains), Contains)), CombineWith);
 
         if (NotContains != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotContains)), CombineWith);
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotContains), NotContains))), CombineWith);
 
         if (StartsWith != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, StartsWith), CombineWith);
+            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(StartsWith), StartsWith)), CombineWith);
 
         if (NotStartsWith != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotStartsWith)), CombineWith);
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotStartsWith), NotStartsWith))), CombineWith);
 
         if (EndsWith != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, EndsWith), CombineWith);
+            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(EndsWith), EndsWith)), CombineWith);
         
         if (NotEndsWith != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, NotEndsWith)), CombineWith);
-
+            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotEndsWith), NotEndsWith))), CombineWith);
 
         if (IsEmpty != null)
         {
             if (IsEmpty.Value)
             { 
-                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, ""), CombineWith);
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty)), CombineWith);
             }
             else
             {
-                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, "")), CombineWith);
+                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
             }
         }
         
@@ -141,14 +142,41 @@ public class StringFilter : IFilterableType
         {
             if (IsNotEmpty.Value)
             {
-                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, "")), CombineWith);
+                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
             }
             else
             {
-                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(expressionBody, targetProperty, filterProperty, ""), CombineWith);
+                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty)), CombineWith);
             }
         }
         
         return expression;
+    }
+
+    private ExpressionBuildContext ContextFor(ExpressionBuildContext originalContext, string propertyName, string value)
+    {
+        var innerProperty = originalContext.FilterProperty.PropertyType.GetProperty(propertyName);
+        var innerPropertyExpression = Expression.Property(originalContext.FilterPropertyExpression, innerProperty);
+
+        return new ExpressionBuildContext(
+            originalContext.ExpressionBody,
+            originalContext.TargetProperty,
+            innerProperty,
+            innerPropertyExpression,
+            originalContext.FilterObject,
+            value);
+    }
+
+    private ExpressionBuildContext ContextForConstant(ExpressionBuildContext originalContext, string value)
+    {
+        return new ExpressionBuildContext(
+            originalContext.ExpressionBody,
+            originalContext.TargetProperty,
+            null,
+            Expression.Constant(value),
+            originalContext.FilterObject,
+            value);
     }
 }

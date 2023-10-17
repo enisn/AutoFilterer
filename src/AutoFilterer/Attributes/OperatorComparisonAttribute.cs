@@ -18,34 +18,37 @@ public class OperatorComparisonAttribute : FilteringOptionsBaseAttribute
 
     public OperatorType OperatorType { get; }
 
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty,
-        PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
-        var prop = Expression.Property(expressionBody, targetProperty.Name);
-        var param = Expression.Constant(value);
-        var targetIsNullable = targetProperty.PropertyType.IsNullable() || targetProperty.PropertyType == typeof(string);
+        var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
 
-        if (targetProperty.PropertyType.IsNullable())
+        var filterProp = BuildFilterExpression(context);
+
+        var targetIsNullable = context.TargetProperty.PropertyType.IsNullable() || context.TargetProperty.PropertyType == typeof(string);
+
+        if (context.TargetProperty.PropertyType.IsNullable())
+        {
             prop = Expression.Property(prop, nameof(Nullable<bool>.Value));
-        
+        }
+
         switch (OperatorType)
         {
             case OperatorType.Equal:
-                return Expression.Equal(prop, param);
+                return Expression.Equal(prop, filterProp);
             case OperatorType.NotEqual:
-                return Expression.NotEqual(prop, param);
+                return Expression.NotEqual(prop, filterProp);
             case OperatorType.GreaterThan:
-                return Expression.GreaterThan(prop, param);
+                return Expression.GreaterThan(prop, filterProp);
             case OperatorType.GreaterThanOrEqual:
-                return Expression.GreaterThanOrEqual(prop, param);
+                return Expression.GreaterThanOrEqual(prop, filterProp);
             case OperatorType.LessThan:
-                return Expression.LessThan(prop, param);
+                return Expression.LessThan(prop, filterProp);
             case OperatorType.LessThanOrEqual:
-                return Expression.LessThanOrEqual(prop, param);
+                return Expression.LessThanOrEqual(prop, filterProp);
             case OperatorType.IsNull:
-                return targetIsNullable ? Expression.Equal(Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null)) : null;
+                return targetIsNullable ? Expression.Equal(Expression.Property(context.ExpressionBody, context.TargetProperty.Name), Expression.Constant(null)) : null;
             case OperatorType.IsNotNull:
-                return targetIsNullable ? Expression.Not(Expression.Equal(Expression.Property(expressionBody, targetProperty.Name), Expression.Constant(null))) : null;
+                return targetIsNullable ? Expression.Not(Expression.Equal(Expression.Property(context.ExpressionBody, context.TargetProperty.Name), Expression.Constant(null))) : null;
         }
 
         return Expression.Empty();

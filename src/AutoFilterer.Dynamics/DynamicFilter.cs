@@ -66,12 +66,17 @@ public class DynamicFilter : Dictionary<string, string>, IFilter
 
         foreach (var key in this.Keys)
         {
-            var filterValue = new DynamicFilter(this[key]);
+            var getter = this.GetType().GetMethod("get_Item");
+            var filterPropertyExpression = Expression.Call(Expression.Constant(this), getter, Expression.Constant(key));
+            var filterValue = getter.Invoke(this, parameters: new object[] { key });
             if (IsPrimitive(key))
             {
                 var targetProperty = entityType.GetProperty(key);
                 var value = Convert.ChangeType((string)filterValue, targetProperty.PropertyType);
-                var exp = OperatorComparisonAttribute.Equal.BuildExpression(body, targetProperty, filterProperty: null, value);
+                //var exp = OperatorComparisonAttribute.Equal.BuildExpression(body, targetProperty, filterProperty: null, value);
+
+                var exp = OperatorComparisonAttribute.Equal.BuildExpression(
+                    new ExpressionBuildContext(body, targetProperty, null, filterPropertyExpression, this, value));
 
                 var combined = finalExpression.Combine(exp, CombineWith);
                 finalExpression = body.Combine(combined, CombineWith);
@@ -87,7 +92,7 @@ public class DynamicFilter : Dictionary<string, string>, IFilter
                     var comparisonKeyword = splitted[1];
                     if (specialKeywords.TryGetValue(comparisonKeyword, out IFilterableType filterable))
                     {
-                        var exp = filterable.BuildExpression(body, targetProperty, filterProperty: null, value);
+                        var exp = filterable.BuildExpression(new ExpressionBuildContext(body, targetProperty, null, filterPropertyExpression, this, value));
 
                         var combined = finalExpression.Combine(exp, CombineWith);
                         finalExpression = body.Combine(combined, CombineWith);

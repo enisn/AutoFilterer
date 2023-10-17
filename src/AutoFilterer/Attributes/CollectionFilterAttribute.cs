@@ -22,14 +22,18 @@ public class CollectionFilterAttribute : FilteringOptionsBaseAttribute
 
     public CollectionFilterType FilterOption { get; set; }
 
-    public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
+    public override Expression BuildExpression(ExpressionBuildContext context)
     {
-        if (value is IFilter filter)
+        var expressionBody = context.ExpressionBody;
+
+        if (context.FilterObjectPropertyValue is IFilter filter)
         {
-            var type = targetProperty.PropertyType.GetGenericArguments().FirstOrDefault();
-            var parameter = Expression.Parameter(type, "a");
+            var type = context.TargetProperty.PropertyType.GetGenericArguments().FirstOrDefault();
+
+            var parameter = Expression.Parameter(type, "a"); // TODO: Change parameter name according to nested execution level.
+
             var innerLambda = Expression.Lambda(filter.BuildExpression(type, body: parameter), parameter);
-            var prop = Expression.Property(expressionBody, targetProperty.Name);
+            var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
             var methodInfo = typeof(Enumerable).GetMethods().LastOrDefault(x => x.Name == FilterOption.ToString());
             var method = methodInfo.MakeGenericMethod(type);
 
@@ -39,6 +43,7 @@ public class CollectionFilterAttribute : FilteringOptionsBaseAttribute
                                         arguments: new Expression[] { prop, innerLambda }
                 );
         }
+
         return expressionBody;
     }
 }
