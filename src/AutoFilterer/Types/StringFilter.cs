@@ -15,47 +15,47 @@ public class StringFilter : IFilterableType
     /// <summary>
     /// Provides parameter for equal operator '==' in query.
     /// </summary>
-    public virtual string Eq { get; set; }
+    public virtual string? Eq { get; set; }
 
     /// <summary>
     /// Provides parameter to not equal operator '!=' in query.
     /// </summary>
-    public virtual string Not { get; set; }
+    public virtual string? Not { get; set; }
 
     /// <summary>
     /// Provides parameter to String.Equals method query.
     /// </summary>
-    public virtual new string Equals { get; set; }
+    public virtual new string? Equals { get; set; }
 
     /// <summary>
     /// Provides parameter to String.Contains method query.
     /// </summary>
-    public virtual string Contains { get; set; }
+    public virtual string? Contains { get; set; }
     
     /// <summary>
     /// Provides parameter to !String.Contains method query.
     /// </summary>
-    public virtual string NotContains { get; set; }
+    public virtual string? NotContains { get; set; }
 
     /// <summary>
     /// Provides parameter to String.StartsWith method query.
     /// </summary>
-    public virtual string StartsWith { get; set; }
+    public virtual string? StartsWith { get; set; }
     
     /// <summary>
     /// Provides parameter to !String.StartsWith method query.
     /// </summary>
-    public virtual string NotStartsWith { get; set; }
+    public virtual string? NotStartsWith { get; set; }
 
     /// <summary>
     /// Provides parameter to String.EndsWith method query.
     /// </summary>
-    public virtual string EndsWith { get; set; }
+    public virtual string? EndsWith { get; set; }
     
     /// <summary>
     /// Provides parameter to !String.EndsWith method query.
     /// </summary>
-    public virtual string NotEndsWith { get; set; }
+    public virtual string? NotEndsWith { get; set; }
     
     /// <summary>
     /// Provides parameter to check is null.
