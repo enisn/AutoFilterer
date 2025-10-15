@@ -1,5 +1,7 @@
 ﻿#if LEGACY_NAMESPACE
 using AutoFilterer.Enums;
+using System;
+
 #endif
 using System.Linq.Expressions;
 
@@ -28,5 +30,14 @@ public static class ExpressionExtensions
             default:
                 return right;
         }
+    }
+
+    public static MemberExpression GetValueExpressionIfNullable(this MemberExpression memberExpression)
+    {
+        if (memberExpression.Type.IsNullable())
+        {
+            return Expression.Property(memberExpression, "Value");
+        }
+        return memberExpression;
     }
 }

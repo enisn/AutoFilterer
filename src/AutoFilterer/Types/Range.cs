@@ -75,7 +75,7 @@ public class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
             {
                 minExp = Expression.GreaterThanOrEqual(
                            propertyExpression,
-                           Expression.Constant(Min));
+                           Expression.Property(Expression.Constant(this), nameof(Min)).GetValueExpressionIfNullable());
                 if (Max == null)
                 {
                     return minExp;
@@ -86,7 +86,7 @@ public class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
             {
                 maxExp = Expression.LessThanOrEqual(
                             propertyExpression,
-                            Expression.Constant(Max));
+                            Expression.Property(Expression.Constant(this), nameof(Max)).GetValueExpressionIfNullable());
                 if (Min == null)
                 {
                     return maxExp;
