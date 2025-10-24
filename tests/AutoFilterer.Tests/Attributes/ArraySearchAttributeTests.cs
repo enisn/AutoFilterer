@@ -57,6 +57,27 @@ public class ArraySearchAttributeTests
             Assert.True(actualResult.Contains(expected));
     }
 
+    [Theory, AutoMoqData(count: 64)]
+    public void BuildExpression_ShouldGenerateQueryCorrect_Guid_WithoutAttribute(List<Preferences> data)
+    {
+        // Arrange
+        var queryable = data.AsQueryable();
+        var filter = new PreferencesFilter_ArraySearchWithoutAttribute_Guid
+        {
+            OrganizationUnitId = data.Take(3).Select(x => x.OrganizationUnitId.GetValueOrDefault()).ToArray()
+        };
+
+        // Act
+        var expectedResult = queryable.Where(x => filter.OrganizationUnitId.Contains(x.OrganizationUnitId.GetValueOrDefault()));
+        var actualResult = queryable.ApplyFilter(filter);
+
+        // Assert
+        Assert.Equal(expectedResult.Count(), actualResult.Count());
+
+        foreach (var expected in expectedResult)
+            Assert.True(actualResult.Contains(expected));
+    }
+
     private static IEnumerable<T> Repeat<T>(Func<T> func, int times = 3)
     {
         for (int i = 0; i < times; i++)
