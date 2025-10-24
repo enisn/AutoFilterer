@@ -3,7 +3,6 @@ using AutoFilterer.Tests.Core;
 using AutoFilterer.Tests.Environment.Dtos;
 using AutoFilterer.Tests.Environment.Models;
 using System;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
