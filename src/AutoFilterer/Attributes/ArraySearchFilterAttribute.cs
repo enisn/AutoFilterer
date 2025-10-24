@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AutoFilterer.Extensions;
+using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,8 +15,8 @@ public class ArraySearchFilterAttribute : FilteringOptionsBaseAttribute
             return Expression.Constant(true); // TODO: Make it better. Maybe return null? When null, it should be ignored and combined with another expressions.
         }
 
-        var type = context.TargetProperty.PropertyType;
-        var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
+        var type = context.TargetProperty.PropertyType.AsNonNullable();
+        var prop = Expression.Property(context.ExpressionBody, context.TargetProperty.Name).GetValueExpressionIfNullable();
 
         var containsMethod = typeof(Enumerable).GetMethods().FirstOrDefault(x => x.Name == nameof(Enumerable.Contains)).MakeGenericMethod(type);
 
@@ -23,8 +24,8 @@ public class ArraySearchFilterAttribute : FilteringOptionsBaseAttribute
                                                 method: containsMethod,
                                                 arguments: new Expression[]
                                                 {
-                                                        Expression.Property(Expression.Constant(context.FilterObject), context.FilterProperty),
-                                                        Expression.Property(context.ExpressionBody, context.TargetProperty)
+                                                        Expression.Property(Expression.Constant(context.FilterObject), context.FilterProperty).GetValueExpressionIfNullable(),
+                                                        Expression.Property(context.ExpressionBody, context.TargetProperty).GetValueExpressionIfNullable()
                                                 });
 
         return containsExpression;

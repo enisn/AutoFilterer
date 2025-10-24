@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoFilterer.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,4 +14,7 @@ public class Preferences
     public string GivenName { get; set; }
     public int SecurityLevel { get; set; }
     public int? ReadLimit { get; set; }
+
+    [ArraySearchFilter]
+    public Guid? OrganizationUnitId { get; set; }
 }
