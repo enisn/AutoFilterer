@@ -75,7 +75,7 @@ public class FilterGenerator : IIncrementalGenerator
 
             var attribute = symbol.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.Name == nameof(GenerateAutoFilterAttribute));
-            var targetNamespace = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temprorary... Attribute has only one argument for now.
+            var targetNamespace = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temporary... Attribute has only one argument for now.
             if (string.IsNullOrEmpty(targetNamespace)) {
                 targetNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
             }
