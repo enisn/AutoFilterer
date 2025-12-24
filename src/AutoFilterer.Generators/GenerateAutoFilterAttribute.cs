@@ -9,7 +9,7 @@ public class GenerateAutoFilterAttribute : Attribute
 
     public GenerateAutoFilterAttribute(string @namespace)
     {
-        Namespace = @Namespace;
+        Namespace = @namespace;
     }
     
     public string Namespace { get; }

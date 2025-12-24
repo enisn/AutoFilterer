@@ -2,74 +2,85 @@
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using DotNurse.CodeAnalysis;
-using AutoFilterer.Generators.Extensions;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Diagnostics;
 
 namespace AutoFilterer.Generators;
 
+using Extensions;
+
 [Generator]
-public class FilterGenerator : ISourceGenerator
+public class FilterGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterForSyntaxNotifications(() => new AttributeSyntaxReceiver<GenerateAutoFilterAttribute>());
+        var classDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => s is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
+                transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
+            .Where(static m => m is not null);
+
+        var compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
+
+        context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
-    public void Execute(GeneratorExecutionContext context)
+    private static ClassDeclarationSyntax GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
-        if (!(context.SyntaxReceiver is AttributeSyntaxReceiver<GenerateAutoFilterAttribute> receiver))
-            return;
+        var classDeclaration = (ClassDeclarationSyntax)context.Node;
 
-        //if (!Debugger.IsAttached)
-        //{
-        //    Debugger.Launch();
-        //}
-
-        foreach (var classSyntax in receiver.Classes)
+        foreach (var attributeList in classDeclaration.AttributeLists)
         {
-            var attribute = classSyntax.AttributeLists.SelectMany(sm => sm.Attributes).FirstOrDefault(x => x.Name.ToString().EnsureEndsWith("Attribute").Equals(typeof(GenerateAutoFilterAttribute).Name));
-            var namespaceParam = attribute.ArgumentList?.Arguments.FirstOrDefault(); // Temprorary... Attribute has only one argument for now.
-
-            var model = context.Compilation.GetSemanticModel(classSyntax.SyntaxTree);
-            var symbol = model.GetDeclaredSymbol(classSyntax);
-            var attrs = symbol.GetAttributes();
-
-            var realNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
-
-            var properties = symbol.GetMembers().OfType<IPropertySymbol>()
-            .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
-
-            context.AddSource($"{symbol.Name}FilterDto.g.cs",
-                   SourceText.From(GetFilterDtoCode(symbol.Name, properties, namespaceParam?.ToString().Trim('\"') ?? realNamespace), Encoding.UTF8));
-        }
-    }
-
-    private static Dictionary<INamedTypeSymbol, IList<AttributeData>> GetClassAttributePairs(GeneratorExecutionContext context,
-        SyntaxReceiver receiver)
-    {
-        var compilation = context.Compilation;
-        var classSymbols = new Dictionary<INamedTypeSymbol, IList<AttributeData>>();
-        foreach (var clazz in receiver.CandidateClasses)
-        {
-            var model = compilation.GetSemanticModel(clazz.SyntaxTree);
-            var classSymbol = model.GetDeclaredSymbol(clazz);
-            var attributes = classSymbol.GetAttributes();
-            if (attributes.Any(ad => ad.AttributeClass.Name == nameof(GenerateAutoFilterAttribute)))
+            foreach (var attribute in attributeList.Attributes)
             {
-                classSymbols.Add((INamedTypeSymbol)classSymbol, attributes.ToList());
+                var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
+                var attributeSymbol = symbolInfo.Symbol as IMethodSymbol;
+
+                var fullName = attributeSymbol?.ContainingType.ToDisplayString()
+                                  ?? attribute.Name.ToString();
+
+                if (fullName.EnsureEndsWith("Attribute").EndsWith(nameof(GenerateAutoFilterAttribute)))
+                {
+                    return classDeclaration;
+                }
             }
         }
 
-        return classSymbols;
+        return null;
     }
 
-    internal string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties,
+    private static void Execute(Compilation compilation, ImmutableArray<ClassDeclarationSyntax> classes, SourceProductionContext context)
+    {
+        if (classes.IsDefaultOrEmpty) {
+            return;
+        }
+
+        foreach (var classSyntax in classes)
+        {
+            var model = compilation.GetSemanticModel(classSyntax.SyntaxTree);
+            if (model.GetDeclaredSymbol(classSyntax) is not { } symbol)
+            {
+                continue;
+            }
+
+            var attribute = symbol.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.Name == nameof(GenerateAutoFilterAttribute));
+            var namespaceParam = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temprorary... Attribute has only one argument for now.
+            var realNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
+
+            var properties = symbol.GetMembers().OfType<IPropertySymbol>()
+                .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
+
+            var sourceCode = GetFilterDtoCode(symbol.Name, properties, namespaceParam ?? realNamespace);
+
+            context.AddSource($"{symbol.Name}FilterDto.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
+        }
+    }
+
+    private static string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties,
         string @namespace = null)
     {
         var start = $@"
@@ -88,10 +99,11 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
 
         foreach (var property in properties)
         {
-            string propertyType = property.Type.ToDisplayString(NullableFlowState.None);
+            var propertyType = property.Type.ToDisplayString(NullableFlowState.None);
 
-            if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped))
+            if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped)) {
                 propertyType = mapped;
+            }
 
             if (propertyType.Equals(nameof(String), StringComparison.InvariantCultureIgnoreCase))
             {
@@ -100,13 +112,10 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
             body.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
         }
 
-        var end = "\t}\n}";
-
-
-        return start + body.ToString() + end;
+        return start + body + "\t}\n}";
     }
 
-    private string GetNamespaceRecursively(INamespaceSymbol symbol)
+    private static string GetNamespaceRecursively(INamespaceSymbol symbol)
     {
         if (symbol.ContainingNamespace == null)
         {
