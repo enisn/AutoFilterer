@@ -19,13 +19,24 @@ public class FilterGenerator : IIncrementalGenerator
     {
         var classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (s, _) => s is ClassDeclarationSyntax { AttributeLists.Count: > 0 },
+                predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
             .Where(static m => m is not null);
 
         var compilationAndClasses = context.CompilationProvider.Combine(classDeclarations.Collect());
 
         context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Left, source.Right, spc));
+    }
+
+    private static bool IsSyntaxTargetForGeneration(SyntaxNode node)
+    {
+        if (node is not ClassDeclarationSyntax classDeclaration || classDeclaration.AttributeLists.Count == 0) {
+            return false;
+        }
+
+        return classDeclaration.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .Any(a => a.Name.ToString().EnsureEndsWith("Attribute").EndsWith(nameof(GenerateAutoFilterAttribute)));
     }
 
     private static ClassDeclarationSyntax GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
@@ -36,12 +47,8 @@ public class FilterGenerator : IIncrementalGenerator
         {
             foreach (var attribute in attributeList.Attributes)
             {
-                var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
-                var attributeSymbol = symbolInfo.Symbol as IMethodSymbol;
-
-                var fullName = attributeSymbol?.ContainingType.ToDisplayString()
-                                  ?? attribute.Name.ToString();
-
+                var attributeSymbol = context.SemanticModel.GetSymbolInfo(attribute).Symbol as IMethodSymbol;
+                var fullName = attributeSymbol?.ContainingType.ToDisplayString() ?? attribute.Name.ToString();
                 if (fullName.EnsureEndsWith("Attribute").EndsWith(nameof(GenerateAutoFilterAttribute)))
                 {
                     return classDeclaration;
@@ -58,7 +65,7 @@ public class FilterGenerator : IIncrementalGenerator
             return;
         }
 
-        foreach (var classSyntax in classes)
+        foreach (var classSyntax in classes.Distinct())
         {
             var model = compilation.GetSemanticModel(classSyntax.SyntaxTree);
             if (model.GetDeclaredSymbol(classSyntax) is not { } symbol)
@@ -68,13 +75,16 @@ public class FilterGenerator : IIncrementalGenerator
 
             var attribute = symbol.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.Name == nameof(GenerateAutoFilterAttribute));
-            var namespaceParam = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temprorary... Attribute has only one argument for now.
-            var realNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
+            var targetNamespace = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temprorary... Attribute has only one argument for now.
+            if (string.IsNullOrEmpty(targetNamespace)) {
+                targetNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
+            }
 
-            var properties = symbol.GetMembers().OfType<IPropertySymbol>()
-                .Where(x => !x.IsStatic && !x.ContainingType.IsGenericType && x.Kind == SymbolKind.Property);
+            var properties = symbol.GetMembers()
+                .OfType<IPropertySymbol>()
+                .Where(x => !x.IsStatic && !x.IsIndexer && x.Kind == SymbolKind.Property);
 
-            var sourceCode = GetFilterDtoCode(symbol.Name, properties, namespaceParam ?? realNamespace);
+            var sourceCode = GetFilterDtoCode(symbol.Name, properties, targetNamespace);
 
             context.AddSource($"{symbol.Name}FilterDto.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
         }
@@ -83,19 +93,15 @@ public class FilterGenerator : IIncrementalGenerator
     private static string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties,
         string @namespace = null)
     {
-        var start = $@"
-using System;
-using AutoFilterer;
-using AutoFilterer.Attributes;
-using AutoFilterer.Types;
-
-namespace {@namespace ?? "AutoFilterer.Filters"}
-{{
-    public partial class {className}Filter : PaginationFilterBase
-    {{
-";
-
-        var body = new StringBuilder();
+        var generatedCode = new StringBuilder();
+        generatedCode.AppendLine("using System;");
+        generatedCode.AppendLine("using AutoFilterer.Attributes;");
+        generatedCode.AppendLine("using AutoFilterer.Types;");
+        generatedCode.AppendLine();
+        generatedCode.AppendLine($"namespace {@namespace}");
+        generatedCode.AppendLine("{");
+        generatedCode.AppendLine($"\tpublic partial class {className}Filter : PaginationFilterBase");
+        generatedCode.AppendLine("\t{");
 
         foreach (var property in properties)
         {
@@ -105,14 +111,18 @@ namespace {@namespace ?? "AutoFilterer.Filters"}
                 propertyType = mapped;
             }
 
-            if (propertyType.Equals(nameof(String), StringComparison.InvariantCultureIgnoreCase))
+            if (property.Type.SpecialType == SpecialType.System_String)
             {
-                body.AppendLine("\t\t[ToLowerContainsComparison]");
+                generatedCode.AppendLine("\t\t[ToLowerContainsComparison]");
             }
-            body.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
+
+            generatedCode.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
         }
 
-        return start + body + "\t}\n}";
+        generatedCode.AppendLine("\t}");
+        generatedCode.AppendLine("}");
+
+        return generatedCode.ToString();
     }
 
     private static string GetNamespaceRecursively(INamespaceSymbol symbol)
