@@ -10,61 +10,24 @@ using AutoFilterer.Enums;
 using Castle.Core.Internal;
 using Xunit;
 
-namespace AutoFilterer.Generators.Tests;
-
-[GenerateAutoFilter]
-
-public class Book
+namespace AutoFilterer.Generators.Tests.FilterGenerator_TestClasses
 {
-    public string Title { get; set; }
-    public int? Year { get; set; }
-    public int TotalPage { get; set; }
-    public DateTime PublishTime { get; set; }
-}
-
-[GenerateAutoFilter("MyCustomNamespace")]
-public class BookInCustomNamespace
-{
-    public string Title { get; set; }
-    public int? Year { get; set; }
-    public int TotalPage { get; set; }
-    public DateTime PublishTime { get; set; }
-}
-
-public class FilterGeneratorTests
-{
-    [Fact]
-    public void ShouldBookFilterBeCreated()
+    [GenerateAutoFilter]
+    public class Book
     {
-        // If there is no compile error. Everything is OK 👍
-        Assert.True(typeof(BookFilter) != null);
+        public string Title { get; set; }
+        public int? Year { get; set; }
+        public int TotalPage { get; set; }
+        public DateTime PublishTime { get; set; }
     }
 
-    [Fact]
-    public void ShouldBookFilterInCustomNamespaceBeCreated()
+    [GenerateAutoFilter("MyCustomNamespace")]
+    public class BookInCustomNamespace
     {
-        // If there is no compile error. Everything is OK 👍
-        Assert.True(typeof(MyCustomNamespace.BookInCustomNamespaceFilter) != null);
-    }
-
-    [Fact]
-    public void ShouldTitleBeString()
-    {
-        var type = typeof(BookFilter);
-
-        Assert.True(type.GetProperty(nameof(Book.Title)).PropertyType == typeof(string));
-    }
-
-    [Theory]
-    [AutoMoqData]
-    public void Test(List<Book> books)
-    {
-        var filter = new BookFilter();
-        filter.Page = 1;
-        filter.PerPage = 2;
-        filter.Year = new Types.Range<int>(min: 1990, max: 2021);
-
-        books.AsQueryable().ApplyFilter(filter);
+        public string Title { get; set; }
+        public int? Year { get; set; }
+        public int TotalPage { get; set; }
+        public DateTime PublishTime { get; set; }
     }
 
     [GenerateAutoFilter("MappingTest")]
@@ -98,29 +61,69 @@ public class FilterGeneratorTests
         public TimeSpan? _TimeSpanN { get; set; }
     }
 
-    [Fact]
-    public void ShouldCreateEachTypeCorrectFromMapping()
-    {
-        Assert.NotNull(typeof(MappingTest.AllTypesTestTypeFilter));
-
-        var filter = new MappingTest.AllTypesTestTypeFilter();
-    }
-
     [GenerateAutoFilter("MappingTest")]
     public class StringAttributeTestType
     {
         public string Title { get; set; }
     }
+}
 
-    [Fact]
-    public void ShouldHaveToLowerContainsComparisonAttribute()
+namespace AutoFilterer.Generators.Tests
+{
+    public class FilterGeneratorTests
     {
-        var attribute =
-            typeof(MappingTest.StringAttributeTestTypeFilter)
-            .GetProperty(nameof(MappingTest.StringAttributeTestTypeFilter.Title))
-            .GetAttribute<ToLowerContainsComparisonAttribute>();
+        [Fact]
+        public void ShouldBookFilterBeCreated()
+        {
+            // If there is no compile error. Everything is OK 👍
+            Assert.True(typeof(FilterGenerator_TestClasses.BookFilter) != null);
+        }
 
-        Assert.NotNull(attribute);
+        [Fact]
+        public void ShouldBookFilterInCustomNamespaceBeCreated()
+        {
+            // If there is no compile error. Everything is OK 👍
+            Assert.True(typeof(MyCustomNamespace.BookInCustomNamespaceFilter) != null);
+        }
+
+        [Fact]
+        public void ShouldTitleBeString()
+        {
+            var type = typeof(FilterGenerator_TestClasses.BookFilter);
+
+            Assert.True(type.GetProperty(nameof(FilterGenerator_TestClasses.Book.Title)).PropertyType == typeof(string));
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void Test(List<FilterGenerator_TestClasses.Book> books)
+        {
+            var filter = new FilterGenerator_TestClasses.BookFilter();
+            filter.Page = 1;
+            filter.PerPage = 2;
+            filter.Year = new Types.Range<int>(min: 1990, max: 2021);
+
+            books.AsQueryable().ApplyFilter(filter);
+        }
+
+        [Fact]
+        public void ShouldCreateEachTypeCorrectFromMapping()
+        {
+            Assert.NotNull(typeof(MappingTest.AllTypesTestTypeFilter));
+
+            var filter = new MappingTest.AllTypesTestTypeFilter();
+        }
+
+        [Fact]
+        public void ShouldHaveToLowerContainsComparisonAttribute()
+        {
+            var attribute =
+                typeof(MappingTest.StringAttributeTestTypeFilter)
+                .GetProperty(nameof(MappingTest.StringAttributeTestTypeFilter.Title))
+                .GetAttribute<ToLowerContainsComparisonAttribute>();
+
+            Assert.NotNull(attribute);
+        }
     }
 }
 
