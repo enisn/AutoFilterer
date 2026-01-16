@@ -10,7 +10,7 @@ public interface IOrderable
 {
     [IgnoreFilter] Sorting SortBy { get; set; }
 
-    [IgnoreFilter] string Sort { get; }
+    [IgnoreFilter] string? Sort { get; }
 
     IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> source);
 }

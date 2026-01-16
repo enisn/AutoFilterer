@@ -16,7 +16,7 @@ public class OrderableBase : IOrderable
     private static readonly MethodInfo orderByDescending = typeof(Queryable).GetMethods().First(x => x.Name == nameof(Queryable.OrderByDescending));
 
     [IgnoreFilter] public virtual Sorting SortBy { get; set; }
-    [IgnoreFilter] public virtual string Sort { get; }
+    [IgnoreFilter] public virtual string? Sort { get; }
 
     public virtual IOrderedQueryable<TSource> ApplyOrder<TSource>(IQueryable<TSource> queryable)
     {
