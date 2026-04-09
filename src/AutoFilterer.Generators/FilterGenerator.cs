@@ -1,4 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
@@ -75,23 +75,143 @@ public class FilterGenerator : IIncrementalGenerator
 
             var attribute = symbol.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.Name == nameof(GenerateAutoFilterAttribute));
-            var targetNamespace = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"'); // Temporary... Attribute has only one argument for now.
+            var targetNamespace = attribute?.ConstructorArguments.FirstOrDefault().Value?.ToString().Trim('\"');
             if (string.IsNullOrEmpty(targetNamespace)) {
                 targetNamespace = GetNamespaceRecursively(symbol.ContainingNamespace);
             }
 
+            // Parse generation options from attribute
+            var baseClass = GetNamedArgumentValue<string>(attribute, nameof(GenerateAutoFilterAttribute.BaseClass)) ?? "PaginationFilterBase";
+            var useStringFilter = GetNamedArgumentValue<bool>(attribute, nameof(GenerateAutoFilterAttribute.UseStringFilter));
+
+            // Handle nullable bool options - use default true when not specified
+            var useRangeForNumbersTemp = GetNamedArgumentValue<bool?>(attribute, nameof(GenerateAutoFilterAttribute.UseRangeForNumbers));
+            var useRangeForNumbers = useRangeForNumbersTemp ?? true;
+
+            var useRangeForDatesTemp = GetNamedArgumentValue<bool?>(attribute, nameof(GenerateAutoFilterAttribute.UseRangeForDates));
+            var useRangeForDates = useRangeForDatesTemp ?? true;
+
+            var generateForEnumPropertiesTemp = GetNamedArgumentValue<bool?>(attribute, nameof(GenerateAutoFilterAttribute.GenerateForEnumProperties));
+            var generateForEnumProperties = generateForEnumPropertiesTemp ?? true;
+
             var properties = symbol.GetMembers()
                 .OfType<IPropertySymbol>()
-                .Where(x => !x.IsStatic && !x.IsIndexer && x.Kind == SymbolKind.Property);
+                .Where(x => !x.IsStatic && !x.IsIndexer && x.Kind == SymbolKind.Property)
+                .Where(x => !ShouldSkipProperty(x));
 
-            var sourceCode = GetFilterDtoCode(symbol.Name, properties, targetNamespace);
+            var sourceCode = GetFilterDtoCode(symbol.Name, properties, targetNamespace, baseClass, useStringFilter, useRangeForNumbers, useRangeForDates, generateForEnumProperties);
 
             context.AddSource($"{symbol.Name}FilterDto.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
         }
     }
 
+    private static T GetNamedArgumentValue<T>(AttributeData attribute, string argumentName)
+    {
+        if (attribute == null)
+        {
+            return default;
+        }
+
+        foreach (var namedArgument in attribute.NamedArguments)
+        {
+            if (namedArgument.Key == argumentName)
+            {
+                try
+                {
+                    return (T)namedArgument.Value.Value;
+                }
+                catch
+                {
+                    return default;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    private static bool ShouldSkipProperty(IPropertySymbol property)
+    {
+        // Skip collection types (arrays, IEnumerable<T>, etc.)
+        if (property.Type is IArrayTypeSymbol)
+        {
+            return true;
+        }
+
+        if (property.Type is INamedTypeSymbol namedType && namedType.IsGenericType)
+        {
+            var typeDefinition = namedType.ConstructedFrom?.ToDisplayString() ?? namedType.ToDisplayString();
+
+            // Skip IEnumerable<T>, ICollection<T>, IList<T>, List<T>, etc.
+            if (typeDefinition.StartsWith("System.Collections.Generic.IEnumerable<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.ICollection<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.IList<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.List<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.HashSet<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.IReadOnlyCollection<") ||
+                typeDefinition.StartsWith("System.Collections.Generic.IReadOnlyList<"))
+            {
+                return true;
+            }
+        }
+
+        // Skip navigation properties to other complex types (non-primitive, non-enum)
+        // Only generate for basic types, strings, enums, and nullable versions of these
+        var type = property.Type;
+        var underlyingType = type;
+
+        if (type is INamedTypeSymbol namedValueType && namedValueType.IsValueType && namedValueType.IsGenericType)
+        {
+            var genericDefinition = namedValueType.ConstructedFrom?.ToDisplayString();
+            if (genericDefinition == "System.Nullable<T>")
+            {
+                underlyingType = namedValueType.TypeArguments[0];
+            }
+        }
+
+        // Check if it's a type we should generate for
+        if (underlyingType.SpecialType == SpecialType.System_String)
+        {
+            return false;
+        }
+
+        // Check for enums
+        if (underlyingType.TypeKind == TypeKind.Enum)
+        {
+            return false;
+        }
+
+        // Check for basic numeric types
+        if (underlyingType.SpecialType >= SpecialType.System_Boolean && underlyingType.SpecialType <= SpecialType.System_UInt64)
+        {
+            return false;
+        }
+
+        // Check for decimal
+        if (underlyingType.SpecialType == SpecialType.System_Decimal)
+        {
+            return false;
+        }
+
+        // Check for DateTime, DateTimeOffset, TimeSpan, Guid
+        var typeName = underlyingType.ToDisplayString();
+        if (typeName == "System.DateTime" || typeName == "System.DateTimeOffset" ||
+            typeName == "System.TimeSpan" || typeName == "System.Guid")
+        {
+            return false;
+        }
+
+        // Skip any other complex types (navigation properties)
+        return true;
+    }
+
     private static string GetFilterDtoCode(string className, IEnumerable<IPropertySymbol> properties,
-        string @namespace = null)
+        string @namespace = null,
+        string baseClass = "PaginationFilterBase",
+        bool useStringFilter = false,
+        bool useRangeForNumbers = true,
+        bool useRangeForDates = true,
+        bool generateForEnumProperties = true)
     {
         var generatedCode = new StringBuilder();
         generatedCode.AppendLine("using System;");
@@ -100,20 +220,83 @@ public class FilterGenerator : IIncrementalGenerator
         generatedCode.AppendLine();
         generatedCode.AppendLine($"namespace {@namespace}");
         generatedCode.AppendLine("{");
-        generatedCode.AppendLine($"\tpublic partial class {className}Filter : PaginationFilterBase");
+        generatedCode.AppendLine($"\tpublic partial class {className}Filter : {baseClass}");
         generatedCode.AppendLine("\t{");
 
         foreach (var property in properties)
         {
             var propertyType = property.Type.ToDisplayString(NullableFlowState.None);
+            var originalType = property.Type;
+            var underlyingType = originalType;
 
-            if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped)) {
-                propertyType = mapped;
+            // Check for nullable types to get the underlying type
+            if (originalType is INamedTypeSymbol namedType && namedType.IsValueType && namedType.IsGenericType)
+            {
+                var genericDefinition = namedType.ConstructedFrom?.ToDisplayString();
+                if (genericDefinition == "System.Nullable<T>")
+                {
+                    underlyingType = namedType.TypeArguments[0];
+                }
             }
 
-            if (property.Type.SpecialType == SpecialType.System_String)
+            // Skip enum properties if not configured to generate them
+            if (underlyingType.TypeKind == TypeKind.Enum && !generateForEnumProperties)
             {
-                generatedCode.AppendLine("\t\t[ToLowerContainsComparison]");
+                continue;
+            }
+
+            // Handle string type mapping
+            if (originalType.SpecialType == SpecialType.System_String && useStringFilter)
+            {
+                propertyType = "StringFilter";
+            }
+            // Handle numeric types
+            else if (TypeMapping.Mappings.TryGetValue(propertyType, out var mapped))
+            {
+                // Check if this is a numeric or date type that should use Range
+                var typeName = underlyingType.ToDisplayString();
+
+                // For numbers, respect useRangeForNumbers flag
+                if ((underlyingType.SpecialType >= SpecialType.System_SByte && underlyingType.SpecialType <= SpecialType.System_UInt64) ||
+                    underlyingType.SpecialType == SpecialType.System_Decimal)
+                {
+                    if (!useRangeForNumbers)
+                    {
+                        // Use the original type instead of Range
+                        propertyType = originalType.ToDisplayString(NullableFlowState.None);
+                    }
+                    else
+                    {
+                        propertyType = mapped;
+                    }
+                }
+                // For DateTime/DateTimeOffset/TimeSpan, respect useRangeForDates flag
+                else if (typeName == "System.DateTime" || typeName == "System.DateTimeOffset" || typeName == "System.TimeSpan")
+                {
+                    if (!useRangeForDates)
+                    {
+                        propertyType = originalType.ToDisplayString(NullableFlowState.None);
+                    }
+                    else
+                    {
+                        propertyType = mapped;
+                    }
+                }
+                // For bool and Guid, always keep as-is (they don't use Range)
+                else
+                {
+                    propertyType = mapped;
+                }
+            }
+
+            // Add attributes based on type
+            if (originalType.SpecialType == SpecialType.System_String)
+            {
+                if (!useStringFilter)
+                {
+                    generatedCode.AppendLine("\t\t[ToLowerContainsComparison]");
+                }
+                // When useStringFilter is true, StringFilter handles the filtering internally, no attribute needed
             }
 
             generatedCode.AppendLine($"\t\tpublic virtual {propertyType} {property.Name} {{ get; set; }}");
