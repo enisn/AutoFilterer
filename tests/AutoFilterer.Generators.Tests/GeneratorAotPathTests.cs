@@ -14,6 +14,7 @@ public class GeneratorAotPathTests
         yield return new object[] { typeof(BookFilter_StringFilter_Advanced) };
         yield return new object[] { typeof(BookFilter_OperatorFilter_Advanced) };
         yield return new object[] { typeof(BookFilter_OrderableEdge) };
+        yield return new object[] { typeof(Level1Filter_AllAnyAnyAnyAnyAnyAny) };
     }
 
     [Theory]

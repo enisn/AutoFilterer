@@ -127,23 +127,17 @@ public sealed class GenerateApplyFilterAttribute : Attribute
 
         EmitParityPrefilters(sb, filterSymbol, entitySymbol);
 
-        // Batch 1 strict support gate: only use generated path for safe subset
-        var isBatch1Safe = IsBatch1SafeFilter(filterSymbol, entitySymbol);
-        if (isBatch1Safe)
+        var filterState = BuildFilterState(filterSymbol, entitySymbol, "x", "filter");
+        if (!string.IsNullOrWhiteSpace(filterState.Condition) && filterState.Condition != "true")
         {
-            // Emit generated WHERE conditions
-            sb.AppendLine("            // Generated WHERE path (Batch 1 safe subset)");
-            EmitBatch1WhereConditions(sb, filterSymbol, entitySymbol);
+            sb.AppendLine($"            source = source.Where(x => {filterState.Condition});");
         }
-        else
-        {
-            // Fallback to runtime path for unsupported patterns
-            sb.AppendLine("            // Fallback to runtime path (unsupported for generated mode)");
-            sb.AppendLine("            return filter.ApplyFilterTo(source);");
-        }
+
+        EmitOrderingAndPagination(sb, filterSymbol, entitySymbol);
 
         sb.AppendLine("            return source;");
         sb.AppendLine("        }");
+        EmitNestedFilterHelpers(sb, filterSymbol, entitySymbol, new HashSet<string>(StringComparer.Ordinal));
         sb.AppendLine("    }");
         sb.AppendLine("}");
         return sb.ToString();
@@ -357,6 +351,765 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             sb.AppendLine("                source = AutoFilterer.Extensions.QueryExtensions.ToPaged(source, filter.Page, filter.PerPage);");
             sb.AppendLine("            }");
         }
+    }
+
+    private static (string Active, string Condition) BuildFilterState(INamedTypeSymbol filterSymbol, INamedTypeSymbol entitySymbol, string paramName, string filterPath)
+    {
+        var propertyStates = new List<(string Active, string Expression)>();
+
+        foreach (var filterProp in filterSymbol.GetMembers().OfType<IPropertySymbol>().Where(p => !p.IsStatic && !p.IsIndexer))
+        {
+            var state = BuildPropertyState(filterProp, entitySymbol, paramName, filterPath);
+            if (!string.IsNullOrWhiteSpace(state.Active) && !string.IsNullOrWhiteSpace(state.Condition))
+            {
+                propertyStates.Add((state.Active, state.Condition));
+            }
+        }
+
+        if (propertyStates.Count == 0)
+        {
+            return ("false", "true");
+        }
+
+        var anyActive = BuildAnyActiveExpression(propertyStates);
+        var andExpression = BuildAndExpression(propertyStates);
+        var orExpression = BuildOrExpression(propertyStates);
+
+        return (anyActive, $"!({anyActive}) || ({filterPath}.CombineWith == CombineType.Or ? ({orExpression}) : ({andExpression}))");
+    }
+
+    private static (string Active, string Condition) BuildPropertyState(IPropertySymbol filterProp, INamedTypeSymbol entitySymbol, string paramName, string filterPath)
+    {
+        if (filterProp.GetAttributes().Any(a => a.AttributeClass?.Name == "IgnoreFilterAttribute"))
+        {
+            return default;
+        }
+
+        var compareToAttrs = filterProp.GetAttributes().Where(a => a.AttributeClass?.Name == "CompareToAttribute").ToArray();
+        var collectionFilterAttr = filterProp.GetAttributes().FirstOrDefault(a => a.AttributeClass?.Name == "CollectionFilterAttribute");
+        var filterRef = $"{filterPath}.{filterProp.Name}";
+
+        if (compareToAttrs.Length == 0)
+        {
+            var targetProp = ResolveMemberByPath(entitySymbol, filterProp.Name);
+            if (targetProp == null)
+            {
+                return default;
+            }
+
+            return BuildTargetState(filterProp, targetProp, filterProp.Name, paramName, filterRef, null, collectionFilterAttr);
+        }
+
+        string combinedCondition = null;
+        var activeParts = new List<string>();
+
+        foreach (var compareToAttr in compareToAttrs)
+        {
+            var targetStates = new List<(string Active, string Condition)>();
+
+            foreach (var targetPath in ExtractStringTargets(compareToAttr))
+            {
+                var targetProp = ResolveMemberByPath(entitySymbol, targetPath);
+                if (targetProp == null)
+                {
+                    continue;
+                }
+
+                var state = BuildTargetState(filterProp, targetProp, targetPath, paramName, filterRef, compareToAttr, collectionFilterAttr);
+                if (!string.IsNullOrWhiteSpace(state.Active) && !string.IsNullOrWhiteSpace(state.Condition))
+                {
+                    targetStates.Add(state);
+                }
+            }
+
+            if (targetStates.Count == 0)
+            {
+                continue;
+            }
+
+            activeParts.AddRange(targetStates.Select(x => $"({x.Active})"));
+
+            var attributeCondition = CombineStates(targetStates.Select(x => x.Condition), GetCompareCombineOperator(compareToAttr));
+            combinedCondition = CombineStates(new[] { combinedCondition, attributeCondition }.Where(x => !string.IsNullOrWhiteSpace(x)), GetCompareCombineOperator(compareToAttr));
+        }
+
+        if (string.IsNullOrWhiteSpace(combinedCondition) || activeParts.Count == 0)
+        {
+            return default;
+        }
+
+        return (string.Join(" || ", activeParts), combinedCondition);
+    }
+
+    private static (string Active, string Condition) BuildTargetState(IPropertySymbol filterProp, IPropertySymbol targetProp, string targetPath, string paramName, string filterRef, AttributeData compareToAttr, AttributeData collectionFilterAttr)
+    {
+        if (collectionFilterAttr != null)
+        {
+            return BuildCollectionState(filterProp, targetProp, targetPath, paramName, filterRef, collectionFilterAttr);
+        }
+
+        if (IsFilterType(filterProp.Type) && IsCollectionType(targetProp.Type))
+        {
+            return BuildCollectionState(filterProp, targetProp, targetPath, paramName, filterRef, null);
+        }
+
+        if (IsFilterType(filterProp.Type))
+        {
+            return BuildNestedFilterState(filterProp, targetProp, targetPath, paramName, filterRef);
+        }
+
+        if (filterProp.Type is IArrayTypeSymbol arrayType && !IsCollectionType(targetProp.Type))
+        {
+            return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{filterRef}.Contains({BuildMemberAccess(paramName, targetPath)})", BuildPathGuard(paramName, targetPath, includeLeaf: false)));
+        }
+
+        var attributeState = BuildAttributeState(filterProp, targetProp, targetPath, paramName, filterRef, compareToAttr);
+        if (!string.IsNullOrWhiteSpace(attributeState.Active) && !string.IsNullOrWhiteSpace(attributeState.Condition))
+        {
+            return attributeState;
+        }
+
+        if (compareToAttr != null && ExtractFilterableType(compareToAttr) != null)
+        {
+            return default;
+        }
+
+        var targetRef = BuildMemberAccess(paramName, targetPath);
+        var pathGuard = BuildPathGuard(paramName, targetPath, includeLeaf: false);
+
+        if (filterProp.Type is INamedTypeSymbol namedStringFilter && namedStringFilter.ToDisplayString().StartsWith("AutoFilterer.Types.StringFilter"))
+        {
+            return BuildConditionState($"{filterRef} != null && ({BuildStringFilterActiveExpression(filterRef)})", BuildStringFilterConditionExpression(filterRef, targetRef, pathGuard));
+        }
+
+        if (filterProp.Type is INamedTypeSymbol namedRange && namedRange.Name == "Range")
+        {
+            var active = $"{filterRef} != null && ({filterRef}.Min != null || {filterRef}.Max != null)";
+            var condition = BuildRangeConditionExpression(filterRef, targetRef, pathGuard);
+            return BuildConditionState(active, condition);
+        }
+
+        if (filterProp.Type is INamedTypeSymbol namedOperator && namedOperator.Name == "OperatorFilter")
+        {
+            return BuildConditionState($"{filterRef} != null && ({BuildOperatorFilterActiveExpression(filterRef, SupportsNullChecks(targetProp.Type))})", BuildOperatorFilterConditionExpression(filterRef, targetRef, pathGuard, SupportsNullChecks(targetProp.Type)));
+        }
+
+        if (filterProp.Type.SpecialType == SpecialType.System_String)
+        {
+            return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} == {filterRef}", pathGuard));
+        }
+
+        if (filterProp.Type is INamedTypeSymbol namedFilterProp && (namedFilterProp.TypeKind == TypeKind.Enum || namedFilterProp.IsValueType))
+        {
+            if (IsNullableValueType(filterProp.Type))
+            {
+                return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef}.Equals({filterRef})", pathGuard));
+            }
+
+            return BuildConditionState("true", WrapWithGuard($"{targetRef}.Equals({filterRef})", pathGuard));
+        }
+
+        return default;
+    }
+
+    private static (string Active, string Condition) BuildCollectionState(IPropertySymbol filterProp, IPropertySymbol targetProp, string targetPath, string paramName, string filterRef, AttributeData collectionFilterAttr)
+    {
+        if (filterProp.Type is not INamedTypeSymbol nestedFilterType || targetProp.Type is not INamedTypeSymbol collectionType || !collectionType.IsGenericType)
+        {
+            return default;
+        }
+
+        var elementType = collectionType.TypeArguments.FirstOrDefault() as INamedTypeSymbol;
+        if (elementType == null)
+        {
+            return default;
+        }
+
+        var collectionAccess = BuildMemberAccess(paramName, targetPath);
+        var filterOption = GetCollectionFilterOption(collectionFilterAttr);
+        var collectionQuery = $"{collectionAccess}.AsQueryable()";
+        var filteredQuery = $"{GetApplyHelperName(nestedFilterType)}({collectionQuery}, {filterRef})";
+        var condition = filterOption == "All"
+            ? $"(!{collectionQuery}.Any() || {filteredQuery}.Count() == {collectionQuery}.Count())"
+            : $"{filteredQuery}.Any()";
+
+        return BuildConditionState($"{filterRef} != null && {GetHasFiltersHelperName(nestedFilterType)}({filterRef})", WrapWithGuard(condition, BuildPathGuard(paramName, targetPath, includeLeaf: false)));
+    }
+
+    private static (string Active, string Condition) BuildNestedFilterState(IPropertySymbol filterProp, IPropertySymbol targetProp, string targetPath, string paramName, string filterRef)
+    {
+        if (filterProp.Type is not INamedTypeSymbol nestedFilterType || targetProp.Type is not INamedTypeSymbol nestedEntityType)
+        {
+            return default;
+        }
+
+        var nestedState = BuildFilterState(nestedFilterType, nestedEntityType, BuildMemberAccess(paramName, targetPath), filterRef);
+        if (nestedState.Active == "false")
+        {
+            return default;
+        }
+
+        return BuildConditionState($"{filterRef} != null && ({nestedState.Active})", nestedState.Condition);
+    }
+
+    private static (string Active, string Condition) BuildAttributeState(IPropertySymbol filterProp, IPropertySymbol targetProp, string targetPath, string paramName, string filterRef, AttributeData compareToAttr)
+    {
+        var targetRef = BuildMemberAccess(paramName, targetPath);
+        var pathGuard = BuildPathGuard(paramName, targetPath, includeLeaf: false);
+
+        if (compareToAttr != null)
+        {
+            var filterableType = ExtractFilterableType(compareToAttr);
+            if (filterableType != null)
+            {
+                return BuildCustomFilterableState(filterableType, filterRef, targetRef, pathGuard);
+            }
+        }
+
+        var inlineAttribute = filterProp.GetAttributes()
+            .FirstOrDefault(a => a.AttributeClass?.Name is not "CompareToAttribute" and not "CollectionFilterAttribute" and not "IgnoreFilterAttribute");
+
+        if (inlineAttribute?.AttributeClass?.Name == "StringFilterOptionsAttribute")
+        {
+            var method = GetStringFilterMethod(inlineAttribute);
+            if (!string.IsNullOrWhiteSpace(method))
+            {
+                return BuildConditionState($"{filterRef} != null", BuildStringMethodCondition(targetRef, filterRef, pathGuard, method, GetStringComparisonExpression(inlineAttribute)));
+            }
+        }
+
+        if (inlineAttribute?.AttributeClass?.Name == "OperatorComparisonAttribute")
+        {
+            return BuildOperatorComparisonState(inlineAttribute, filterRef, targetRef, pathGuard, SupportsNullChecks(targetProp.Type));
+        }
+
+        return default;
+    }
+
+    private static (string Active, string Condition) BuildCustomFilterableState(INamedTypeSymbol filterableType, string filterRef, string targetRef, string pathGuard)
+    {
+        if (filterableType.Name == "ToLowerContainsComparisonAttribute")
+        {
+            return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef}.ToLower().Contains({filterRef}.ToLower())", pathGuard));
+        }
+
+        if (filterableType.Name == "ToLowerEqualsComparisonAttribute")
+        {
+            return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef}.ToLower().Equals({filterRef}.ToLower())", pathGuard));
+        }
+
+        if (InheritsFrom(filterableType, "StringFilterOptionsAttribute", "AutoFilterer.Attributes"))
+        {
+            var method = InferMethodFromName(filterableType.Name);
+            if (!string.IsNullOrWhiteSpace(method))
+            {
+                return BuildConditionState($"{filterRef} != null", BuildStringMethodCondition(targetRef, filterRef, pathGuard, method, "StringComparison.InvariantCultureIgnoreCase"));
+            }
+        }
+
+        return default;
+    }
+
+    private static (string Active, string Condition) BuildOperatorComparisonState(AttributeData attribute, string filterRef, string targetRef, string pathGuard, bool supportsNullChecks)
+    {
+        var operatorName = GetOperatorName(attribute);
+        if (string.IsNullOrWhiteSpace(operatorName))
+        {
+            return default;
+        }
+
+        return operatorName switch
+        {
+            "Equal" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} == {filterRef}", pathGuard)),
+            "NotEqual" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} != {filterRef}", pathGuard)),
+            "GreaterThan" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} > {filterRef}", pathGuard)),
+            "GreaterThanOrEqual" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} >= {filterRef}", pathGuard)),
+            "LessThan" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} < {filterRef}", pathGuard)),
+            "LessThanOrEqual" => BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} <= {filterRef}", pathGuard)),
+            "IsNull" when supportsNullChecks => BuildConditionState("true", WrapWithGuard($"{targetRef} == null", pathGuard)),
+            "IsNotNull" when supportsNullChecks => BuildConditionState("true", WrapWithGuard($"{targetRef} != null", pathGuard)),
+            _ => default
+        };
+    }
+
+    private static string BuildRangeConditionExpression(string filterRef, string targetRef, string pathGuard)
+    {
+        var conditions = new List<string>
+        {
+            $"({filterRef}.Min == null || {WrapWithGuard($"{targetRef} >= {filterRef}.Min", pathGuard)})",
+            $"({filterRef}.Max == null || {WrapWithGuard($"{targetRef} <= {filterRef}.Max", pathGuard)})"
+        };
+
+        return string.Join(" && ", conditions);
+    }
+
+    private static string BuildStringFilterActiveExpression(string filterRef)
+    {
+        return BuildAnyActiveExpression(GetStringFilterConditions(filterRef).Select(x => (x.Active, x.Expression)));
+    }
+
+    private static string BuildStringFilterConditionExpression(string filterRef, string targetRef, string pathGuard)
+    {
+        var conditions = GetStringFilterConditions(filterRef)
+            .Select(x => (x.Active, Expression: ApplyStringCondition(x.Expression, targetRef, filterRef, pathGuard)))
+            .ToList();
+
+        var andExpression = BuildAndExpression(conditions);
+        var orExpression = BuildOrExpression(conditions);
+        return $"({filterRef}.CombineWith == CombineType.Or ? ({orExpression}) : ({andExpression}))";
+    }
+
+    private static string BuildOperatorFilterActiveExpression(string filterRef, bool supportsNullChecks)
+    {
+        return BuildAnyActiveExpression(GetOperatorFilterConditions(filterRef, supportsNullChecks).Select(x => (x.Active, x.Expression)));
+    }
+
+    private static string BuildOperatorFilterConditionExpression(string filterRef, string targetRef, string pathGuard, bool supportsNullChecks)
+    {
+        var conditions = GetOperatorFilterConditions(filterRef, supportsNullChecks)
+            .Select(x => (x.Active, Expression: WrapWithGuard(x.Expression.Replace("{target}", targetRef), pathGuard)))
+            .ToList();
+
+        var andExpression = BuildAndExpression(conditions);
+        var orExpression = BuildOrExpression(conditions);
+        return $"({filterRef}.CombineWith == CombineType.Or ? ({orExpression}) : ({andExpression}))";
+    }
+
+    private static void EmitOrderingAndPagination(StringBuilder sb, INamedTypeSymbol filterSymbol, INamedTypeSymbol entitySymbol)
+    {
+        var sortProp = FindPropertyIncludingBase(filterSymbol, "Sort");
+        if (sortProp != null && sortProp.Type.SpecialType == SpecialType.System_String)
+        {
+            sb.AppendLine("            if (!string.IsNullOrEmpty(filter.Sort))");
+            sb.AppendLine("            {");
+            sb.AppendLine("                switch (filter.Sort)");
+            sb.AppendLine("                {");
+            foreach (var sortPath in EnumerateSortablePaths(entitySymbol).Distinct(StringComparer.Ordinal))
+            {
+                sb.AppendLine($"                    case \"{sortPath}\":");
+                sb.AppendLine("                    {");
+                var sortByProp = FindPropertyIncludingBase(filterSymbol, "SortBy");
+                if (sortByProp != null)
+                {
+                    sb.AppendLine("                        if (filter.SortBy == Sorting.Descending)");
+                    sb.AppendLine($"                            source = source.OrderByDescending(x => x.{sortPath});");
+                    sb.AppendLine("                        else");
+                    sb.AppendLine($"                            source = source.OrderBy(x => x.{sortPath});");
+                }
+                else
+                {
+                    sb.AppendLine($"                        source = source.OrderBy(x => x.{sortPath});");
+                }
+                sb.AppendLine("                        break;");
+                sb.AppendLine("                    }");
+            }
+            sb.AppendLine("                    default: throw new ArgumentException(\"Invalid Sort field\", nameof(filter.Sort));");
+            sb.AppendLine("                }");
+            sb.AppendLine("            }");
+        }
+
+        var pageProp = FindPropertyIncludingBase(filterSymbol, "Page");
+        var perPageProp = FindPropertyIncludingBase(filterSymbol, "PerPage");
+        if (pageProp != null && perPageProp != null)
+        {
+            sb.AppendLine("            if (filter.Page > 0 && filter.PerPage > 0)");
+            sb.AppendLine("            {");
+            sb.AppendLine("                source = AutoFilterer.Extensions.QueryExtensions.ToPaged(source, filter.Page, filter.PerPage);");
+            sb.AppendLine("            }");
+        }
+    }
+
+    private static void EmitNestedFilterHelpers(StringBuilder sb, INamedTypeSymbol filterSymbol, INamedTypeSymbol entitySymbol, HashSet<string> emitted)
+    {
+        foreach (var filterProp in filterSymbol.GetMembers().OfType<IPropertySymbol>().Where(p => !p.IsStatic && !p.IsIndexer))
+        {
+            if (!IsFilterType(filterProp.Type))
+            {
+                continue;
+            }
+
+            var compareToAttrs = filterProp.GetAttributes().Where(a => a.AttributeClass?.Name == "CompareToAttribute").ToArray();
+            if (compareToAttrs.Length == 0)
+            {
+                var defaultTarget = ResolveMemberByPath(entitySymbol, filterProp.Name);
+                EmitNestedFilterHelperIfNeeded(sb, filterProp, defaultTarget, emitted);
+                continue;
+            }
+
+            foreach (var compareToAttr in compareToAttrs)
+            {
+                foreach (var targetPath in ExtractStringTargets(compareToAttr))
+                {
+                    var targetProp = ResolveMemberByPath(entitySymbol, targetPath);
+                    EmitNestedFilterHelperIfNeeded(sb, filterProp, targetProp, emitted);
+                }
+            }
+        }
+    }
+
+    private static void EmitNestedFilterHelperIfNeeded(StringBuilder sb, IPropertySymbol filterProp, IPropertySymbol targetProp, HashSet<string> emitted)
+    {
+        if (targetProp == null || filterProp.Type is not INamedTypeSymbol nestedFilterType)
+        {
+            return;
+        }
+
+        if (targetProp.Type is not INamedTypeSymbol namedTargetType)
+        {
+            return;
+        }
+
+        INamedTypeSymbol nestedEntityType;
+        if (IsCollectionType(targetProp.Type))
+        {
+            if (!namedTargetType.IsGenericType || namedTargetType.TypeArguments.FirstOrDefault() is not INamedTypeSymbol elementType)
+            {
+                return;
+            }
+
+            nestedEntityType = elementType;
+        }
+        else
+        {
+            nestedEntityType = namedTargetType;
+        }
+
+        var key = nestedFilterType.ToDisplayString() + "->" + nestedEntityType.ToDisplayString();
+        if (!emitted.Add(key))
+        {
+            return;
+        }
+
+        EmitNestedFilterHelpers(sb, nestedFilterType, nestedEntityType, emitted);
+        EmitHasFiltersHelper(sb, nestedFilterType);
+        EmitApplyNestedHelper(sb, nestedFilterType, nestedEntityType);
+    }
+
+    private static void EmitHasFiltersHelper(StringBuilder sb, INamedTypeSymbol filterSymbol)
+    {
+        sb.AppendLine();
+        sb.AppendLine($"        private static bool {GetHasFiltersHelperName(filterSymbol)}({filterSymbol.ToDisplayString()} filter)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (filter == null)");
+        sb.AppendLine("            {");
+        sb.AppendLine("                return false;");
+        sb.AppendLine("            }");
+
+        foreach (var prop in filterSymbol.GetMembers().OfType<IPropertySymbol>().Where(p => !p.IsStatic && !p.IsIndexer))
+        {
+            if (prop.GetAttributes().Any(a => a.AttributeClass?.Name == "IgnoreFilterAttribute"))
+            {
+                continue;
+            }
+
+            var filterRef = $"filter.{prop.Name}";
+
+            if (prop.Type is INamedTypeSymbol namedStringFilter && namedStringFilter.ToDisplayString().StartsWith("AutoFilterer.Types.StringFilter"))
+            {
+                sb.AppendLine($"            if ({filterRef} != null && ({BuildStringFilterActiveExpression(filterRef)})) return true;");
+                continue;
+            }
+
+            if (prop.Type is INamedTypeSymbol namedOperator && namedOperator.Name == "OperatorFilter")
+            {
+                sb.AppendLine($"            if ({filterRef} != null && ({BuildOperatorFilterActiveExpression(filterRef, true)})) return true;");
+                continue;
+            }
+
+            if (prop.Type is INamedTypeSymbol namedRange && namedRange.Name == "Range")
+            {
+                sb.AppendLine($"            if ({filterRef} != null && ({filterRef}.Min != null || {filterRef}.Max != null)) return true;");
+                continue;
+            }
+
+            if (prop.Type is IArrayTypeSymbol)
+            {
+                sb.AppendLine($"            if ({filterRef} != null) return true;");
+                continue;
+            }
+
+            if (IsFilterType(prop.Type) && prop.Type is INamedTypeSymbol nestedFilterType)
+            {
+                sb.AppendLine($"            if ({filterRef} != null && {GetHasFiltersHelperName(nestedFilterType)}({filterRef})) return true;");
+                continue;
+            }
+
+            if (prop.Type.SpecialType == SpecialType.System_String || IsNullableValueType(prop.Type))
+            {
+                sb.AppendLine($"            if ({filterRef} != null) return true;");
+                continue;
+            }
+
+            if (prop.Type is INamedTypeSymbol namedProp && (namedProp.TypeKind == TypeKind.Enum || namedProp.IsValueType))
+            {
+                sb.AppendLine("            return true;");
+                sb.AppendLine("        }");
+                return;
+            }
+        }
+
+        sb.AppendLine("            return false;");
+        sb.AppendLine("        }");
+    }
+
+    private static void EmitApplyNestedHelper(StringBuilder sb, INamedTypeSymbol filterSymbol, INamedTypeSymbol entitySymbol)
+    {
+        sb.AppendLine();
+        sb.AppendLine($"        private static IQueryable<{entitySymbol.ToDisplayString()}> {GetApplyHelperName(filterSymbol)}(IQueryable<{entitySymbol.ToDisplayString()}> source, {filterSymbol.ToDisplayString()} filter)");
+        sb.AppendLine("        {");
+        sb.AppendLine("            if (filter == null) return source;");
+        EmitParityPrefilters(sb, filterSymbol, entitySymbol);
+        var filterState = BuildFilterState(filterSymbol, entitySymbol, "x", "filter");
+        if (!string.IsNullOrWhiteSpace(filterState.Condition) && filterState.Condition != "true")
+        {
+            sb.AppendLine($"            source = source.Where(x => {filterState.Condition});");
+        }
+        EmitOrderingAndPagination(sb, filterSymbol, entitySymbol);
+        sb.AppendLine("            return source;");
+        sb.AppendLine("        }");
+    }
+
+    private static string GetApplyHelperName(INamedTypeSymbol filterSymbol)
+    {
+        return "ApplyGenerated_" + filterSymbol.Name;
+    }
+
+    private static string GetHasFiltersHelperName(INamedTypeSymbol filterSymbol)
+    {
+        return "HasFilters_" + filterSymbol.Name;
+    }
+
+    private static IEnumerable<(string Active, string Expression)> GetStringFilterConditions(string filterRef)
+    {
+        yield return ($"{filterRef}.Eq != null", "{target} == " + filterRef + ".Eq");
+        yield return ($"{filterRef}.Not != null", "{target} != " + filterRef + ".Not");
+        yield return ($"{filterRef}.Equals != null", "STRING_EQUALS");
+        yield return ($"{filterRef}.Contains != null", "STRING_CONTAINS");
+        yield return ($"{filterRef}.NotContains != null", "NOT_STRING_CONTAINS");
+        yield return ($"{filterRef}.StartsWith != null", "STRING_STARTSWITH");
+        yield return ($"{filterRef}.NotStartsWith != null", "NOT_STRING_STARTSWITH");
+        yield return ($"{filterRef}.EndsWith != null", "STRING_ENDSWITH");
+        yield return ($"{filterRef}.NotEndsWith != null", "NOT_STRING_ENDSWITH");
+        yield return ($"{filterRef}.IsNull != null", $"({filterRef}.IsNull.Value ? {{target}} == null : {{target}} != null)");
+        yield return ($"{filterRef}.IsNotNull != null", $"({filterRef}.IsNotNull.Value ? {{target}} != null : {{target}} == null)");
+        yield return ($"{filterRef}.IsEmpty != null", "IS_EMPTY");
+        yield return ($"{filterRef}.IsNotEmpty != null", "IS_NOT_EMPTY");
+    }
+
+    private static IEnumerable<(string Active, string Expression)> GetOperatorFilterConditions(string filterRef, bool supportsNullChecks)
+    {
+        yield return ($"{filterRef}.Eq != null", "{target} == " + filterRef + ".Eq");
+        yield return ($"{filterRef}.Not != null", "{target} != " + filterRef + ".Not");
+        yield return ($"{filterRef}.Gt != null", "{target} > " + filterRef + ".Gt");
+        yield return ($"{filterRef}.Lt != null", "{target} < " + filterRef + ".Lt");
+        yield return ($"{filterRef}.Gte != null", "{target} >= " + filterRef + ".Gte");
+        yield return ($"{filterRef}.Lte != null", "{target} <= " + filterRef + ".Lte");
+
+        if (supportsNullChecks)
+        {
+            yield return ($"{filterRef}.IsNull != null", $"({filterRef}.IsNull.Value ? {{target}} == null : {{target}} != null)");
+            yield return ($"{filterRef}.IsNotNull != null", $"({filterRef}.IsNotNull.Value ? {{target}} != null : {{target}} == null)");
+        }
+    }
+
+    private static string ApplyStringCondition(string template, string targetRef, string filterRef, string pathGuard)
+    {
+        return template switch
+        {
+            "STRING_EQUALS" => BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.Equals", pathGuard, "Equals", $"{filterRef}.Compare"),
+            "STRING_CONTAINS" => BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.Contains", pathGuard, "Contains", $"{filterRef}.Compare"),
+            "NOT_STRING_CONTAINS" => $"!({BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.NotContains", pathGuard, "Contains", $"{filterRef}.Compare")})",
+            "STRING_STARTSWITH" => BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.StartsWith", pathGuard, "StartsWith", $"{filterRef}.Compare"),
+            "NOT_STRING_STARTSWITH" => $"!({BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.NotStartsWith", pathGuard, "StartsWith", $"{filterRef}.Compare")})",
+            "STRING_ENDSWITH" => BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.EndsWith", pathGuard, "EndsWith", $"{filterRef}.Compare"),
+            "NOT_STRING_ENDSWITH" => $"!({BuildDynamicStringMethodCondition(targetRef, $"{filterRef}.NotEndsWith", pathGuard, "EndsWith", $"{filterRef}.Compare")})",
+            "IS_EMPTY" => $"({filterRef}.IsEmpty.Value ? {BuildDynamicStringMethodCondition(targetRef, "string.Empty", pathGuard, "Equals", $"{filterRef}.Compare", valueIsLiteral: true)} : !({BuildDynamicStringMethodCondition(targetRef, "string.Empty", pathGuard, "Equals", $"{filterRef}.Compare", valueIsLiteral: true)}))",
+            "IS_NOT_EMPTY" => $"({filterRef}.IsNotEmpty.Value ? !({BuildDynamicStringMethodCondition(targetRef, "string.Empty", pathGuard, "Equals", $"{filterRef}.Compare", valueIsLiteral: true)}) : {BuildDynamicStringMethodCondition(targetRef, "string.Empty", pathGuard, "Equals", $"{filterRef}.Compare", valueIsLiteral: true)})",
+            _ => WrapWithGuard(template.Replace("{target}", targetRef), pathGuard)
+        };
+    }
+
+    private static string BuildDynamicStringMethodCondition(string targetRef, string valueRef, string pathGuard, string methodName, string comparisonRef, bool valueIsLiteral = false)
+    {
+        var valueExpression = valueIsLiteral ? valueRef : valueRef;
+        var withComparison = BuildStringMethodCondition(targetRef, valueExpression, pathGuard, methodName, $"{comparisonRef}.Value");
+        var withoutComparison = BuildStringMethodCondition(targetRef, valueExpression, pathGuard, methodName, null);
+        return $"({comparisonRef} != null ? {withComparison} : {withoutComparison})";
+    }
+
+    private static string BuildStringMethodCondition(string targetRef, string valueRef, string pathGuard, string methodName, string comparisonExpression)
+    {
+        var methodCall = string.IsNullOrWhiteSpace(comparisonExpression)
+            ? BuildStringMethodInvocation(targetRef, methodName, valueRef)
+            : BuildStringMethodInvocation(targetRef, methodName, valueRef, comparisonExpression);
+
+        return WrapWithGuard($"{targetRef} != null && {methodCall}", pathGuard);
+    }
+
+    private static string BuildStringMethodInvocation(string targetRef, string methodName, string valueRef, string comparisonExpression = null)
+    {
+        return string.IsNullOrWhiteSpace(comparisonExpression)
+            ? $"{targetRef}.{methodName}({valueRef})"
+            : $"{targetRef}.{methodName}({valueRef}, {comparisonExpression})";
+    }
+
+    private static string BuildPathGuard(string paramName, string targetPath, bool includeLeaf)
+    {
+        var parts = targetPath.Split('.');
+        var count = includeLeaf ? parts.Length : parts.Length - 1;
+        if (count <= 0)
+        {
+            return null;
+        }
+
+        return string.Join(" && ", Enumerable.Range(1, count).Select(i => BuildMemberAccess(paramName, string.Join(".", parts.Take(i))) + " != null"));
+    }
+
+    private static string BuildMemberAccess(string paramName, string targetPath)
+    {
+        return string.IsNullOrWhiteSpace(targetPath) ? paramName : $"{paramName}.{targetPath}";
+    }
+
+    private static string WrapWithGuard(string condition, string pathGuard)
+    {
+        if (string.IsNullOrWhiteSpace(pathGuard))
+        {
+            return condition;
+        }
+
+        return $"({pathGuard} && ({condition}))";
+    }
+
+    private static string CombineStates(IEnumerable<string> expressions, string combineOperator)
+    {
+        var parts = expressions.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => $"({x})").ToArray();
+        if (parts.Length == 0)
+        {
+            return null;
+        }
+
+        if (parts.Length == 1)
+        {
+            return parts[0];
+        }
+
+        var op = string.Equals(combineOperator, "And", StringComparison.Ordinal) ? " && " : " || ";
+        return string.Join(op, parts);
+    }
+
+    private static (string Active, string Condition) BuildConditionState(string active, string condition)
+    {
+        return string.IsNullOrWhiteSpace(active) || string.IsNullOrWhiteSpace(condition) ? default : (active, condition);
+    }
+
+    private static string GetCompareCombineOperator(AttributeData compareToAttr)
+    {
+        var combine = compareToAttr.NamedArguments.FirstOrDefault(x => x.Key == "CombineWith").Value;
+        return combine.Value?.ToString() == "0" ? "And" : "Or";
+    }
+
+    private static INamedTypeSymbol ExtractFilterableType(AttributeData compareToAttr)
+    {
+        foreach (var argument in compareToAttr.ConstructorArguments)
+        {
+            if (argument.Kind != TypedConstantKind.Array && argument.Value is INamedTypeSymbol namedType)
+            {
+                return namedType;
+            }
+        }
+
+        return null;
+    }
+
+    private static string GetCollectionFilterOption(AttributeData collectionFilterAttr)
+    {
+        if (collectionFilterAttr == null)
+        {
+            return "Any";
+        }
+
+        var filterOptionArg = collectionFilterAttr.ConstructorArguments.Length > 0 ? collectionFilterAttr.ConstructorArguments[0] : default;
+        if (filterOptionArg.Value != null)
+        {
+            return filterOptionArg.Value.ToString() == "0" ? "Any" : "All";
+        }
+
+        var namedArg = collectionFilterAttr.NamedArguments.FirstOrDefault(kv => kv.Key == "FilterOption").Value;
+        return namedArg.Value?.ToString() == "1" ? "All" : "Any";
+    }
+
+    private static bool SupportsNullChecks(ITypeSymbol type)
+    {
+        return IsNullableValueType(type) || type.SpecialType == SpecialType.System_String;
+    }
+
+    private static bool IsCollectionType(ITypeSymbol type)
+    {
+        return type is INamedTypeSymbol named && IsCollectionLike(named);
+    }
+
+    private static bool InheritsFrom(INamedTypeSymbol type, string baseTypeName, string baseNamespace)
+    {
+        for (var current = type; current != null; current = current.BaseType)
+        {
+            if (current.Name == baseTypeName && current.ContainingNamespace?.ToDisplayString() == baseNamespace)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string InferMethodFromName(string typeName)
+    {
+        if (typeName.Contains("StartsWith", StringComparison.Ordinal)) return "StartsWith";
+        if (typeName.Contains("EndsWith", StringComparison.Ordinal)) return "EndsWith";
+        if (typeName.Contains("Contains", StringComparison.Ordinal)) return "Contains";
+        if (typeName.Contains("Equals", StringComparison.Ordinal)) return "Equals";
+        return null;
+    }
+
+    private static string GetStringFilterMethod(AttributeData attribute)
+    {
+        var optionArg = attribute.ConstructorArguments.Length > 0 ? attribute.ConstructorArguments[0].Value?.ToString() : null;
+        return optionArg switch
+        {
+            "0" => "Equals",
+            "1" => "StartsWith",
+            "2" => "EndsWith",
+            "4" => "Contains",
+            _ => null
+        };
+    }
+
+    private static string GetStringComparisonExpression(AttributeData attribute)
+    {
+        var comparisonArg = attribute.ConstructorArguments.Length > 1 ? attribute.ConstructorArguments[1].Value?.ToString() : null;
+        if (!string.IsNullOrWhiteSpace(comparisonArg))
+        {
+            return $"(StringComparison){comparisonArg}";
+        }
+
+        var namedComparison = attribute.NamedArguments.FirstOrDefault(x => x.Key == "Comparison").Value;
+        return namedComparison.Value == null ? null : $"(StringComparison){namedComparison.Value}";
+    }
+
+    private static string GetOperatorName(AttributeData attribute)
+    {
+        var operatorArg = attribute.ConstructorArguments.Length > 0 ? attribute.ConstructorArguments[0].Value?.ToString() : null;
+        return operatorArg switch
+        {
+            "0" => "Equal",
+            "1" => "NotEqual",
+            "2" => "GreaterThan",
+            "3" => "GreaterThanOrEqual",
+            "4" => "LessThan",
+            "5" => "LessThanOrEqual",
+            "6" => "IsNull",
+            "7" => "IsNotNull",
+            _ => null
+        };
     }
 
     private static string BuildStringFilterPredicate(string filterRef, string targetRef)
