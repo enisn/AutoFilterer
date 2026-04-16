@@ -127,10 +127,10 @@ public class GeneratorParityFinalBacklogTests
         var filterWith = new PreferencesFilter_ArraySearchWith { SecurityLevel = new[] { 10, 20 } };
 
         var runtimeWithout = ExecutePreferences(() => filterWithout.ApplyFilterTo(preferences.AsQueryable()).ToList());
-        var generatedWithout = ExecutePreferences(() => preferences.AsQueryable().ApplyFilter(filterWithout).ToList());
+        var generatedWithout = ExecutePreferences(() => GeneratedFilterInvoker.ApplyFilter(preferences.AsQueryable(), filterWithout).ToList());
 
         var runtimeWith = ExecutePreferences(() => filterWith.ApplyFilterTo(preferences.AsQueryable()).ToList());
-        var generatedWith = ExecutePreferences(() => preferences.AsQueryable().ApplyFilter(filterWith).ToList());
+        var generatedWith = ExecutePreferences(() => GeneratedFilterInvoker.ApplyFilter(preferences.AsQueryable(), filterWith).ToList());
 
         Assert.Equal(runtimeWithout.Result.Select(x => x.UserId), generatedWithout.Result.Select(x => x.UserId));
         Assert.Equal(runtimeWith.Result.Select(x => x.UserId), generatedWith.Result.Select(x => x.UserId));
@@ -149,10 +149,10 @@ public class GeneratorParityFinalBacklogTests
         var filterWith = new PreferencesFilter_ArraySearchWith { SecurityLevel = Array.Empty<int>() };
 
         var runtimeWithout = ExecutePreferences(() => filterWithout.ApplyFilterTo(preferences.AsQueryable()).ToList());
-        var generatedWithout = ExecutePreferences(() => preferences.AsQueryable().ApplyFilter(filterWithout).ToList());
+        var generatedWithout = ExecutePreferences(() => GeneratedFilterInvoker.ApplyFilter(preferences.AsQueryable(), filterWithout).ToList());
 
         var runtimeWith = ExecutePreferences(() => filterWith.ApplyFilterTo(preferences.AsQueryable()).ToList());
-        var generatedWith = ExecutePreferences(() => preferences.AsQueryable().ApplyFilter(filterWith).ToList());
+        var generatedWith = ExecutePreferences(() => GeneratedFilterInvoker.ApplyFilter(preferences.AsQueryable(), filterWith).ToList());
 
         Assert.Empty(runtimeWithout.Result);
         Assert.Empty(generatedWithout.Result);
@@ -1545,7 +1545,7 @@ public class GeneratorParityFinalBacklogTests
         where TFilter : FilterBase
     {
         var runtime = Execute(() => filter.ApplyFilterTo(books.AsQueryable()).ToList());
-        var generated = Execute(() => books.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = Execute(() => GeneratedFilterInvoker.ApplyFilter(books.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -1562,7 +1562,7 @@ public class GeneratorParityFinalBacklogTests
         where TFilter : FilterBase
     {
         var runtime = ExecuteAuthor(() => filter.ApplyFilterTo(authors.AsQueryable()).ToList());
-        var generated = ExecuteAuthor(() => authors.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecuteAuthor(() => GeneratedFilterInvoker.ApplyFilter(authors.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -1579,7 +1579,7 @@ public class GeneratorParityFinalBacklogTests
         where TFilter : FilterBase
     {
         var runtime = ExecutePreferences(() => filter.ApplyFilterTo(preferences.AsQueryable()).ToList());
-        var generated = ExecutePreferences(() => preferences.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecutePreferences(() => GeneratedFilterInvoker.ApplyFilter(preferences.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -1596,7 +1596,7 @@ public class GeneratorParityFinalBacklogTests
         where TFilter : FilterBase
     {
         var runtime = ExecutePublisher(() => filter.ApplyFilterTo(publishers.AsQueryable()).ToList());
-        var generated = ExecutePublisher(() => publishers.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecutePublisher(() => GeneratedFilterInvoker.ApplyFilter(publishers.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 

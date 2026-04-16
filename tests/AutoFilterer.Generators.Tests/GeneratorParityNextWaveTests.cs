@@ -404,7 +404,7 @@ public class GeneratorParityNextWaveTests
         where TFilter : FilterBase
     {
         var runtime = Execute(() => filter.ApplyFilterTo(books.AsQueryable()).ToList());
-        var generated = Execute(() => books.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = Execute(() => GeneratedFilterInvoker.ApplyFilter(books.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 

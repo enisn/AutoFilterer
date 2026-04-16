@@ -289,21 +289,17 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             {
                 sb.AppendLine($"            if (filter.{prop.Name} != null)");
                 sb.AppendLine("            {");
-                sb.AppendLine($"                if (filter.{prop.Name}.Eq != null) source = source.Where(x => x.{targetPath} == filter.{prop.Name}.Eq);");
-                sb.AppendLine($"                if (filter.{prop.Name}.Gt != null) source = source.Where(x => x.{targetPath} > filter.{prop.Name}.Gt);");
-                sb.AppendLine($"                if (filter.{prop.Name}.Lt != null) source = source.Where(x => x.{targetPath} < filter.{prop.Name}.Lt);");
-                sb.AppendLine($"                if (filter.{prop.Name}.Gte != null) source = source.Where(x => x.{targetPath} >= filter.{prop.Name}.Gte);");
-                sb.AppendLine($"                if (filter.{prop.Name}.Lte != null) source = source.Where(x => x.{targetPath} <= filter.{prop.Name}.Lte);");
+                sb.AppendLine($"                source = source.Where(x => {BuildOperatorFilterPredicate($"filter.{prop.Name}", $"x.{targetPath}", IsNullableValueType(entityProp.Type))});");
                 sb.AppendLine("            }");
                 continue;
             }
 
-            // Handle StringFilter (basic equality only for Batch 1)
+            // Handle StringFilter
             if (prop.Type is INamedTypeSymbol named && named.ToDisplayString().StartsWith("AutoFilterer.Types.StringFilter"))
             {
                 sb.AppendLine($"            if (filter.{prop.Name} != null)");
                 sb.AppendLine("            {");
-                sb.AppendLine($"                if (filter.{prop.Name}.Eq != null) source = source.Where(x => x.{targetPath} == filter.{prop.Name}.Eq);");
+                sb.AppendLine($"                source = source.Where(x => {BuildStringFilterPredicate($"filter.{prop.Name}", $"x.{targetPath}")});");
                 sb.AppendLine("            }");
                 continue;
             }
@@ -311,7 +307,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             // Default scalar/string equality comparison
             if (prop.Type.SpecialType == SpecialType.System_String)
             {
-                sb.AppendLine($"            if (!string.IsNullOrEmpty(filter.{prop.Name})) source = source.Where(x => x.{targetPath} == filter.{prop.Name});");
+                sb.AppendLine($"            if (filter.{prop.Name} != null) source = source.Where(x => x.{targetPath} == filter.{prop.Name});");
             }
             else if (IsNullableValueType(prop.Type))
             {
@@ -327,21 +323,21 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             sb.AppendLine("            {");
             sb.AppendLine("                switch (filter.Sort)");
             sb.AppendLine("                {");
-            foreach (var ep in entitySymbol.GetMembers().OfType<IPropertySymbol>().Where(p => !p.IsStatic))
+            foreach (var sortPath in EnumerateSortablePaths(entitySymbol).Distinct(StringComparer.Ordinal))
             {
-                sb.AppendLine($"                    case \"{ep.Name}\":");
+                sb.AppendLine($"                    case \"{sortPath}\":");
                 sb.AppendLine("                    {");
                 var sortByProp = FindPropertyIncludingBase(filterSymbol, "SortBy");
                 if (sortByProp != null)
                 {
                     sb.AppendLine("                        if (filter.SortBy == Sorting.Descending)");
-                    sb.AppendLine($"                            source = source.OrderByDescending(x => x.{ep.Name});");
+                    sb.AppendLine($"                            source = source.OrderByDescending(x => x.{sortPath});");
                     sb.AppendLine("                        else");
-                    sb.AppendLine($"                            source = source.OrderBy(x => x.{ep.Name});");
+                    sb.AppendLine($"                            source = source.OrderBy(x => x.{sortPath});");
                 }
                 else
                 {
-                    sb.AppendLine($"                        source = source.OrderBy(x => x.{ep.Name});");
+                    sb.AppendLine($"                        source = source.OrderBy(x => x.{sortPath});");
                 }
                 sb.AppendLine("                        break;");
                 sb.AppendLine("                    }");
@@ -361,6 +357,131 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             sb.AppendLine("                source = AutoFilterer.Extensions.QueryExtensions.ToPaged(source, filter.Page, filter.PerPage);");
             sb.AppendLine("            }");
         }
+    }
+
+    private static string BuildStringFilterPredicate(string filterRef, string targetRef)
+    {
+        var conditions = new List<(string Active, string Expression)>
+        {
+            ($"{filterRef}.Eq != null", $"{targetRef} == {filterRef}.Eq"),
+            ($"{filterRef}.Not != null", $"{targetRef} != {filterRef}.Not"),
+            ($"{filterRef}.Equals != null", BuildGuardedStringComparison(targetRef, "Equals", $"{filterRef}.Equals", filterRef)),
+            ($"{filterRef}.Contains != null", BuildGuardedStringComparison(targetRef, "Contains", $"{filterRef}.Contains", filterRef)),
+            ($"{filterRef}.NotContains != null", $"!({BuildGuardedStringComparison(targetRef, "Contains", $"{filterRef}.NotContains", filterRef)})"),
+            ($"{filterRef}.StartsWith != null", BuildGuardedStringComparison(targetRef, "StartsWith", $"{filterRef}.StartsWith", filterRef)),
+            ($"{filterRef}.NotStartsWith != null", $"!({BuildGuardedStringComparison(targetRef, "StartsWith", $"{filterRef}.NotStartsWith", filterRef)})"),
+            ($"{filterRef}.EndsWith != null", BuildGuardedStringComparison(targetRef, "EndsWith", $"{filterRef}.EndsWith", filterRef)),
+            ($"{filterRef}.NotEndsWith != null", $"!({BuildGuardedStringComparison(targetRef, "EndsWith", $"{filterRef}.NotEndsWith", filterRef)})"),
+            ($"{filterRef}.IsNull != null", $"({filterRef}.IsNull.Value ? {targetRef} == null : {targetRef} != null)"),
+            ($"{filterRef}.IsNotNull != null", $"({filterRef}.IsNotNull.Value ? {targetRef} != null : {targetRef} == null)"),
+            ($"{filterRef}.IsEmpty != null", $"({filterRef}.IsEmpty.Value ? {BuildGuardedStringComparison(targetRef, "Equals", "string.Empty", filterRef)} : !({BuildGuardedStringComparison(targetRef, "Equals", "string.Empty", filterRef)}))"),
+            ($"{filterRef}.IsNotEmpty != null", $"({filterRef}.IsNotEmpty.Value ? !({BuildGuardedStringComparison(targetRef, "Equals", "string.Empty", filterRef)}) : {BuildGuardedStringComparison(targetRef, "Equals", "string.Empty", filterRef)})")
+        };
+
+        var anyActive = BuildAnyActiveExpression(conditions);
+        var andExpression = BuildAndExpression(conditions);
+        var orExpression = BuildOrExpression(conditions);
+
+        return $"{filterRef} == null || (!({anyActive}) || ({filterRef}.CombineWith == CombineType.Or ? ({orExpression}) : ({andExpression})))";
+    }
+
+    private static string BuildOperatorFilterPredicate(string filterRef, string targetRef, bool supportsNullChecks)
+    {
+        var conditions = new List<(string Active, string Expression)>
+        {
+            ($"{filterRef}.Eq != null", $"{targetRef} == {filterRef}.Eq"),
+            ($"{filterRef}.Not != null", $"{targetRef} != {filterRef}.Not"),
+            ($"{filterRef}.Gt != null", $"{targetRef} > {filterRef}.Gt"),
+            ($"{filterRef}.Lt != null", $"{targetRef} < {filterRef}.Lt"),
+            ($"{filterRef}.Gte != null", $"{targetRef} >= {filterRef}.Gte"),
+            ($"{filterRef}.Lte != null", $"{targetRef} <= {filterRef}.Lte")
+        };
+
+        if (supportsNullChecks)
+        {
+            conditions.Add(($"{filterRef}.IsNull != null", $"({filterRef}.IsNull.Value ? {targetRef} == null : {targetRef} != null)"));
+            conditions.Add(($"{filterRef}.IsNotNull != null", $"({filterRef}.IsNotNull.Value ? {targetRef} != null : {targetRef} == null)"));
+        }
+
+        var anyActive = BuildAnyActiveExpression(conditions);
+        var andExpression = BuildAndExpression(conditions);
+        var orExpression = BuildOrExpression(conditions);
+
+        return $"{filterRef} == null || (!({anyActive}) || ({filterRef}.CombineWith == CombineType.Or ? ({orExpression}) : ({andExpression})))";
+    }
+
+    private static string BuildGuardedStringComparison(string targetRef, string methodName, string valueRef, string filterRef)
+    {
+        return $"{targetRef} != null && ({BuildStringComparison(targetRef, methodName, valueRef, filterRef)})";
+    }
+
+    private static string BuildStringComparison(string targetRef, string methodName, string valueRef, string filterRef)
+    {
+        return $"({filterRef}.Compare != null ? {targetRef}.{methodName}({valueRef}, {filterRef}.Compare.Value) : {targetRef}.{methodName}({valueRef}))";
+    }
+
+    private static string BuildAnyActiveExpression(IEnumerable<(string Active, string Expression)> conditions)
+    {
+        return string.Join(" || ", conditions.Select(c => $"({c.Active})"));
+    }
+
+    private static string BuildAndExpression(IEnumerable<(string Active, string Expression)> conditions)
+    {
+        return string.Join(" && ", conditions.Select(c => $"(!({c.Active}) || ({c.Expression}))"));
+    }
+
+    private static string BuildOrExpression(IEnumerable<(string Active, string Expression)> conditions)
+    {
+        return string.Join(" || ", conditions.Select(c => $"(({c.Active}) && ({c.Expression}))"));
+    }
+
+    private static IEnumerable<string> EnumerateSortablePaths(INamedTypeSymbol entitySymbol, int depth = 2, string prefix = null)
+    {
+        foreach (var property in entitySymbol.GetMembers().OfType<IPropertySymbol>().Where(p => !p.IsStatic && !p.IsIndexer))
+        {
+            var currentPath = string.IsNullOrEmpty(prefix) ? property.Name : $"{prefix}.{property.Name}";
+
+            if (IsSortableLeaf(property.Type))
+            {
+                yield return currentPath;
+                continue;
+            }
+
+            if (depth <= 1 || property.Type is not INamedTypeSymbol named || IsCollectionLike(named))
+            {
+                continue;
+            }
+
+            foreach (var nestedPath in EnumerateSortablePaths(named, depth - 1, currentPath))
+            {
+                yield return nestedPath;
+            }
+        }
+    }
+
+    private static bool IsSortableLeaf(ITypeSymbol type)
+    {
+        if (type.SpecialType == SpecialType.System_String)
+        {
+            return true;
+        }
+
+        if (type.TypeKind == TypeKind.Enum || type.IsValueType)
+        {
+            return true;
+        }
+
+        return type is INamedTypeSymbol named && named.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T;
+    }
+
+    private static bool IsCollectionLike(INamedTypeSymbol type)
+    {
+        if (type.AllInterfaces.Any(i => i.Name == nameof(System.Collections.IEnumerable)))
+        {
+            return type.SpecialType != SpecialType.System_String;
+        }
+
+        return false;
     }
 
     private static IPropertySymbol ResolveMemberByPath(INamedTypeSymbol entitySymbol, string path)

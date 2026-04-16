@@ -66,16 +66,16 @@ public class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
             BinaryExpression minExp = default, maxExp = default;
 
             var propertyExpression = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
-            if (context.TargetProperty.PropertyType.IsNullable())
-            {
-                propertyExpression = Expression.Property(propertyExpression, nameof(Nullable<bool>.Value));
-            }
 
             if (Min != null)
             {
+                var minExpression = Expression.Convert(
+                    Expression.Property(Expression.Constant(this), nameof(Min)).GetValueExpressionIfNullable(),
+                    propertyExpression.Type);
+
                 minExp = Expression.GreaterThanOrEqual(
                            propertyExpression,
-                           Expression.Property(Expression.Constant(this), nameof(Min)).GetValueExpressionIfNullable());
+                           minExpression);
                 if (Max == null)
                 {
                     return minExp;
@@ -84,9 +84,13 @@ public class Range<T> : IRange<T>, IRange, IEquatable<string>, IFormattable
 
             if (Max != null)
             {
+                var maxExpression = Expression.Convert(
+                    Expression.Property(Expression.Constant(this), nameof(Max)).GetValueExpressionIfNullable(),
+                    propertyExpression.Type);
+
                 maxExp = Expression.LessThanOrEqual(
                             propertyExpression,
-                            Expression.Property(Expression.Constant(this), nameof(Max)).GetValueExpressionIfNullable());
+                            maxExpression);
                 if (Min == null)
                 {
                     return maxExp;

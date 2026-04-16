@@ -599,7 +599,7 @@ public class GeneratorParityP1MatrixTests
         };
 
         var runtime = ExecutePublishers(() => filter.ApplyFilterTo(publishers.AsQueryable()).ToList());
-        var generated = ExecutePublishers(() => publishers.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecutePublishers(() => GeneratedFilterInvoker.ApplyFilter(publishers.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -747,7 +747,7 @@ public class GeneratorParityP1MatrixTests
         };
 
         var runtime = Execute(() => filter.ApplyFilterTo(books.AsQueryable()).ToList());
-        var generated = Execute(() => books.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = Execute(() => GeneratedFilterInvoker.ApplyFilter(books.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -767,7 +767,7 @@ public class GeneratorParityP1MatrixTests
         where TFilter : FilterBase
     {
         var runtime = Execute(() => filter.ApplyFilterTo(books.AsQueryable()).ToList());
-        var generated = Execute(() => books.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = Execute(() => GeneratedFilterInvoker.ApplyFilter(books.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -784,7 +784,7 @@ public class GeneratorParityP1MatrixTests
         where TFilter : FilterBase
     {
         var runtime = ExecuteAuthors(() => filter.ApplyFilterTo(authors.AsQueryable()).ToList());
-        var generated = ExecuteAuthors(() => authors.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecuteAuthors(() => GeneratedFilterInvoker.ApplyFilter(authors.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
@@ -801,7 +801,7 @@ public class GeneratorParityP1MatrixTests
         where TFilter : FilterBase
     {
         var runtime = ExecutePublishers(() => filter.ApplyFilterTo(publishers.AsQueryable()).ToList());
-        var generated = ExecutePublishers(() => publishers.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecutePublishers(() => GeneratedFilterInvoker.ApplyFilter(publishers.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 

@@ -66,14 +66,18 @@ public class FilterBase : IFilter
                 {
                     foreach (var targetPropertyName in attribute.PropertyNames)
                     {
-                        var targetProperty = entityType.GetProperty(targetPropertyName);
-                        if (targetProperty == null)
-                            continue;
-
                         var bodyParameter = finalExpression is MemberExpression ? finalExpression : body;
 
+                        if (!TryResolveTargetPath(entityType, bodyParameter, targetPropertyName, out var targetBody, out var targetProperty, out var nullGuard))
+                            continue;
+
                         var expression = attribute.BuildExpressionForProperty(
-                            new ExpressionBuildContext(bodyParameter, targetProperty, filterProperty, filterPropertyExpression, this, filterPropertyValue));
+                            new ExpressionBuildContext(targetBody, targetProperty, filterProperty, filterPropertyExpression, this, filterPropertyValue));
+
+                        if (expression != null && nullGuard != null)
+                        {
+                            expression = Expression.AndAlso(nullGuard, expression);
+                        }
 
                         innerExpression = innerExpression.Combine(expression, attribute.CombineWith);
                     }
@@ -94,5 +98,53 @@ public class FilterBase : IFilter
         }
 
         return finalExpression;
+    }
+
+    private static bool TryResolveTargetPath(Type entityType, Expression expressionBody, string targetPropertyName, out Expression targetBody, out PropertyInfo targetProperty, out Expression nullGuard)
+    {
+        targetBody = expressionBody;
+        targetProperty = null;
+        nullGuard = null;
+
+        if (string.IsNullOrWhiteSpace(targetPropertyName))
+        {
+            return false;
+        }
+
+        var parts = targetPropertyName.Split('.');
+        var currentType = entityType;
+        var currentExpression = expressionBody;
+
+        for (var i = 0; i < parts.Length; i++)
+        {
+            var property = currentType.GetProperty(parts[i]);
+            if (property == null)
+            {
+                return false;
+            }
+
+            if (i == parts.Length - 1)
+            {
+                targetBody = currentExpression;
+                targetProperty = property;
+                return true;
+            }
+
+            currentExpression = Expression.Property(currentExpression, property);
+            currentType = property.PropertyType;
+
+            if (CanBeNull(property.PropertyType))
+            {
+                var notNull = Expression.NotEqual(currentExpression, Expression.Constant(null, property.PropertyType));
+                nullGuard = nullGuard == null ? notNull : Expression.AndAlso(nullGuard, notNull);
+            }
+        }
+
+        return false;
+    }
+
+    private static bool CanBeNull(Type type)
+    {
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
 }

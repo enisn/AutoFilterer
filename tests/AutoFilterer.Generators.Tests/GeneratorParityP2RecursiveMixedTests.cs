@@ -1805,7 +1805,7 @@ public class GeneratorParityP2RecursiveMixedTests
         where TFilter : FilterBase
     {
         var runtime = ExecuteLevel1(() => filter.ApplyFilterTo(data.AsQueryable()).ToList());
-        var generated = ExecuteLevel1(() => data.AsQueryable().ApplyFilter(filter).ToList());
+        var generated = ExecuteLevel1(() => GeneratedFilterInvoker.ApplyFilter(data.AsQueryable(), filter).ToList());
 
         Assert.Equal(runtime.Exception?.GetType(), generated.Exception?.GetType());
 
