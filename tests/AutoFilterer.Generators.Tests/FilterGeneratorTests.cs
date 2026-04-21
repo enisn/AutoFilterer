@@ -202,6 +202,7 @@ namespace AutoFilterer.Generators.Tests
             Assert.NotNull(typeof(MappingTest.AllTypesTestTypeFilter));
 
             var filter = new MappingTest.AllTypesTestTypeFilter();
+            Assert.NotNull(filter);
         }
 
         [Fact]
@@ -475,4 +476,3 @@ namespace AutoFilterer.Generators.Tests
         }
     }
 }
-

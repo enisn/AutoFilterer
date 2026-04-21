@@ -203,18 +203,14 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             {
                 // No multi-target CompareTo (array of property names)
                 var propNamesConst = attr.ConstructorArguments.Length > 0 ? attr.ConstructorArguments[0] : default;
-                if (propNamesConst.Kind == TypedConstantKind.Array)
+                var targetNames = ExtractTargetPropertyNames(propNamesConst).ToArray();
+                if (targetNames.Length > 1)
                 {
-                    if (propNamesConst.Values.Length > 1)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
 
                 // Only support single-segment property names (no nested navigation like "Nav.Prop")
-                var targetName = propNamesConst.Kind == TypedConstantKind.Array
-                    ? propNamesConst.Values.FirstOrDefault().Value?.ToString()
-                    : propNamesConst.Value?.ToString();
+                var targetName = targetNames.FirstOrDefault();
                 if (!string.IsNullOrWhiteSpace(targetName) && targetName.Contains('.'))
                 {
                     return false;
@@ -252,9 +248,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
                 if (compareToAttrs[0].ConstructorArguments.Length > 0)
                 {
                     var targetArg = compareToAttrs[0].ConstructorArguments[0];
-                    targetName = targetArg.Kind == TypedConstantKind.Array
-                        ? targetArg.Values.FirstOrDefault().Value?.ToString()
-                        : targetArg.Value?.ToString();
+                    targetName = ExtractTargetPropertyNames(targetArg).FirstOrDefault();
                 }
 
                 if (!string.IsNullOrWhiteSpace(targetName))
@@ -503,7 +497,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
         {
             if (IsNullableValueType(filterProp.Type))
             {
-                return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef}.Equals({filterRef})", pathGuard));
+                return BuildConditionState($"{filterRef} != null", WrapWithGuard($"{targetRef} == {filterRef}", pathGuard));
             }
 
             return BuildConditionState("true", WrapWithGuard($"{targetRef}.Equals({filterRef})", pathGuard));
@@ -1423,24 +1417,24 @@ public sealed class GenerateApplyFilterAttribute : Attribute
     {
         foreach (var argument in attribute.ConstructorArguments)
         {
-            if (argument.Kind == TypedConstantKind.Array)
+            foreach (var targetName in ExtractTargetPropertyNames(argument))
             {
-                foreach (var value in argument.Values)
-                {
-                    if (value.Value is string path && !string.IsNullOrWhiteSpace(path))
-                    {
-                        yield return path;
-                    }
-                }
-
-                continue;
-            }
-
-            if (argument.Value is string singlePath && !string.IsNullOrWhiteSpace(singlePath))
-            {
-                yield return singlePath;
+                yield return targetName;
             }
         }
+    }
+
+    private static IEnumerable<string> ExtractTargetPropertyNames(TypedConstant propNamesConst)
+    {
+        if (propNamesConst.Kind == TypedConstantKind.Array)
+        {
+            return propNamesConst.Values
+                .Select(v => v.Value?.ToString())
+                .Where(targetName => !string.IsNullOrWhiteSpace(targetName));
+        }
+
+        var targetName = propNamesConst.Value?.ToString();
+        return string.IsNullOrWhiteSpace(targetName) ? Enumerable.Empty<string>() : new[] { targetName };
     }
 
     private static string BuildNullGuardsForPath(string path)
@@ -1462,23 +1456,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
         var epName = entityProp.Name;
 
         // Get FilterOption (Any or All)
-        var filterOption = "Any"; // default
-        var filterOptionArg = collectionFilterAttr.ConstructorArguments.Length > 0 ? collectionFilterAttr.ConstructorArguments[0] : default;
-        if (filterOptionArg.Value != null)
-        {
-            // The value is an integer enum value
-            var enumValue = filterOptionArg.Value.ToString();
-            filterOption = enumValue == "0" ? "Any" : "All";
-        }
-        else
-        {
-            var namedArg = collectionFilterAttr.NamedArguments.FirstOrDefault(kv => kv.Key == "FilterOption").Value;
-            if (namedArg.Value != null)
-            {
-                var enumValue = namedArg.Value.ToString();
-                filterOption = enumValue == "0" ? "Any" : "All";
-            }
-        }
+        var filterOption = GetCollectionFilterOption(collectionFilterAttr);
 
         // Check if entity property is a collection
         if (entityProp.Type is not INamedTypeSymbol collectionType) return;
@@ -1523,13 +1501,10 @@ public sealed class GenerateApplyFilterAttribute : Attribute
         if (type == null) return false;
         
         // Check if implements IFilter interface
-        foreach (var iface in type.AllInterfaces)
-        {
-            if (iface.Name == "IFilter" && iface.ContainingNamespace?.ToDisplayString() == "AutoFilterer.Abstractions")
-            {
-                return true;
-            }
-        }
+        var implementsIFilter = type.AllInterfaces.Any(iface =>
+            iface.Name == "IFilter" &&
+            iface.ContainingNamespace?.ToDisplayString() == "AutoFilterer.Abstractions");
+        if (implementsIFilter) return true;
         
         // Check if inherits from FilterBase
         var baseType = type.BaseType;
@@ -1596,20 +1571,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
                     foreach (var attr in compareToAttrs)
                     {
                         var propNamesConst = attr.ConstructorArguments.Length > 0 ? attr.ConstructorArguments[0] : default;
-                        var targetNames = new List<string>();
-                        
-                        if (propNamesConst.Kind == TypedConstantKind.Array)
-                        {
-                            targetNames.AddRange(propNamesConst.Values.Select(v => v.Value?.ToString()).Where(n => !string.IsNullOrWhiteSpace(n)));
-                        }
-                        else
-                        {
-                            var targetName = propNamesConst.Value?.ToString();
-                            if (!string.IsNullOrWhiteSpace(targetName))
-                            {
-                                targetNames.Add(targetName);
-                            }
-                        }
+                        var targetNames = ExtractTargetPropertyNames(propNamesConst);
 
                         foreach (var targetName in targetNames)
                         {
@@ -1650,20 +1612,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
                 foreach (var attr in compareToAttrs2)
                 {
                     var propNamesConst = attr.ConstructorArguments.Length > 0 ? attr.ConstructorArguments[0] : default;
-                    var targetNames = new List<string>();
-                    
-                    if (propNamesConst.Kind == TypedConstantKind.Array)
-                    {
-                        targetNames.AddRange(propNamesConst.Values.Select(v => v.Value?.ToString()).Where(n => !string.IsNullOrWhiteSpace(n)));
-                    }
-                    else
-                    {
-                        var targetName = propNamesConst.Value?.ToString();
-                        if (!string.IsNullOrWhiteSpace(targetName))
-                        {
-                            targetNames.Add(targetName);
-                        }
-                    }
+                    var targetNames = ExtractTargetPropertyNames(propNamesConst);
 
                     foreach (var targetName in targetNames)
                     {
@@ -1693,22 +1642,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
         var epName = entityProp.Name;
 
         // Get FilterOption
-        var filterOption = "Any";
-        var filterOptionArg = collectionFilterAttr.ConstructorArguments.Length > 0 ? collectionFilterAttr.ConstructorArguments[0] : default;
-        if (filterOptionArg.Value != null)
-        {
-            var enumValue = filterOptionArg.Value.ToString();
-            filterOption = enumValue == "0" ? "Any" : "All";
-        }
-        else
-        {
-            var namedArg = collectionFilterAttr.NamedArguments.FirstOrDefault(kv => kv.Key == "FilterOption").Value;
-            if (namedArg.Value != null)
-            {
-                var enumValue = namedArg.Value.ToString();
-                filterOption = enumValue == "0" ? "Any" : "All";
-            }
-        }
+        var filterOption = GetCollectionFilterOption(collectionFilterAttr);
 
         if (entityProp.Type is not INamedTypeSymbol collectionType) return string.Empty;
         
@@ -1874,7 +1808,7 @@ public sealed class GenerateApplyFilterAttribute : Attribute
             var isNullable = filterProp.NullableAnnotation == Microsoft.CodeAnalysis.NullableAnnotation.Annotated;
             if (isNullable)
             {
-                sb.AppendLine($"            if (filter.{fpName} != null) source = source.Where(x => x.{epName}.Equals(filter.{fpName}));");
+                sb.AppendLine($"            if (filter.{fpName} != null) source = source.Where(x => x.{epName} == filter.{fpName});");
             }
         }
     }

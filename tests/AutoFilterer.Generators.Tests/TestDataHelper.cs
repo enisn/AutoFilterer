@@ -36,7 +36,21 @@ public static class TestDataHelper
         var books = GetSampleBooks();
         foreach (var author in authors)
         {
-            author.Books = books.Where(b => b.AuthorId == author.Id).ToList();
+            author.Books = books
+                .Where(b => b.AuthorId == author.Id)
+                .Select(b => new Environment.Models.Book
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    TotalPage = b.TotalPage,
+                    Year = b.Year,
+                    IsPublished = b.IsPublished,
+                    AuthorId = b.AuthorId,
+                    Author = b.Author,
+                    ReadCount = b.ReadCount,
+                    Views = b.Views,
+                })
+                .ToList();
             foreach (var book in author.Books)
             {
                 book.AuthorModel = author;
