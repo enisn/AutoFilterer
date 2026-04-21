@@ -1430,7 +1430,8 @@ public sealed class GenerateApplyFilterAttribute : Attribute
         {
             return propNamesConst.Values
                 .Select(v => v.Value?.ToString())
-                .Where(targetName => !string.IsNullOrWhiteSpace(targetName));
+                .Where(targetName => !string.IsNullOrWhiteSpace(targetName))
+                .Select(targetName => targetName!);
         }
 
         var targetName = propNamesConst.Value?.ToString();
