@@ -200,8 +200,7 @@ namespace AutoFilterer.Generators.Tests
         public void ShouldCreateEachTypeCorrectFromMapping()
         {
             Assert.NotNull(typeof(MappingTest.AllTypesTestTypeFilter));
-
-            var filter = new MappingTest.AllTypesTestTypeFilter();
+            Assert.IsType<MappingTest.AllTypesTestTypeFilter>(new MappingTest.AllTypesTestTypeFilter());
         }
 
         [Fact]
@@ -475,4 +474,3 @@ namespace AutoFilterer.Generators.Tests
         }
     }
 }
-
