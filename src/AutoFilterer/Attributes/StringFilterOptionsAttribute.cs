@@ -40,10 +40,11 @@ public class StringFilterOptionsAttribute : FilteringOptionsBaseAttribute
     {
         var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string), typeof(StringComparison) });
         var filterProp = BuildFilterExpression(context);
+        var source = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
 
         var comparison = Expression.Call(
                               method: method,
-                              instance: Expression.Property(context.ExpressionBody, context.TargetProperty.Name),
+                              instance: source,
                               arguments: new Expression[] { filterProp, Expression.Constant(Comparison) });
 
         return comparison;
@@ -54,10 +55,11 @@ public class StringFilterOptionsAttribute : FilteringOptionsBaseAttribute
         var method = typeof(string).GetMethod(option.ToString(), types: new[] { typeof(string) });
 
         var filterProp = BuildFilterExpression(context);
+        var source = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
 
         var comparison = Expression.Call(
                             method: method,
-                            instance: Expression.Property(context.ExpressionBody, context.TargetProperty.Name),
+                            instance: source,
                             arguments: new[] { filterProp });
 
         return comparison;

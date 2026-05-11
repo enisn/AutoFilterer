@@ -3,7 +3,7 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AutoFilterer\AutoFilterer.csproj" />
     <ProjectReference Include="..\..\src\AutoFilterer.Generators\AutoFilterer.Generators.csproj" OutputItemType="Analyzer"/>
     <ProjectReference Include="..\AutoFilterer.Tests.Core\AutoFilterer.Tests.Core.csproj" />
   </ItemGroup>

@@ -104,37 +104,75 @@ public class StringFilter : IFilterableType
             expression = expression.Combine(OperatorComparisonAttribute.IsNotNull.BuildExpression(ContextFor(context, nameof(IsNotNull), null)), CombineWith);
         
         if (Equals != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(Equals), Equals)), CombineWith);
+            expression = expression.Combine(
+                GuardTargetNotNull(
+                    context,
+                    new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                        .BuildExpression(ContextFor(context, nameof(Equals), Equals))),
+                CombineWith);
 
         if (Contains != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(Contains), Contains)), CombineWith);
+            expression = expression.Combine(
+                GuardTargetNotNull(
+                    context,
+                    new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }
+                        .BuildExpression(ContextFor(context, nameof(Contains), Contains))),
+                CombineWith);
 
         if (NotContains != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotContains), NotContains))), CombineWith);
+            expression = expression.Combine(
+                Expression.Not(
+                    GuardTargetNotNull(
+                        context,
+                        new StringFilterOptionsAttribute(StringFilterOption.Contains) { Comparison = Compare }
+                            .BuildExpression(ContextFor(context, nameof(NotContains), NotContains)))),
+                CombineWith);
 
         if (StartsWith != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(StartsWith), StartsWith)), CombineWith);
+            expression = expression.Combine(
+                GuardTargetNotNull(
+                    context,
+                    new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }
+                        .BuildExpression(ContextFor(context, nameof(StartsWith), StartsWith))),
+                CombineWith);
 
         if (NotStartsWith != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotStartsWith), NotStartsWith))), CombineWith);
+            expression = expression.Combine(
+                Expression.Not(
+                    GuardTargetNotNull(
+                        context,
+                        new StringFilterOptionsAttribute(StringFilterOption.StartsWith) { Comparison = Compare }
+                            .BuildExpression(ContextFor(context, nameof(NotStartsWith), NotStartsWith)))),
+                CombineWith);
 
         if (EndsWith != null)
-            expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(EndsWith), EndsWith)), CombineWith);
+            expression = expression.Combine(
+                GuardTargetNotNull(
+                    context,
+                    new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }
+                        .BuildExpression(ContextFor(context, nameof(EndsWith), EndsWith))),
+                CombineWith);
         
         if (NotEndsWith != null)
-            expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }.BuildExpression(ContextFor(context, nameof(NotEndsWith), NotEndsWith))), CombineWith);
+            expression = expression.Combine(
+                Expression.Not(
+                    GuardTargetNotNull(
+                        context,
+                        new StringFilterOptionsAttribute(StringFilterOption.EndsWith) { Comparison = Compare }
+                            .BuildExpression(ContextFor(context, nameof(NotEndsWith), NotEndsWith)))),
+                CombineWith);
 
         if (IsEmpty != null)
         {
             if (IsEmpty.Value)
             { 
-                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
-                .BuildExpression(ContextForConstant(context, string.Empty)), CombineWith);
+                expression = expression.Combine(GuardTargetNotNull(context, new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
             }
             else
             {
-                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
-                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
+                expression = expression.Combine(Expression.Not(GuardTargetNotNull(context, new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty)))), CombineWith);
             }
         }
         
@@ -142,13 +180,13 @@ public class StringFilter : IFilterableType
         {
             if (IsNotEmpty.Value)
             {
-                expression = expression.Combine(Expression.Not(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
-                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
+                expression = expression.Combine(Expression.Not(GuardTargetNotNull(context, new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty)))), CombineWith);
             }
             else
             {
-                expression = expression.Combine(new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
-                .BuildExpression(ContextForConstant(context, string.Empty)), CombineWith);
+                expression = expression.Combine(GuardTargetNotNull(context, new StringFilterOptionsAttribute(StringFilterOption.Equals) { Comparison = Compare }
+                .BuildExpression(ContextForConstant(context, string.Empty))), CombineWith);
             }
         }
         
@@ -178,5 +216,12 @@ public class StringFilter : IFilterableType
             Expression.Constant(value),
             originalContext.FilterObject,
             value);
+    }
+
+    private static Expression GuardTargetNotNull(ExpressionBuildContext context, Expression comparisonExpression)
+    {
+        var source = Expression.Property(context.ExpressionBody, context.TargetProperty.Name);
+        var sourceNotNull = Expression.NotEqual(source, Expression.Constant(null, typeof(string)));
+        return Expression.AndAlso(sourceNotNull, comparisonExpression);
     }
 }
